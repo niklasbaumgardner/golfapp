@@ -13,7 +13,7 @@ def login():
         return render_template('login.html', email=email)
     return render_template("login.html")
 
-@auth.route('//login', methods=["POST"])
+@auth.route('/login', methods=["GET", "POST"])
 def login_post():
     email = request.form['email']
     password = request.form['password']
@@ -23,8 +23,7 @@ def login_post():
     if user and bcrypt.check_password_hash(user.password, password):
         # add remember me button
         login_user(user)
-        next_page = request.args.get('next')
-        return redirect(next_page or url_for('.view_'))
+        return redirect(url_for('home.add_round'))
     
     elif user:
         flash('Password was incorrect. Try again', 'w3-pale-red')
@@ -34,15 +33,17 @@ def login_post():
 
     return render_template("login.html", email=email)
 
-@auth.route('//signup')
+@auth.route('/signup')
 def signup():
     return render_template("signup.html")
 
-@auth.route('//signup', methods=["POST"])
+@auth.route('/signup', methods=["POST"])
 def signup_post():
     try:
 
         email = request.form['email']
+        fname = request.form['fname']
+        lname = request.form['lname']
         password1 = request.form['password1']
         password2 = request.form['password2']
 
@@ -58,7 +59,7 @@ def signup_post():
             return render_template("signup.html", email=email)
         hash_ = bcrypt.generate_password_hash(password1).decode('utf-8')
 
-        new_user = User(email=email, password=hash_)
+        new_user = User(email=email, name=fname+' '+lname, password=hash_)
         db.session.add(new_user)
         db.session.commit()
         flash('Sign up succesful', 'w3-pale-green')

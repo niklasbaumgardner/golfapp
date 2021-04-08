@@ -2,7 +2,6 @@ from golfapp.extensions import db, login_manager
 from flask_login import UserMixin
 
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -13,3 +12,21 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+
+class Course(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), nullable=False)
+    par = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    slope = db.Column(db.Float, nullable=False)
+
+class Round(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+
+class Handicap(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    handicap = db.Column(db.Float, nullable=False)

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Sign Up{% endblock title %}
+{% block title %}Add Round{% endblock title %}
+{% block addround %}w3-text-blue{% endblock addround %}
 
 
 
@@ -10,7 +11,7 @@
     <div class="w3-cell-row w3-padding-32">
         <div class="w3-container">
             <br><br>
-            <h1>Sign Up</h1>
+            <h1>Add Round</h1>
         </div>
         
     </div>
@@ -31,30 +32,38 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('auth.signup_post') }}" method="POST">
+            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('home.add_round') }}" method="POST">
     
                 <!-- <label class="" for="name"><h4 style="text-align: left;">Name</h4></label>
                 <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:50%"> -->
-            
-                <label class="" for="email"><h4 style="text-align: left;">Email</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="email" id="email" name="email" placeholder="Your email" {% if email %}value="{{ email }}"{% endif %} style="width:50%" required>
+                <p class="w3-red">If you don't see the right course, add a new course <a href="{{ url_for('home.add_course') }}">here</a></p>
+                <label for="course">Choose a course:</label>
+                <select name="course" id="course">
+                    {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.name }}</option>
+                    {% endfor %}
+                </select>
 
-                <label class="" for="fname"><h4 style="text-align: left;">First Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="fname" name="fname" placeholder="Your first Name" style="width:50%" required>
+                <!-- <label class="" for="email"><h4 style="text-align: left;">Par</h4></label>
+                <input class="w3-input w3-border" type="number" id="par" name="par" placeholder="Par" style="width:10%" required> -->
 
-                <label class="" for="lname"><h4 style="text-align: left;">Last Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="lname" name="lname" placeholder="Your last name" style="width:50%" required>
+                <label class="" for="fname"><h4 style="text-align: left;">Score</h4></label>
+                <input class="w3-input w3-border" type="number" id="score" name="score" placeholder="Score" style="width:10%" required>
+
+                <!-- <label class="" for="lname"><h4 style="text-align: left;">Last Name</h4></label>
+                <input class="w3-input w3-border" type="text" id="lname" name="lname" placeholder="Your last name" style="width:50%" required>
+                
             
                 <label class="" for="password1"><h4 style="text-align: left;">Password</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="password" id="password1" name="password1" placeholder="Password" style="width:50%" required>
+                <input class="w3-input w3-border" type="password" id="password1" name="password1" placeholder="Password" style="width:50%" required>
 
                 <label class="" for="password2"><h4 style="text-align: left;">Password Again</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="password" id="password2" name="password2" placeholder="Password" style="width:50%" required>
+                <input class="w3-input w3-border" type="password" id="password2" name="password2" placeholder="Password" style="width:50%" required> -->
         
                 <!-- <label class="" for="message"><h4 style="text-align: left;">Message</h4></label>
                 <textarea class="w3-input w3-border" id="message" name="message" placeholder="Message" style="height:200px;resize:none;"></textarea> -->
             
-                <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Login">
+                <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Add Round">
             
             </form>
             <br><br><br><br><br>

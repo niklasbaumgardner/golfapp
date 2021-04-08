@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/w3.css">
+    <link rel="icon" type="image/png" href="{% block icon %}/static/images/nb.png{% endblock icon %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+
+
+<body>
+    <header>
+
+        <div class="w3-top">
+            <div class="w3-bar w3-red">
+                <div class="w3-bar-item w3-mobile" style="text-decoration: none;width: 30%"></div>
+                <!-- <p class="w3-bar-item w3-mobile">Work in progress!</p><br> -->
+                <div class="w3-bar-item w3-mobile w3-center">
+                    <p class="w3-bar-item w3-mobile w3-center">Work in progress! Please report any bugs to <a href="mailto:niklasbaumgardner@gmail.com">niklasbaumgardner@gmail.com</a></p>
+                </div>
+                
+                <div class="w3-bar-item w3-mobile" style="text-decoration: none;width: 30%"></div>
+            </div>
+            <div class="w3-bar w3-border w3-light-grey w3-large">
+                <a href="/" class="w3-bar-item" style="text-decoration: none;">Niklas Baumgardner</a>
+                {% if current_user.is_authenticated %}
+                    <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small" href="{{ url_for('auth.logout') }}">Logout from {{ current_user.email.split('@')[0] }}</a>
+                {% else %}
+                    <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block login %}{% endblock login %}" href="{{ url_for('auth.login') }}">Login</a>
+                {% endif %}
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block addcourse %}{% endblock addcourse %}" href="{{ url_for('home.add_course') }}">Add Course</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block addround %}{% endblock addround %}" href="{{ url_for('home.add_round') }}">Add Round</a>
+                <a class="w3-bar-item w3-button w3-mobile w3-hover-blue w3-right w3-hide-small {% block home %}{% endblock home %}" href="/">Home</a>
+                <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="myFunction()">&#9776;</a>
+            </div>
+            
+            <div id="side" class="w3-bar-block w3-light-grey w3-hide w3-hide-large w3-hide-medium">
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.home() }}" href="/">Home</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addround() }}" href="{{ url_for('home.add_round') }}">Add Round</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addcourse() }}" href="{{ url_for('home.add_course') }}">Add Course</a>
+                {% if current_user.is_authenticated %}
+                    <a class="w3-bar-item w3-button w3-hover-blue w3-right" href="{{ url_for('auth.logout') }}">Logout from {{ current_user.email.split('@')[0] }}</a>
+                {% else %}
+                    <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.login() }}" href="{{ url_for('auth.login') }}">Login</a>
+                {% endif %}
+                <!-- <a class="w3-bar-item w3-button w3-hover-blue w3-right" href="https://github.com/niklasbaumgardner" target="_blank">Code</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right" href="../static/documents/Niklas Baumgardner Resume.pdf" target="_blank">Resume</a> -->
+                
+            </div>
+        </div>
+        
+        <script>
+            function myFunction() {
+                var x = document.getElementById("side");
+                if (x.className.indexOf("w3-show") == -1) {
+                    x.className += " w3-show";
+                } else { 
+                    x.className = x.className.replace(" w3-show", "");
+                }
+            }
+        </script>
+
+    </header>
+
+    <div class="wrapper">
+        <br><br>
+        {% block content %}{% endblock content %}
+        <br><br>
+    </div>
+
+    <footer class="footer">
+        <a class="w3-margin w3-right" href="https://www.instagram.com/niklasbaumgardner/" target="_blank" style="text-decoration: none;">
+            <i class="fa fa-instagram" style="font-size:20px;color:#3f729b"></i>
+        </a>
+        <a class="w3-margin w3-right" href="https://www.linkedin.com/in/niklasbaumgardner/" target="_blank" style="text-decoration: none;">
+            <i class="fa fa-linkedin" style="font-size:20px;color:#0072b1"></i>
+        </a>
+        <a class="w3-margin w3-right" href="mailto:niklasbaumgardner@gmail.com" style="text-decoration: none;">
+            <i class="fa fa-envelope" style="font-size:20px;color:#0082ad"></i>
+        </a>
+        
+    </footer>
+    
+</body>
+</html>
