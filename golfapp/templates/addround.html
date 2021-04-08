@@ -40,7 +40,7 @@
                 <label for="course">Choose a course:</label>
                 <select name="course" id="course">
                     {% for course in courses %}
-                        <option value="{{ course.id }}">{{ course.name }}</option>
+                        <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{ course.slope }}</option>
                     {% endfor %}
                 </select>
 

@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap
 from golfapp.extensions import db
+from golfapp.home import golf
 
 # app = Flask(__name__)
 
@@ -29,6 +30,23 @@ def add_round_submit():
     new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score)
     db.session.add(new_round)
     db.session.commit()
+
+    # calc handicap
+    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+    courses = {}
+    for round_ in rounds:
+        courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
+    
+    handicap = golf.calculate_handicap(rounds, courses)
+    user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
+    if user_handicap:
+        user_handicap.handicap = handicap
+        db.session.commit()
+    else:
+        new_handicap = Handicap(user_id=current_user.get_id(), handicap=handicap)
+        db.session.add(new_handicap)
+        db.session.commit()
+
 
     return redirect(url_for('home.view_rounds'))
 
@@ -58,35 +76,48 @@ def add_course_submit():
 @home.route('/view_rounds', methods=['GET'])
 @login_required
 def view_rounds():
-    rounds = Round.query.filter_by(user_id=current_user.get_id())
+    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
     courses = {}
     for round_ in rounds:
         # temp = Course.query.filter_by(id=round_.course_id).first()
         # courses[round_.course_id] = (temp.name, temp.par)
         courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
-    print(courses)
-    return render_template('viewrounds.html', rounds=rounds, courses=courses)
+    if len(rounds) > 0:
+        handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
+    else:
+        handicap = "No handicap"
+    return render_template('viewrounds.html', rounds=rounds, courses=courses, handicap=handicap)
 
-
-
-
-
-
-
-# set FLASK_APP=hello.py
-# $env:FLASK_APP = "hello.py"
-# WSL
-# export FLASK_APP=home.py
-# flask run
-
-
-# $site->dbConfigure('mysql:host=mysql-user.cse.msu.edu;dbname=baumga91',
-#         'baumga91',       // Database user
-#         'password',     // Database password
-#         '');            // Table prefix
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-    # app.run()
-
+@home.route('/delete_round/<int:id>')
+@login_required
+def delete_round(id):
+    if id:
+        rnd = Round.query.filter_by(id=id).first()
+        if rnd:
+            db.session.delete(rnd)
+            db.session.commit()
+            rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+            if len(rounds) < 1:
+                user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
+                if user_handicap:
+                    user_handicap.handicap = 0
+                    db.session.commit()
+                else:
+                    new_handicap = Handicap(user_id=current_user.get_id(), handicap=0)
+                    db.session.add(new_handicap)
+                    db.session.commit()
+                return redirect(url_for('home.view_rounds'))
+            courses = {}
+            for round_ in rounds:
+                courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
+            
+            handicap = golf.calculate_handicap(rounds, courses)
+            user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
+            if user_handicap:
+                user_handicap.handicap = handicap
+                db.session.commit()
+            else:
+                new_handicap = Handicap(user_id=current_user.get_id(), handicap=handicap)
+                db.session.add(new_handicap)
+                db.session.commit()
+    return redirect(url_for('home.view_rounds'))

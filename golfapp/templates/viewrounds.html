@@ -12,6 +12,7 @@
         <div class="w3-container">
             <br><br>
             <h1>View Rounds</h1>
+            <h4>Your handicap is {{ handicap }}</h4>
         </div>
         
     </div>
@@ -22,13 +23,16 @@
             <div class="w3-container">
                 <table class="w3-table w3-striped w3-bordered w3-border">
                     <tr>
-                        <th class="w3-center">Course Name</th><th class="w3-center">Score</th><th class="w3-center">Par</th>
+                        <th class="w3-center">Course Name</th><th class="w3-center">Score</th><th class="w3-center">Par</th><th></th>
                     </tr>
                     {% for round in rounds %}
                         <tr>
-                            <td class="w3-center" style="padding:0;">{{ courses[round.course_id].name }}</td>
-                            <td class="w3-center" style="padding:0;">{{ round.score }}</td>
-                            <td class="w3-center" style="padding:0;">{{ courses[round.course_id].par }}</td>
+                            <!-- <td class="w3-center" style="padding:0;">{{ courses[round.course_id].name }}</td>
+                            <td class="w3-center" style="padding:0;">{{ round.score }}</td> -->
+                            <td class="w3-center"><p style="padding:0;">{{ courses[round.course_id].name }}</p></td>
+                            <td class="w3-center"><p style="padding:0;">{{ round.score }}</p></td>
+                            <td class="w3-center"><p style="padding:0;">{{ courses[round.course_id].par }}</p></td>
+                            <td class="w3-center"><a style="padding:0;" class="w3-text-red" href="{{ url_for('home.delete_round', id=round.id) }}">delete</a></td>
                         </tr>
                     {% endfor %}
                 </table>
