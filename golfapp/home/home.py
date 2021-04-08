@@ -17,8 +17,20 @@ def index():
 @home.route('/add_round', methods=['GET'])
 @login_required
 def add_round():
-    return render_template('addround.html')
+    courses = Course.query.all()
+    return render_template('addround.html', courses=courses)
 
+@home.route('/add_round_submit', methods=['POST'])
+@login_required
+def add_round_submit():
+    course_id = request.form['course']
+    score = request.form['score']
+
+    new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score)
+    db.session.add(new_round)
+    db.session.commit()
+
+    return redirect(url_for('home.view_rounds'))
 
 @home.route('/add_course', methods=['GET'])
 @login_required
@@ -42,6 +54,18 @@ def add_course_submit():
 
     return render_template('addcourse.html')
 
+
+@home.route('/view_rounds', methods=['GET'])
+@login_required
+def view_rounds():
+    rounds = Round.query.filter_by(user_id=current_user.get_id())
+    courses = {}
+    for round_ in rounds:
+        # temp = Course.query.filter_by(id=round_.course_id).first()
+        # courses[round_.course_id] = (temp.name, temp.par)
+        courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
+    print(courses)
+    return render_template('viewrounds.html', rounds=rounds, courses=courses)
 
 
 

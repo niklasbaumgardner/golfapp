@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}View Rounds{% endblock title %}
+{% block viewrounds %}w3-text-blue{% endblock viewrounds %}
+
+
+
+{% block content %}
+
+
+    <div class="w3-cell-row w3-padding-32">
+        <div class="w3-container">
+            <br><br>
+            <h1>View Rounds</h1>
+        </div>
+        
+    </div>
+
+
+    <div class="w3-cell-row w3-padding-32 content">
+        <div class="w3-container w3-cell" style="width:15%"></div>
+            <div class="w3-container">
+                <table class="w3-table w3-striped w3-bordered w3-border">
+                    <tr>
+                        <th class="w3-center">Course Name</th><th class="w3-center">Score</th><th class="w3-center">Par</th>
+                    </tr>
+                    {% for round in rounds %}
+                        <tr>
+                            <td class="w3-center" style="padding:0;">{{ courses[round.course_id].name }}</td>
+                            <td class="w3-center" style="padding:0;">{{ round.score }}</td>
+                            <td class="w3-center" style="padding:0;">{{ courses[round.course_id].par }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        <div class="w3-container w3-cell" style="width:15%"></div>
+        </div>
+
+{% endblock content %}s
