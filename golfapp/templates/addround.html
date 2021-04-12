@@ -37,6 +37,7 @@
                 <!-- <label class="" for="name"><h4 style="text-align: left;">Name</h4></label>
                 <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:50%"> -->
                 <p class="w3-text-red">If you don't see the right course, add a new course <a href="{{ url_for('home.add_course') }}">HERE</a></p>
+                <br>
                 <label for="course">Choose a course:</label>
                 <select name="course" id="course">
                     {% for course in courses %}

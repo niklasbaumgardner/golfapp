@@ -42,7 +42,7 @@
             
             <div id="side" class="w3-bar-block w3-light-grey w3-hide w3-hide-large w3-hide-medium">
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.home() }}" href="/">Home</a>
-                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.viewrounds() }}" href="{{ url_for('home.view_rounds') }}">Add Round</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.viewrounds() }}" href="{{ url_for('home.view_rounds') }}">View Rounds</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addround() }}" href="{{ url_for('home.add_round') }}">Add Round</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addcourse() }}" href="{{ url_for('home.add_course') }}">Add Course</a>
                 {% if current_user.is_authenticated %}
