@@ -1,4 +1,4 @@
-
+from golfapp.models import User, Course, Round, Handicap, H_User
 
 
 def calculate_handicap(rounds, courses):
@@ -42,3 +42,19 @@ def get_score_diffs(rounds, courses):
 
 def calculate_score_diff(slope, rating, score):
     return (113 / slope) * (score - rating - 1)
+
+
+def assign_handicap(users, handis):
+    lst = []
+    for user in users:
+        handicap = find_handicap(user.id, handis)
+        print(handicap)
+        if handicap:
+            new_user = H_User(name=user.name, handicap=handicap.handicap)
+            lst.append(new_user)
+    lst.sort(key=lambda x: x.handicap)
+    return lst
+
+
+def find_handicap(id, handis):
+    return next(filter(lambda x: x.user_id == id, handis), None)

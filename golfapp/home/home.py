@@ -1,7 +1,7 @@
 
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
-from golfapp.models import User, Course, Round, Handicap
+from golfapp.models import User, Course, Round, Handicap, H_User
 from golfapp.extensions import db
 from golfapp.home import golf
 
@@ -12,13 +12,17 @@ home = Blueprint('home', __name__)
 
 @home.route('/', methods=["GET"])
 def index():
-    return render_template('base.html')
+    users = User.query.all()
+    handis = Handicap.query.all()
+    h_users = golf.assign_handicap(users, handis)
+    return render_template('index.html', users=h_users)
 
 
 @home.route('/add_round', methods=['GET'])
 @login_required
 def add_round():
     courses = Course.query.all()
+    courses.sort(key=lambda x: x.name)
     return render_template('addround.html', courses=courses)
 
 @home.route('/add_round_submit', methods=['POST'])
