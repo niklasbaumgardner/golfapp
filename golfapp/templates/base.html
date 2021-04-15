@@ -36,12 +36,14 @@
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block addcourse %}{% endblock addcourse %}" href="{{ url_for('home.add_course') }}">Add Course</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block addround %}{% endblock addround %}" href="{{ url_for('home.add_round') }}">Add Round</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block viewrounds %}{% endblock viewrounds %}" href="{{ url_for('home.view_rounds') }}">View Rounds</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right w3-hide-small {% block strokes %}{% endblock strokes %}" href="{{ url_for('home.calculate_strokes') }}">Calculate Strokes</a>
                 <a class="w3-bar-item w3-button w3-mobile w3-hover-blue w3-right w3-hide-small {% block home %}{% endblock home %}" href="/">Home</a>
                 <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="myFunction()">&#9776;</a>
             </div>
             
             <div id="side" class="w3-bar-block w3-light-grey w3-hide w3-hide-large w3-hide-medium">
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.home() }}" href="/">Home</a>
+                <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.strokes() }}" href="{{ url_for('home.calculate_strokes') }}">Calculate Strokes</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.viewrounds() }}" href="{{ url_for('home.view_rounds') }}">View Rounds</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addround() }}" href="{{ url_for('home.add_round') }}">Add Round</a>
                 <a class="w3-bar-item w3-button w3-hover-blue w3-right {{ self.addcourse() }}" href="{{ url_for('home.add_course') }}">Add Course</a>

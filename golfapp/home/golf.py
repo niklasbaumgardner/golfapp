@@ -1,4 +1,5 @@
 from golfapp.models import User, Course, Round, Handicap, H_User
+from golfapp.extensions import db
 
 
 def calculate_handicap(rounds, courses):
@@ -48,7 +49,7 @@ def assign_handicap(users, handis):
     lst = []
     for user in users:
         handicap = find_handicap(user.id, handis)
-        print(handicap)
+        # print(handicap)
         if handicap:
             new_user = H_User(name=user.name, handicap=handicap.handicap)
             lst.append(new_user)
@@ -58,3 +59,26 @@ def assign_handicap(users, handis):
 
 def find_handicap(id, handis):
     return next(filter(lambda x: x.user_id == id, handis), None)
+
+
+def calculate_strokes(course, players):
+    course = Course.query.filter_by(id=course).first()
+    players = [ User.query.filter_by(id=player).first() for player in players ]
+    handis = [ Handicap.query.filter_by(user_id=player.id).first() for player in players ]
+
+    h_users = assign_handicap(players, handis)
+
+    return get_strokes(course, h_users), course.name
+
+
+
+def get_strokes(course, h_users):
+    lst = []
+    for user in h_users:
+        num_strokes = strokes(course, user.handicap)
+        lst.append((user.name, num_strokes))
+    return lst
+
+
+def strokes(course, handi):
+    return int(handi * course.slope / 113)

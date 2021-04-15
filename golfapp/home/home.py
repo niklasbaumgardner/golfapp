@@ -18,6 +18,26 @@ def index():
     return render_template('index.html', users=h_users)
 
 
+@home.route('/calculate_strokes', methods=["GET", "POST"])
+def calculate_strokes():
+    
+    if request.method == 'POST':
+        course = request.form.get('course')
+        players = request.form.getlist('players')
+        # print(course, players)
+        players = [ int(player) for player in players ]
+        print(course, players)
+        strokes, course_name = golf.calculate_strokes(course, players)
+        return render_template('strokes.html', strokes=strokes, course=course_name)
+
+
+    courses = Course.query.all()
+    courses.sort(key=lambda x: x.name)
+    users = User.query.all()
+    return render_template('strokes.html', users=users, courses=courses)
+
+
+
 @home.route('/add_round', methods=['GET'])
 @login_required
 def add_round():
