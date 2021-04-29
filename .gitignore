@@ -132,3 +132,6 @@ dmypy.json
 .pyre/
 website/site.db
 *.db
+
+# csv files
+db_backup/
