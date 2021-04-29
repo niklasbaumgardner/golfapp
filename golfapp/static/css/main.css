@@ -72,3 +72,10 @@ html, body {
 .left {
     text-align: left;
 }
+
+.max_height {
+    height: 300px;
+    max-width: 400px;
+    overflow-y: scroll;
+    background-color: white;
+}

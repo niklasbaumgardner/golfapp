@@ -33,20 +33,31 @@
                     {% endif %}
                 {% endwith %}
             <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('home.add_course_submit') }}" method="POST">
-    
-                <label class="" for="name"><h4 style="text-align: left;">Course Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:50%" required>
 
-                <label class="" for="par"><h4 style="text-align: left;">Par</h4></label>
-                <input class="w3-input w3-border" type="text" id="par" name="par" placeholder="Par" style="width:20%" required>
+                <div class="w3-cell-row w3-margin">
+                    <div class="w3-cell w3-left" style="width:95%">
+                        <label class="" for="name"><h4 style="text-align: left;">Course Name</h4></label>
+                        <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:100%" required>
 
-                <label class="" for="rating"><h4 style="text-align: left;">Rating</h4></label>
-                <input class="w3-input w3-border" type="text" id="rating" name="rating" placeholder="Rating" style="width:20%" required>
+                        <label class="" for="par"><h4 style="text-align: left;">Par</h4></label>
+                        <input class="w3-input w3-border" type="text" id="par" name="par" placeholder="Par" style="width:40%" required>
 
-                <label class="" for="slope"><h4 style="text-align: left;">Slope</h4></label>
-                <input class="w3-input w3-border" type="text" id="slope" name="slope" placeholder="Slope" style="width:20%" required>
+                        <label class="" for="rating"><h4 style="text-align: left;">Rating</h4></label>
+                        <input class="w3-input w3-border" type="text" id="rating" name="rating" placeholder="Rating" style="width:40%" required>
 
-            
+                        <label class="" for="slope"><h4 style="text-align: left;">Slope</h4></label>
+                        <input class="w3-input w3-border" type="text" id="slope" name="slope" placeholder="Slope" style="width:40%" required>
+
+                    </div>
+                    <div class="w3-cell" style="width:50%">
+                        <label class="w3-center" for="existing_courses"><h4>Existing Courses</h4></label>
+                        <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-center">
+                            {% for course in courses %}
+                                <li>{{ course.name }} {{ course.rating }}/{{ course.slope }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
                 <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Add Course">
             
             </form>

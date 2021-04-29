@@ -77,7 +77,8 @@ def add_round_submit():
 @home.route('/add_course', methods=['GET'])
 @login_required
 def add_course():
-    return render_template('addcourse.html')
+    courses = Course.query.all()
+    return render_template('addcourse.html', courses=courses)
 
 @home.route('/add_course_submit', methods=['POST'])
 @login_required
