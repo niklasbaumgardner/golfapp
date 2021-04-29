@@ -130,6 +130,8 @@ def delete_round(id):
             db.session.delete(rnd)
             db.session.commit()
             rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+            rounds.sort(key=lambda x: x.date, reverse=True)
+            rounds = rounds[:20]
             if len(rounds) < 1:
                 user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
                 if user_handicap:
