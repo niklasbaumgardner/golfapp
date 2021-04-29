@@ -4,11 +4,13 @@ from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, H_User
 from golfapp.extensions import db
 from golfapp.home import golf
+import datetime
 
 # app = Flask(__name__)
 
 home = Blueprint('home', __name__)
 # mail = Mail(home)
+
 
 @home.route('/', methods=["GET"])
 def index():
@@ -51,12 +53,17 @@ def add_round_submit():
     course_id = request.form['course']
     score = request.form['score']
 
-    new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score)
+    new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score, date=datetime.datetime.now())
     db.session.add(new_round)
     db.session.commit()
 
     # calc handicap
     rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+    rounds.sort(key=lambda x: x.date, reverse=True)
+    rounds = rounds[:20]
+    # for rnd in rounds:
+    #     print(rnd.date)
+    # print(rounds)
     courses = {}
     for round_ in rounds:
         courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
