@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, H_User
 from golfapp.extensions import db
 from golfapp.home import golf
-import datetime
+from datetime import datetime
 
 # app = Flask(__name__)
 
@@ -52,8 +52,12 @@ def add_round():
 def add_round_submit():
     course_id = request.form['course']
     score = request.form['score']
+    gir = request.form.get('gir')
+    fir = request.form.get('fir').split('/')
+    fir = round(float(fir[0]) / float(fir[1]), 2)
+    putts = request.form.get('putts')
 
-    new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score, date=datetime.datetime.now())
+    new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score, gir=gir, fir=fir, putts=putts, date=datetime.datetime.now())
     db.session.add(new_round)
     db.session.commit()
 
@@ -112,14 +116,12 @@ def view_rounds():
     rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
     courses = {}
     for round_ in rounds:
-        # temp = Course.query.filter_by(id=round_.course_id).first()
-        # courses[round_.course_id] = (temp.name, temp.par)
         courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
     if len(rounds) > 0:
         handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
     else:
         handicap = "No handicap"
-    return render_template('viewrounds.html', rounds=rounds, courses=courses, handicap=handicap)
+    return render_template('viewrounds.html', rounds=rounds, courses=courses, handicap=handicap, strftime=datetime.strftime)
 
 @home.route('/delete_round/<int:id>')
 @login_required

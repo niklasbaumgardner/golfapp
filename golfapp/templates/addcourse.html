@@ -1,70 +1,59 @@
 {% extends "base.html" %}
 
 {% block title %}Add Course{% endblock title %}
-{% block addcourse %}w3-text-blue{% endblock addcourse %}
+{% block addcourse %}active{% endblock addcourse %}
 
 
 
 {% block content %}
 
+<div class="container py-5 h-100">
+    <div class="card bg-light">
+        <div class="card-body p-5">
+            <p class="card-title fs-2 mb-3">Add Course</p>
+            <form action="{{ url_for('home.add_course_submit') }}" method="POST">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-outline form-white mb-4">
+                            <label class="form-label" for="name">Course Name</label>
+                            <input class="form-control w-75" type="text" id="paycheckName" name="name" placeholder="Augusta" autocomplete="niklas" required>
+                        </div>
 
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Add Course</h1>
-        </div>
-        
-    </div>
+                        <div class="form-outline form-white mb-4">
+                            <label class="form-label" for="par">Par</label>
+                            <input class="form-control w-50" type="number" id="par" name="par" placeholder="69" required>
+                        </div>
 
-    <!-- TODO: Look at decode page for form format width/scaling -->
+                        <div class="form-outline form-white mb-4">
+                            <label class="form-label" for="name">Rating</label>
+                            <input class="form-control w-50" type="number" step=".1" id="rating" name="rating" placeholder="69.9" required>
+                        </div>
 
-    <div class="w3-cell-row w3-mobile w3-margin-bottom" style="height: 100%;">
-        <div class="w3-cell" style="width:20%"></div>
-        <div class="w3-cell w3-mobile w3-margin-top w3-margin-bottom">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="w3-panel {{ category }} w3-display-container w3-border">
-                                <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                <h3>{{ message }}</h3>
-                                </button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('home.add_course_submit') }}" method="POST">
-
-                <div class="w3-cell-row w3-margin">
-                    <div class="w3-cell w3-left" style="width:95%">
-                        <label class="" for="name"><h4 style="text-align: left;">Course Name</h4></label>
-                        <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:100%" required>
-
-                        <label class="" for="par"><h4 style="text-align: left;">Par</h4></label>
-                        <input class="w3-input w3-border" type="text" id="par" name="par" placeholder="Par" style="width:40%" required>
-
-                        <label class="" for="rating"><h4 style="text-align: left;">Rating</h4></label>
-                        <input class="w3-input w3-border" type="text" id="rating" name="rating" placeholder="Rating" style="width:40%" required>
-
-                        <label class="" for="slope"><h4 style="text-align: left;">Slope</h4></label>
-                        <input class="w3-input w3-border" type="text" id="slope" name="slope" placeholder="Slope" style="width:40%" required>
+                        <div class="form-outline form-white mb-4">
+                            <label class="form-label" for="name">Slope</label>
+                            <input class="form-control w-50" type="number" id="slope" name="slope" placeholder="115" required>
+                        </div>
 
                     </div>
-                    <div class="w3-cell" style="width:50%">
-                        <label class="w3-center" for="existing_courses"><h4>Existing Courses</h4></label>
-                        <ul name="existing_courses" class="max_height w3-ul w3-border w3-margin w3-center">
+                    <div class="col-sm">
+                        <label class="form-label" for="existing_courses">Existing Courses</label>
+                        <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
                             {% for course in courses %}
-                                <li>{{ course.name }} {{ course.rating }}/{{ course.slope }}</li>
+                                <li class="list-group-item">{{ course.name }} {{ course.rating }}/{{ course.slope }}</li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
-                <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Add Course">
-            
+                <div class="row">
+                    <div class="col-sm mt-5">
+                        <!-- <p id="name_error" class="text-danger display-none">Paycheck Name is invalid<br></p>
+                        <p id="amount_error" class="text-danger display-none"><br></p> -->
+                        <input class="btn btn-primary" type="submit" value="Add Course">
+                    </div>
+                </div>
             </form>
-            <br><br><br><br><br>
         </div>
-        <div class="w3-cell" style="width:20%"></div>
-
     </div>
+</div>
 
 {% endblock content %}s

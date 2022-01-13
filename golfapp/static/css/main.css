@@ -1,81 +1,13 @@
-html, body, header, footer, hgroup, nav, article, section, figure,
-figcaption, h1, h2, h3, ul, li, body, div, p, img {
-    margin: 0;
-    padding: 0;
-    font-size: 100%;
-    vertical-align: baseline;
-    border: 0;
-    font-family: Arial,sans-serif;
-    text-align: center;
+.w-60p {
+    width: 60px;
 }
 
-fieldset {
-    margin: auto;
-    max-width: 40em;
-    max-height: auto;
-    text-align: center;
-}
-
-h1 {
-    text-align: center;
-    font-size: xx-large;
-}
-
-h2 {
-    text-align: center;
-    font-size: x-large;
-}
-
-html, body {
-    height: 100%;
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
     margin: 0;
 }
-.wrapper {
-    min-height: 100%;
 
-  /* Equal to height of footer */
-  /* But also accounting for potential margin-bottom of last child */
-    margin-bottom: -50px;
-}
-.footer {
-    height: 50px;
-    max-height: 50px;
-}
-.push {
-    max-height: 30px;
-    height: 30px;
-}
-.home-background {
-    background-image: url('../images/davide-colonna-juRODTUKcCE-unsplash-dark.png');
-    background-position: left;
-    background-size: 100%;
-}
-
-/* .content {
-    position: relative;
-}
-
-.home-background::before {
-    content: '';
-    display: block;
-    position: absolute;
-    background-color: #000;
-    opacity: 0.5;
-    width: 100%;
-    height: auto;
-} */
-
-.white-text {
-    color: white;
-}
-
-.left {
-    text-align: left;
-}
-
-.max_height {
-    height: 300px;
-    max-width: 400px;
-    overflow-y: scroll;
-    background-color: white;
+input[type=number] {
+    -moz-appearance: textfield;
 }

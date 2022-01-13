@@ -29,6 +29,9 @@ class Round(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    gir = db.Column(db.Float, nullable=True)
+    fir = db.Column(db.Float, nullable=True)
+    putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.DateTime, nullable=False)
 
 class Handicap(db.Model):

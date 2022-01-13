@@ -6,31 +6,48 @@ from golfapp.models import User
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login')
+# @auth.route('/login')
+# def login():
+#     email = request.args.get('email')
+#     next_ = request.args.get('next')
+#     if email and next_:
+#         return render_template('login.html', email=email, next=next_)
+#     if next_:
+#         return render_template('login.html', next=next_)
+#     if email:
+#         return render_template('login.html', email=email)
+
+#     return render_template("login.html")
+
+@auth.route('/login', methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home.index'))
+
     email = request.args.get('email')
     if email:
         return render_template('login.html', email=email)
-    return render_template("login.html")
 
-@auth.route('/login', methods=["GET", "POST"])
-def login_post():
-    email = request.form['email']
-    password = request.form['password']
 
-    user = User.query.filter_by(email=email).first()
+    email = request.form.get('email')
+    password = request.form.get('password')
 
-    if user and bcrypt.check_password_hash(user.password, password):
-        # add remember me button
-        login_user(user)
-        return redirect(url_for('home.add_round'))
-    
-    elif user:
-        flash('Password was incorrect. Try again', 'w3-pale-red')
-        return render_template("login.html", email=email)
+    if email and password:
 
-    flash('User not found. Please create an acount', 'w3-pale-red')
+        user = User.query.filter_by(email=email).first()
 
+        if user and bcrypt.check_password_hash(user.password, password):
+            # add remember me button
+            login_user(user)
+            print(email, "next", request.args.get('next'))
+            return redirect(url_for('home.add_round'))
+        
+        elif user:
+            flash('Password was incorrect. Try again', 'w3-pale-red')
+            return render_template("login.html", email=email)
+
+        flash('User not found. Please create an acount', 'w3-pale-red')
+    print('last', "next", request.args.get('next'))
     return render_template("login.html", email=email)
 
 @auth.route('/signup')
