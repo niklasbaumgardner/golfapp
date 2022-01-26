@@ -100,7 +100,7 @@ def get_avg_gir(rounds):
             total += round_.gir
             count += 1
 
-    return round(total / count, 2)
+    return round(total / count, 2) if count else 0
 
 def get_avg_fir(rounds):
     total = 0
@@ -111,7 +111,7 @@ def get_avg_fir(rounds):
             total += round_.fir
             count += 1
 
-    return round(total / count, 2)
+    return round(total / count, 2) if count else 0
 
 def get_avg_putts(rounds):
     total = 0
@@ -122,7 +122,7 @@ def get_avg_putts(rounds):
             total += round_.putts
             count += 1
 
-    return round(total / count, 2)
+    return round(total / count, 2) if count else 0
 
 def stringify_handicap(handicap):
     if handicap < 0:
