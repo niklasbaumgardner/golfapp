@@ -38,9 +38,9 @@
                     <li class="nav-item">
                         <a class="nav-link {% block viewplayers %}{% endblock viewplayers %}" href="{{ url_for('home.view_players') }}">View Players</a>
                     </li>
-                    {% if current_user.is_authenticated and current_user.id == 3 %}
+                    {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
                         <li class="nav-item">
-                            <a class="nav-link {% block hijack %}{% endblock hijack %}" href="{{ url_for('home.hijack') }}">Hijack handicap</a>
+                            <a class="nav-link {% block hijack %}{% endblock hijack %}" href="{{ url_for('home.hijack') }}">Hijack Handicap</a>
                         </li>
                     {% endif %}
                 </ul>

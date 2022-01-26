@@ -63,7 +63,7 @@
                             <tr>
                                 <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}" method="POST">
                                     <td>
-                                        <span class="show-not-edit-{{ round.id }}">{{ courses[round.course_id].name }}</span>
+                                        <span>{{ courses[round.course_id].name }}</span>
     
                                     </td>
                                     <td>
@@ -163,6 +163,8 @@
             </div>
         </div>
     {% endfor %}
+
+    {{ current_user.id }}
 
     <script>
         let date = new Date();

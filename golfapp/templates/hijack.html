@@ -10,7 +10,7 @@
 <div class="container-fluid">
     <div class="container pb-5 pt-5">
         <div class="fw-bold fs-1">
-            Hijack handicap
+            Hijack Handicap
         </div>
     </div>
 </div>
@@ -21,7 +21,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">PLayer</th>
+                        <th scope="col">Player</th>
                         <th scope="col">Handicap</th>
                         <th scope="col">Hijack</th>
                     </tr>
@@ -31,11 +31,11 @@
                         <tr>
                             <form action="{{ url_for('home.hijack') }}" method="POST">
                                 <input type="text" name="user_id" value="{{ user.id }}" hidden>
-                                <td>{{ user.name }}</td>
-                                <td>
+                                <td class="name">{{ user.name }}</td>
+                                <td class="handicap">
                                     <input class="form-control w-80p" type="number" name="handicap" step=".01" value="{{ user.handicap }}">
                                 </td>
-                                <td>
+                                <td class="hijack">
                                     <input class="btn btn-outline-primary" type="submit" value="Hijack">
                                 </td>
 

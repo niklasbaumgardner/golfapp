@@ -49,6 +49,9 @@ def view_players():
 @home.route('/hijack', methods=["GET", "POST"])
 @login_required
 def hijack():
+    if current_user.id not in set([3, 11]):
+        return redirect(url_for('home.index'))
+
     if request.method == "POST":
         try:
             id = int(request.form.get('user_id'))
@@ -66,13 +69,13 @@ def hijack():
         except:
             users = User.query.all()
             handis = Handicap.query.all()
-            h_users = golf.assign_handicap(users, handis, include_all=True)
+            h_users = golf.assign_handicap(users, handis, include_all=True, stringify=False)
             return render_template('hijack.html', users=h_users)
 
     else:
         users = User.query.all()
         handis = Handicap.query.all()
-        h_users = golf.assign_handicap(users, handis, include_all=True)
+        h_users = golf.assign_handicap(users, handis, include_all=True, stringify=False)
         return render_template('hijack.html', users=h_users)
 
 

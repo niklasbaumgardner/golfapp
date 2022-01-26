@@ -46,19 +46,22 @@ def calculate_score_diff(slope, rating, score):
     return (113 / slope) * (score - rating - 1)
 
 
-def assign_handicap(users, handis, include_all=False):
+def assign_handicap(users, handis, include_all=False, stringify=True):
     lst = []
     for user in users:
         handicap = find_handicap(user.id, handis)
         # print(handicap)
         if handicap or include_all:
             if handicap:
-                handicap = stringify_handicap(handicap.handicap)
+                if stringify:
+                    handicap = stringify_handicap(handicap.handicap)
+                else:
+                    handicap = handicap.handicap
 
             new_user = H_User(id=user.id, name=user.name, handicap=handicap if handicap else '0')
             lst.append(new_user)
 
-    return sort_handicap(lst)
+    return sort_handicap(lst) if stringify else sorted(lst, key=lambda x: x.name)
 
 
 def find_handicap(id, handis):
