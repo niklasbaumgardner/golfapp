@@ -31,16 +31,17 @@ def login():
 
     email = request.form.get('email')
     password = request.form.get('password')
+    remember = request.form.get('remember')
 
     if email and password:
 
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-            # add remember me button
-            login_user(user)
+            remember = True if remember == "True" else False
+            login_user(user, remember=remember)
             print(email, "next", request.args.get('next'))
-            return redirect(url_for('home.add_round'))
+            return redirect(url_for('home.index'))
         
         elif user:
             flash('Password was incorrect. Try again', 'w3-pale-red')

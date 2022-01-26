@@ -7,7 +7,8 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class H_User():
-    def __init__(self, name, handicap):
+    def __init__(self, id, name, handicap):
+        self.id = id
         self.name = name
         self.handicap = handicap
 

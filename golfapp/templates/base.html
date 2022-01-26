@@ -30,14 +30,19 @@
             <div class="collapse navbar-collapse" id="navbarsExample07">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
+                        <a class="nav-link {% block addcourse %}{% endblock addcourse %}" href="{{ url_for('home.add_course') }}">Add Course</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% block strokes %}{% endblock strokes %}" href="{{ url_for('home.calculate_strokes') }}">Calculate Strokes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% block viewrounds %}{% endblock viewrounds %}" href="{{ url_for('home.view_rounds') }}">View Rounds</a>
+                        <a class="nav-link {% block viewplayers %}{% endblock viewplayers %}" href="{{ url_for('home.view_players') }}">View Players</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% block addcourse %}{% endblock addcourse %}" href="{{ url_for('home.add_course') }}">Add Course</a>
-                    </li>
+                    {% if current_user.is_authenticated and current_user.id == 3 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% block hijack %}{% endblock hijack %}" href="{{ url_for('home.hijack') }}">Hijack handicap</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 {% if current_user.is_authenticated %}
                     <a class="nav-link text-white-50" href="{{ url_for('auth.logout') }}">Logout from {{ current_user.email.split('@')[0] }}</a>

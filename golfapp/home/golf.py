@@ -46,16 +46,19 @@ def calculate_score_diff(slope, rating, score):
     return (113 / slope) * (score - rating - 1)
 
 
-def assign_handicap(users, handis):
+def assign_handicap(users, handis, include_all=False):
     lst = []
     for user in users:
         handicap = find_handicap(user.id, handis)
         # print(handicap)
-        if handicap:
-            new_user = H_User(name=user.name, handicap=handicap.handicap)
+        if handicap or include_all:
+            if handicap:
+                handicap = stringify_handicap(handicap.handicap)
+
+            new_user = H_User(id=user.id, name=user.name, handicap=handicap if handicap else '0')
             lst.append(new_user)
-    lst.sort(key=lambda x: x.handicap)
-    return lst
+
+    return sort_handicap(lst)
 
 
 def find_handicap(id, handis):
@@ -83,3 +86,55 @@ def get_strokes(course, h_users):
 
 def strokes(course, handi):
     return int(handi * course.slope / 113)
+
+
+def get_avg_gir(rounds):
+    total = 0
+    count = 0
+
+    for round_ in rounds:
+        if round_.gir:
+            total += round_.gir
+            count += 1
+
+    return round(total / count, 2)
+
+def get_avg_fir(rounds):
+    total = 0
+    count = 0
+
+    for round_ in rounds:
+        if round_.fir:
+            total += round_.fir
+            count += 1
+
+    return round(total / count, 2)
+
+def get_avg_putts(rounds):
+    total = 0
+    count = 0
+
+    for round_ in rounds:
+        if round_.putts:
+            total += round_.putts
+            count += 1
+
+    return round(total / count, 2)
+
+def stringify_handicap(handicap):
+    if handicap < 0:
+        handicap = f'+{str(handicap)[1:]}'
+    else:
+        handicap = str(handicap)
+    return handicap
+
+def sort_handicap(lst):
+    for ele in lst:
+        ele.handicap = float(ele.handicap) if ele.handicap[0] != '+' else -1*float(ele.handicap[1:])
+
+    lst.sort(key=lambda x: x.handicap)
+
+    for ele in lst:
+        ele.handicap = stringify_handicap(ele.handicap)
+
+    return lst

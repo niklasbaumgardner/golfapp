@@ -1,65 +1,73 @@
 {% extends "base.html" %}
 
 {% block title %}Strokes{% endblock title %}
-{% block strokes %}w3-text-blue{% endblock strokes %}
+{% block strokes %}active{% endblock strokes %}
 
 
 
 {% block content %}
 
 
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Strokes</h1>
-        </div>
-        
-    </div>
-
-
-    <div class="w3-cell-row w3-padding-32 content">
-        <div class="w3-container w3-cell" style="width:15%"></div>
-            <div class="w3-container">
-                {% if strokes %}
-                    <h3>Strokes for {{ course }}</h3>
-                    <table class="w3-table w3-striped w3-bordered w3-border">
-                        <tr>
-                            <th class="w3-center">Name</th><th class="w3-center">Strokes</th>
-                        </tr>
-                        {% for user in strokes %}
+<div class="container py-5 h-100">
+    <div class="card bg-light">
+        <div class="card-body p-5">
+            <p class="card-title fs-2 mb-3">Strokes</p>
+            {% if strokes %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <td class="w3-center"><p style="padding:0;">{{ user[0] }}</p></td>
-                                <td class="w3-center"><p style="padding:0;">{{ user[1] }}</p></td>
+                                <th scope="col">Name</th>
+                                <th scope="col">Number of strokes for {{ course }}</th>
                             </tr>
-                        {% endfor %}
+                        </thead>
+                        <tbody>
+                            {% for user in strokes %}
+                                <tr>
+                                    <td>{{ user[0] }}</td>
+                                    <td>{{ user[1] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
-                {% else %}
-                    <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('home.calculate_strokes') }}" method="POST">
-                        <br><br>
-                        <div class="w3-row-padding">
-                            <div class="w3-half">
-                                <fieldset class="checkboxgroup">
-                                    <p>Select Players: </p>
-                                    {% for user in users %}
-                                        <label class="w3-left"><input type="checkbox" name="players" value="{{ user.id }}"> {{ user.name }}</label><br>
-                                    {% endfor %}
-                                </fieldset>
-                            </div>
-                            <div class="w3-half">
-                                <label for="course">Choose a course:</label>
-                                <select name="course" id="course">
-                                    {% for course in courses %}
-                                        <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{ course.slope }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                </div>
+            {% else %}
+                <form action="{{ url_for('home.calculate_strokes') }}" method="POST">
+                    <div class="row">
+                        <div class="col-sm mb-4">
+                            <fieldset class="border p-4">
+                                <label class="form-label" for="players">Select players:</label>
+                                {% for user in users %}
+                                    <div class="form-check" id="players">
+                                        <input class="form-check-input" type="checkbox" name="players" value="{{ user.id }}" id="user{{ user.id }}">
+                                        <label class="form-check-label" for="user{{ user.id }}">
+                                            {{ user.name }} - {{ user.handicap }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </fieldset>
+
                         </div>
-                        <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding w3-center" type="submit" value="Get Strokes">
-                        <br><br>
-                    </form>
-                {% endif %}
-            </div>
-        <div class="w3-container w3-cell" style="width:15%"></div>
+                        <div class="col-sm">
+                            <label class="form-label" for="course">Choose a course:</label>
+                            <select name="course" id="course" class="form-select" aria-label="Default select example">
+                                {% for course in courses %}
+                                    <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{ course.slope }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm mt-5">
+                            <!-- <p id="name_error" class="text-danger display-none">Paycheck Name is invalid<br></p>
+                            <p id="amount_error" class="text-danger display-none"><br></p> -->
+                            <input class="btn btn-outline-primary" type="submit" value="Calculate strokes">
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
         </div>
+    </div>
+</div>
 
 {% endblock content %}s

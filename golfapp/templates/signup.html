@@ -7,60 +7,50 @@
 {% block content %}
 
 
-    <div class="w3-cell-row w3-padding-32">
-        <div class="w3-container">
-            <br><br><br><br>
-            <h1>Sign Up</h1>
-        </div>
-        
-    </div>
-
-    <!-- TODO: Look at decode page for form format width/scaling -->
-
-    <div class="w3-cell-row w3-mobile w3-margin-bottom" style="height: 100%;">
-        <div class="w3-cell" style="width:20%"></div>
-        <div class="w3-cell w3-mobile w3-margin-top w3-margin-bottom">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="w3-panel {{ category }} w3-display-container w3-border">
-                                <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                <h3>{{ message }}</h3>
-                                </button>
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-light">
+                    <div class="card-header px-3">
+                        <div class="fs-4">
+                            Sign up
+                        </div>
+                        <div class="">
+                            Please enter your name, your email, and a password
+                        </div>
+                    </div>
+                    <div class="card-body px-5 pb-5">
+                        <form action="{{ url_for('auth.signup_post') }}" method="POST">
+                            <div class="mb-4">
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input class="form-control" type="email" id="email" name="email" placeholder="Your email" {% if email %}value="{{ email }}"{% endif %} required>
+                                </div>
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="fname">First and last name</label>
+                                    <div class="input-group">
+                                        <!-- <span class="input-group-text">First and last name</span> -->
+                                        <input class="form-control" type="text" id="fname" name="fname" placeholder="Your first name" required>
+                                        <input class="form-control" type="text" id="lname" name="lname" placeholder="Your last name" required>
+                                    </div>
+                                </div>
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="password1">Password</label>
+                                    <input class="form-control" type="password" id="password1" name="password1" placeholder="Password" required>
+                                </div>
+                                <div class="form-outline form-white mb-4">
+                                    <label class="form-label" for="password2">Password Again</label>
+                                    <input class="form-control" type="password" id="password2" name="password2" placeholder="Password" required>
+                                </div>
+                                <div class="form-outline form-white">
+                                    <input class="btn btn-outline-primary" type="submit" value="Sign Up">
+                                </div>
                             </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            <form class="w3-container w3-margin-bottom w3-light-grey w3-card-4" action="{{ url_for('auth.signup_post') }}" method="POST">
-    
-                <!-- <label class="" for="name"><h4 style="text-align: left;">Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="name" name="name" placeholder="Your name" style="width:50%"> -->
-            
-                <label class="" for="email"><h4 style="text-align: left;">Email</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="email" id="email" name="email" placeholder="Your email" {% if email %}value="{{ email }}"{% endif %} style="width:50%" required>
-
-                <label class="" for="fname"><h4 style="text-align: left;">First Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="fname" name="fname" placeholder="Your first Name" style="width:50%" required>
-
-                <label class="" for="lname"><h4 style="text-align: left;">Last Name</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="text" id="lname" name="lname" placeholder="Your last name" style="width:50%" required>
-            
-                <label class="" for="password1"><h4 style="text-align: left;">Password</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="password" id="password1" name="password1" placeholder="Password" style="width:50%" required>
-
-                <label class="" for="password2"><h4 style="text-align: left;">Password Again</h4></label>
-                <input class="w3-input w3-border w3-animate-input" type="password" id="password2" name="password2" placeholder="Password" style="width:50%" required>
-        
-                <!-- <label class="" for="message"><h4 style="text-align: left;">Message</h4></label>
-                <textarea class="w3-input w3-border" id="message" name="message" placeholder="Message" style="height:200px;resize:none;"></textarea> -->
-            
-                <input class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding" type="submit" value="Login">
-            
-            </form>
-            <br><br><br><br><br>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="w3-cell" style="width:20%"></div>
-
     </div>
 
-{% endblock content %}s
+{% endblock content %}
