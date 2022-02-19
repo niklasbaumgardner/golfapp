@@ -8,7 +8,7 @@
 {% block content %}
 <script>
     function check_existing_courses(event) {
-        let name = event.target.value;
+        let name = event.target.value.toLowerCase();
         let matchingDiv = document.querySelector("#matching-courses-div");
         matchingDiv.hidden = true;
         if (name.length < 3) {
