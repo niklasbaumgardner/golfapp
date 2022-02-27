@@ -125,6 +125,10 @@ def add_round_submit():
     print(date_)
     date_ = get_datetime(date_)
 
+    gir = gir if gir else None
+    fir = fir if fir else None
+    putts = putts if putts else None
+
     print(course_id, score, gir, fir, putts, date_)
 
 
