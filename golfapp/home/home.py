@@ -90,6 +90,7 @@ def calculate_strokes():
         players = [ int(player) for player in players ]
         print(course, players)
         strokes, course_name = golf.calculate_strokes(course, players)
+        strokes.sort(key=lambda x: x[1])
         return render_template('strokes.html', strokes=strokes, course=course_name)
 
 
