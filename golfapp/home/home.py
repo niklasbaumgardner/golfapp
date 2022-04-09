@@ -90,6 +90,7 @@ def calculate_strokes():
         players = [ int(player) for player in players ]
         print(course, players)
         strokes, course_name = golf.calculate_strokes(course, players)
+        strokes.sort(key=lambda x: x[1])
         return render_template('strokes.html', strokes=strokes, course=course_name)
 
 
@@ -123,6 +124,10 @@ def add_round_submit():
     date_ = request.form.get('date')
     print(date_)
     date_ = get_datetime(date_)
+
+    gir = gir if gir else None
+    fir = fir if fir else None
+    putts = putts if putts else None
 
     print(course_id, score, gir, fir, putts, date_)
 
