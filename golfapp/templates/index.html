@@ -29,152 +29,169 @@
     }
 </script>
 
-    <div class="container-fluid">
-        <div class="container pb-5 pt-5">
-            <div class="fw-bold fs-1">
-                Your handicap is {{ handicap }}
-            </div>
-            <div>
-                <p class="m-2">You've played {{ stats['num_rounds'] }} rounds</p>
-                <p class="m-2">Your average round is {{ stats['avg_score'] }}</p>
-                <p class="m-2">Your average GIR (recorded) {{ stats['avg_gir'] }}</p>
-                <p class="m-2">Your average FIR (recorded) {{ stats['avg_fir'] }}</p>
-                <p class="m-2">Your average putts (recorded) {{ stats['avg_putts'] }}</p>
-            </div>
+<div class="container-fluid">
+    <div class="container pb-5 pt-5">
+        <div class="fw-bold fs-1">
+            Your handicap is {{ handicap }}
+        </div>
+        <div>
+            <p class="m-2">You've played {{ stats['num_rounds'] }} rounds</p>
+            <p class="m-2">Your average round is {{ stats['avg_score'] }}</p>
+            <p class="m-2">Your average GIR (recorded) {{ stats['avg_gir'] }}</p>
+            <p class="m-2">Your average FIR (recorded) {{ stats['avg_fir'] }}</p>
+            <p class="m-2">Your average putts (recorded) {{ stats['avg_putts'] }}</p>
         </div>
     </div>
-    <div class="container-fluid mb-5">
-        <div class="container">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Course</th>
-                            <th scope="col">Score / Par</th>
-                            <th scope="col w-80p">GIR</th>
-                            <th scope="col w-80p">FIR</th>
-                            <th scope="col w-80p">Putts</th>
-                            <th scope="col">Date</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for round in rounds %}
-                            <tr>
-                                <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}" method="POST">
-                                    <td>
-                                        <span>{{ courses[round.course_id].name }}</span>
-    
-                                    </td>
-                                    <td>
-                                        <span class="show-not-edit-{{ round.id }}">{{ round.score }} / {{ courses[round.course_id].par }}</span>
-                                        <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="score" placeholder="Score" value="{{ round.score }}" hidden>
-                                    </td>
-                                    <td class="w-80p">
-                                        <span class="show-not-edit-{{ round.id }}">{{ round.gir }}</span>
-                                        <input class="form-control show-edit-{{ round.id }} " type="number" name="gir" placeholder="GIR" value="{{ round.gir }}" hidden>
-    
-                                    </td>
-                                    <td class="w-80p">
-                                        <span class="show-not-edit-{{ round.id }}">{{ round.fir }}</span>
-                                        <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="fir" placeholder="FIR" value="{{ round.fir }}" hidden>
-    
-                                    </td>
-                                    <td class="w-80p">
-                                        <span class="show-not-edit-{{ round.id }}">{{ round.putts }}</span>
-                                        <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="putts" placeholder="Putts" value="{{ round.putts }}" hidden>
-    
-                                    </td>
-                                    <td>
-                                        <span class="show-not-edit-{{ round.id }}">{{ round.date.strftime("%B %d, %Y") }}</span>
-                                        <input class="show-not-edit-{{ round.id }}" type="date" name="date" value="{{ round.date.strftime('%Y-%m-%d') }}" hidden>
-    
-                                    </td>
-                                    <td>
-                                        <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);" onclick="editRound('{{ round.id }}')">edit</a>
-                                        <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);" onclick="document.getElementById('round{{ round.id }}').submit();" hidden>update</a>
-                                         |
-                                        <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);" onclick="cancelEditRound('{{ round.id }}')" hidden>cancel</a>
-                                        <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);" onclick="deleteRoundClick('{{ round.id }}')">delete</a>
-                                    </td>
+</div>
+<div class="container-fluid mb-5">
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Course</th>
+                        <th scope="col">Score / Par</th>
+                        <th scope="col w-80p">GIR</th>
+                        <th scope="col w-80p">FIR</th>
+                        <th scope="col w-80p">Putts</th>
+                        <th scope="col">Date</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for round in rounds %}
+                    <tr>
+                        <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}"
+                            method="POST">
+                            <td>
+                                <span>{{ courses[round.course_id].name }}</span>
 
-                                </form>
-                            </tr>
-                        {% endfor %}
+                            </td>
+                            <td>
+                                <span class="show-not-edit-{{ round.id }}">{{ round.score }} / {{
+                                    courses[round.course_id].par }}</span>
+                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="score"
+                                    placeholder="Score" value="{{ round.score }}" hidden>
+                            </td>
+                            <td class="w-80p">
+                                <span class="show-not-edit-{{ round.id }}">{{ round.gir }}</span>
+                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="gir"
+                                    placeholder="GIR" value="{{ round.gir }}" hidden>
 
-                        <tr>
-                            <form action="{{ url_for('home.add_round_submit') }}" method="POST">
-                                <td>
-                                    <select name="course" id="course" class="form-select" aria-label="Default select example" style="max-width: 350px;">
-                                        {% for course in all_courses %}
-                                            <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{ course.slope }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="score" placeholder="Score" required>
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
-                                </td>
-                                <td>
-                                    <input type="date" id="date" name="date" placeholder="">
-                                </td>
-                                <td>
-                                    <input class="btn btn-primary" type="submit" value="Add Round">
-                                </td>
+                            </td>
+                            <td class="w-80p">
+                                <span class="show-not-edit-{{ round.id }}">{{ round.fir }}</span>
+                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="fir"
+                                    placeholder="FIR" value="{{ round.fir }}" hidden>
 
-                            </form>
-                        </tr>
-                    </tbody>
-                </table>
+                            </td>
+                            <td class="w-80p">
+                                <span class="show-not-edit-{{ round.id }}">{{ round.putts }}</span>
+                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="putts"
+                                    placeholder="Putts" value="{{ round.putts }}" hidden>
 
-            </div>
-        </div>
-    </div>
+                            </td>
+                            <td>
+                                <span class="show-not-edit-{{ round.id }}">{{ round.date.strftime("%B %d, %Y") }}</span>
+                                <input class="show-not-edit-{{ round.id }}" type="date" name="date"
+                                    value="{{ round.date.strftime('%Y-%m-%d') }}" hidden>
 
-    {% for round in rounds %}
-        <div id="delete_id{{ round.id }}" class="modal" style="display: none;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <p class="modal-title fs-4">Delete this round?</p>
-                        <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="fs-5">Are you sure you want to delete this round?</p>
-                        <p class="px-5">Course: {{ courses[round.course_id].name }}</p>
-                        <p class="px-5">Score: {{ round.score }}</p>
-                        <p class="px-5">Date: {{ round.date.strftime("%B %d, %Y") }}</p>
-                    </div>
-                    <div class="modal-footer">
-                        <form method="POST" action="{{ url_for('home.delete_round', id=round.id) }}">
-                            <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                            <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                            </td>
+                            <td>
+                                <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
+                                    onclick="editRound('{{ round.id }}')">edit</a>
+                                <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
+                                    onclick="document.getElementById('round{{ round.id }}').submit();" hidden>update</a>
+                                |
+                                <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
+                                    onclick="cancelEditRound('{{ round.id }}')" hidden>cancel</a>
+                                <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
+                                    onclick="deleteRoundClick('{{ round.id }}')">delete</a>
+                            </td>
+
                         </form>
-                    </div>
-                </div>
+                    </tr>
+                    {% endfor %}
+
+                    <tr>
+                        <form action="{{ url_for('home.add_round_submit') }}" method="POST">
+                            <td>
+                                <select name="course" id="course" class="form-select"
+                                    aria-label="Default select example" style="max-width: 350px;">
+                                    {% for course in all_courses %}
+                                    <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{
+                                        course.slope }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="score" placeholder="Score"
+                                    required>
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
+                            </td>
+                            <td>
+                                <input type="date" id="date" name="date" placeholder="">
+                            </td>
+                            <td>
+                                <input class="btn btn-primary" type="submit" value="Add Round">
+                            </td>
+
+                        </form>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+{% for round in rounds %}
+<div id="delete_id{{ round.id }}" class="modal" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title fs-4">Delete this round?</p>
+                <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'" type="button"
+                    class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fs-5">Are you sure you want to delete this round?</p>
+                <p class="px-5">Course: {{ courses[round.course_id].name }}</p>
+                <p class="px-5">Score: {{ round.score }}</p>
+                <p class="px-5">Date: {{ round.date.strftime("%B %d, %Y") }}</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{{ url_for('home.delete_round', id=round.id) }}">
+                    <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
+                    <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'"
+                        type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
+                </form>
             </div>
         </div>
-    {% endfor %}
+    </div>
+</div>
+{% endfor %}
 
-    {{ current_user.id }}
+{{ current_user.id }}
 
-    <script>
-        let date = new Date();
-        let ele = document.getElementById('date');
-        let year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        let strDate = year + '-' + month + '-' + day;
-        ele.valueAsDate = date;
-        ele.value = strDate;
-    </script>
+<script>
+    let date = new Date();
+    let ele = document.getElementById('date');
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    let strDate = year + '-' + month + '-' + day;
+    ele.valueAsDate = date;
+    ele.value = strDate;
+</script>
 
 {% endblock content %}
