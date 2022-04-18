@@ -88,7 +88,7 @@ def calculate_strokes():
         players = request.form.getlist('players')
         # print(course, players)
         players = [ int(player) for player in players ]
-        print(course, players)
+        # print(course, players)
         strokes, course_name = golf.calculate_strokes(course, players)
         strokes.sort(key=lambda x: x[1])
         return render_template('strokes.html', strokes=strokes, course=course_name)
@@ -122,14 +122,14 @@ def add_round_submit():
     # fir = round(float(fir[0]) / float(fir[1]), 2)
     putts = request.form.get('putts')
     date_ = request.form.get('date')
-    print(date_)
+    # print(date_)
     date_ = get_datetime(date_)
 
     gir = gir if gir else None
     fir = fir if fir else None
     putts = putts if putts else None
 
-    print(course_id, score, gir, fir, putts, date_)
+    # print(course_id, score, gir, fir, putts, date_)
 
 
     new_round = Round(user_id=current_user.get_id(), course_id=course_id, score=score, gir=gir, fir=fir, putts=putts, date=date_)
@@ -157,7 +157,7 @@ def add_course_submit():
     rating = request.form['rating']
     slope = request.form['slope']
 
-    print(name, par, rating, slope)
+    # print(name, par, rating, slope)
 
     new_course = Course(name=name, par=par, slope=slope, rating=rating)
     db.session.add(new_course)
@@ -194,14 +194,17 @@ def update_round(id):
         new_date = request.form.get('date')
         if new_score:
             round.score = new_score
-        if new_gir:
-            round.gir = new_gir
-        if new_fir:
-            round.fir = new_fir
-        if new_putts:
-            round.putts = new_putts
         if new_date:
             round.date = new_date
+
+        # make these None instead of ''
+        new_gir = new_gir if new_gir else None
+        new_fir = new_fir if new_fir else None
+        new_putts = new_putts if new_putts else None
+        # these can be None
+        round.gir = new_gir
+        round.fir = new_fir
+        round.putts = new_putts
 
         db.session.commit()
         update_handicap()

@@ -36,7 +36,7 @@ def get_score_diffs(rounds, courses):
     for rnd in rounds:
         course = courses[rnd.course_id]
         score_diff = calculate_score_diff(course.slope, course.rating, rnd.score)
-        print(course.name, score_diff)
+        # print(course.name, score_diff)
         lst.append(score_diff)
     lst.sort()
     return lst
