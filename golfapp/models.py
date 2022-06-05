@@ -12,6 +12,19 @@ class H_User():
         self.name = name
         self.handicap = handicap
 
+class RRound():
+    def __init__(self, round):
+        self.id = round.id
+        self.user_id = round.user_id
+        self.course_id = round.course_id
+        self.score = round.score
+        self.score_diff = round.score_diff
+        self.gir = round.gir
+        self.fir = round.fir
+        self.putts = round.putts
+        self.date = round.date
+        self.included = True
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
@@ -30,6 +43,7 @@ class Round(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    score_diff = db.Column(db.Float, nullable=True)
     gir = db.Column(db.Float, nullable=True)
     fir = db.Column(db.Float, nullable=True)
     putts = db.Column(db.Float, nullable=True)

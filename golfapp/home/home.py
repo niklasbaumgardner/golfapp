@@ -34,6 +34,7 @@ def index():
     stats['avg_gir'] = golf.get_avg_gir(rounds)
     stats['avg_fir'] = golf.get_avg_fir(rounds)
     stats['avg_putts'] = golf.get_avg_putts(rounds)
+    rounds = golf.get_included_rounds(rounds)
     return render_template('index.html', rounds=rounds, courses=courses, all_courses=all_courses, handicap=handicap, strftime=datetime.strftime, stats=stats)
 
 

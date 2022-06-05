@@ -1,4 +1,4 @@
-from golfapp.models import User, Course, Round, Handicap, H_User
+from golfapp.models import User, Course, Round, Handicap, H_User, RRound
 from golfapp.extensions import db
 import math
 
@@ -36,6 +36,8 @@ def get_score_diffs(rounds, courses):
     for rnd in rounds:
         course = courses[rnd.course_id]
         score_diff = calculate_score_diff(course.slope, course.rating, rnd.score)
+        rnd.score_diff = score_diff
+        db.session.commit()
         # print(course.name, score_diff)
         lst.append(score_diff)
     lst.sort()
@@ -44,7 +46,7 @@ def get_score_diffs(rounds, courses):
 
 
 def calculate_score_diff(slope, rating, score):
-    return (113 / slope) * (score - rating - 1)
+    return round((113 / slope) * (score - rating - 1), 1)
 
 
 def assign_handicap(users, handis, include_all=False, stringify=True):
@@ -146,3 +148,30 @@ def sort_handicap(lst):
         ele.handicap = stringify_handicap(ele.handicap)
 
     return lst
+
+def get_included_rounds(rounds):
+    num_included = 1
+    count = len(rounds)
+    if 6 <= count <= 8:
+        num_included = 2
+    elif 9 <= count <= 11:
+        num_included = 3
+    elif 12 <= count <= 14:
+        num_included = 4
+    elif 15 <= count <= 16:
+        num_included = 5
+    elif 17 <= count <= 18:
+        num_included = 6
+    elif count == 19:
+        num_included = 7
+    elif count >= 20:
+        num_included = 8
+
+    score_diff_indeces = sorted(enumerate(rounds[:20]), key=lambda x: float(x[1].score_diff))[:num_included]
+
+    for index in score_diff_indeces:
+        rounds[index[0]] = RRound(rounds[index[0]])
+
+    return rounds
+
+

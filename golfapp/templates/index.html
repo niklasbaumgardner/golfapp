@@ -93,7 +93,7 @@
                     </tr>
 
                     {% for round in rounds %}
-                    <tr>
+                    <tr {% if round.included %}class="bg-light-green"{% endif %}>
                         <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}"
                             method="POST">
                             <td>
@@ -102,7 +102,7 @@
                             </td>
                             <td>
                                 <span class="show-not-edit-{{ round.id }}">{{ round.score }} / {{
-                                    courses[round.course_id].par }}</span>
+                                    courses[round.course_id].par }} ({{ round.score_diff }})</span>
                                 <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="score"
                                     placeholder="Score" value="{{ round.score }}" hidden>
                             </td>

@@ -17,6 +17,10 @@ input[type=number] {
     z-index: 999;
 }
 
+.bg-light-green {
+    background-color: #d1e7dd;
+}
+
 @media (max-width: 1000px) {
     	/* Force table to not be like tables anymore */
 	table, thead, tbody, th, td, tr { 
