@@ -35,11 +35,11 @@
             Your handicap is {{ handicap }}
         </div>
         <div>
-            <p class="m-2">You've played {{ stats['num_rounds'] }} rounds</p>
-            <p class="m-2">Your average round is {{ stats['avg_score'] }}</p>
-            <p class="m-2">Your average GIR (recorded) {{ stats['avg_gir'] }}</p>
-            <p class="m-2">Your average FIR (recorded) {{ stats['avg_fir'] }}</p>
-            <p class="m-2">Your average putts (recorded) {{ stats['avg_putts'] }}</p>
+            <p class="m-2"><b>{{ stats['num_rounds'] }}</b> rounds recorded</p>
+            <p class="m-2">Average round: <b>{{ stats['avg_score'] }}</b></p>
+            <p class="m-2">Fairways in regulation: <b>{{ stats['avg_fir'] }}</b></p>
+            <p class="m-2">Greens in regulation: <b>{{ stats['avg_gir'] }}</b></p>
+            <p class="m-2">Putting: <b>{{ stats['avg_putts'] }}</b></p>
         </div>
     </div>
 </div>
@@ -51,8 +51,8 @@
                     <tr>
                         <th scope="col">Course</th>
                         <th scope="col">Score / Par</th>
-                        <th scope="col w-80p">GIR</th>
                         <th scope="col w-80p">FIR</th>
+                        <th scope="col w-80p">GIR</th>
                         <th scope="col w-80p">Putts</th>
                         <th scope="col">Date</th>
                         <th scope="col"></th>
@@ -75,10 +75,10 @@
                                     required>
                             </td>
                             <td>
-                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
+                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
                             </td>
                             <td>
-                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
+                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
                             </td>
                             <td>
                                 <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
@@ -107,28 +107,24 @@
                                     placeholder="Score" value="{{ round.score }}" hidden>
                             </td>
                             <td class="w-80p">
-                                <span class="show-not-edit-{{ round.id }}">{{ round.gir }}</span>
-                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="gir"
-                                    placeholder="GIR" value="{{ round.gir }}" hidden>
-
-                            </td>
-                            <td class="w-80p">
                                 <span class="show-not-edit-{{ round.id }}">{{ round.fir }}</span>
                                 <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="fir"
                                     placeholder="FIR" value="{{ round.fir }}" hidden>
-
+                            </td>
+                            <td class="w-80p">
+                                <span class="show-not-edit-{{ round.id }}">{{ round.gir }}</span>
+                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="gir"
+                                    placeholder="GIR" value="{{ round.gir }}" hidden>
                             </td>
                             <td class="w-80p">
                                 <span class="show-not-edit-{{ round.id }}">{{ round.putts }}</span>
                                 <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="putts"
                                     placeholder="Putts" value="{{ round.putts }}" hidden>
-
                             </td>
                             <td>
                                 <span class="show-not-edit-{{ round.id }}">{{ round.date.strftime("%B %d, %Y") }}</span>
                                 <input class="show-not-edit-{{ round.id }}" type="date" name="date"
                                     value="{{ round.date.strftime('%Y-%m-%d') }}" hidden>
-
                             </td>
                             <td>
                                 <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
@@ -141,7 +137,6 @@
                                 <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
                                     onclick="deleteRoundClick('{{ round.id }}')">delete</a>
                             </td>
-
                         </form>
                     </tr>
                     {% endfor %}

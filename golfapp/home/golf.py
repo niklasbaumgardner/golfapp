@@ -122,7 +122,12 @@ def get_avg_putts(rounds):
             total += round_.putts
             count += 1
 
-    return round(total / count, 2) if count else 0
+    avg_putts = 0
+    if count:
+        ppr = round(total / count, 2)
+        avg_putts = f"{ppr} putts. ({round(ppr / 18, 2)} per hole)"
+
+    return avg_putts
 
 def stringify_handicap(handicap):
     if handicap < 0:
