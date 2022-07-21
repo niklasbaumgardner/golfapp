@@ -65,11 +65,11 @@ input[type=number] {
         font-weight: bold;
     }
 	td:nth-of-type(3):before {
-        content: "GIR";
+        content: "FIR";
         font-weight: bold;
     }
 	td:nth-of-type(4):before {
-        content: "FIR";
+        content: "GIR";
         font-weight: bold;
     }
 	td:nth-of-type(5):before  {
