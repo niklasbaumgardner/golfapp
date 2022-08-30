@@ -29,4 +29,7 @@ def create_app():
 
     migrate.init_app(app, db)
 
+    with app.app_context():
+        db.create_all()
+
     return app
