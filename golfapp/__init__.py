@@ -3,9 +3,11 @@ from flask_bcrypt import Bcrypt
 from golfapp.config import Config
 from golfapp.extensions import db, login_manager
 from flask_migrate import Migrate
+from flask_mail import Mail
 
 bcrypt = Bcrypt()
 migrate = Migrate()
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -17,6 +19,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'w3-pale-red'
+    mail.init_app(app)
 
     from golfapp.user.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
