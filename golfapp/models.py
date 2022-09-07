@@ -32,6 +32,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    is_publicly_visible = db.Column(db.Boolean, nullable=True)
 
     def get_reset_token(self, expire_sec=600):
         s = Serializer(os.environ.get('SECRET_KEY'), expire_sec)

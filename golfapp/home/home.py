@@ -1,4 +1,5 @@
 
+from re import T
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, H_User
@@ -8,15 +9,25 @@ from datetime import datetime
 
 from golfapp.user.auth import login
 
-# app = Flask(__name__)
 
 home = Blueprint('home', __name__)
-# mail = Mail(home)
+
+
+@home.route('/toggle_user_visibilty', methods=['GET'])
+@login_required
+def toggle_user_visibilty():
+    is_visible = request.args.get("isVisible") == "true"
+    print(is_visible)
+    user = User.query.filter_by(id=current_user.get_id()).first()
+    user.is_publicly_visible = is_visible
+    db.session.commit()
+    return { "success": True }
 
 
 @home.route('/', methods=['GET'])
 @login_required
 def index():
+    user = User.query.filter_by(id=current_user.get_id()).first()
     rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
     rounds.sort(key=lambda x: x.date, reverse=True)
     courses = {}
@@ -35,13 +46,13 @@ def index():
     stats['avg_fir'] = golf.get_avg_fir(rounds)
     stats['avg_putts'] = golf.get_avg_putts(rounds)
     rounds = golf.get_included_rounds(rounds)
-    return render_template('index.html', rounds=rounds, courses=courses, all_courses=all_courses, handicap=handicap, strftime=datetime.strftime, stats=stats)
+    return render_template('index.html', rounds=rounds, courses=courses, all_courses=all_courses, handicap=handicap, strftime=datetime.strftime, stats=stats, is_visible=user.is_publicly_visible)
 
 
 @home.route('/view_players', methods=["GET"])
 @login_required
 def view_players():
-    users = User.query.all()
+    users = User.query.filter_by(is_publicly_visible=True).all()
     handis = Handicap.query.all()
     h_users = golf.assign_handicap(users, handis)
     return render_template('viewplayers.html', users=h_users)

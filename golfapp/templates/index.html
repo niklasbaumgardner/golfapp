@@ -7,6 +7,7 @@
 
 {% block content %}
 <script>
+    const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
     function deleteRoundClick(id) {
         document.getElementById(`delete_id${id}`).style.display = 'block';
     }
@@ -33,6 +34,13 @@
     <div class="container pb-5 pt-5">
         <div class="fw-bold fs-1">
             Your handicap is {{ handicap }}
+        </div>
+        <div class="m-2">
+            Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
+            <div class="form-check form-switch ms-3" style="display:inline-block;">
+                <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
+                <label class="form-check-label" for="showHandicapToggle"></label>
+            </div>
         </div>
         <div>
             <p class="m-2"><b>{{ stats['num_rounds'] }}</b> rounds recorded</p>
@@ -186,6 +194,21 @@
     let strDate = year + '-' + month + '-' + day;
     ele.valueAsDate = date;
     ele.value = strDate;
+
+    let visibilityToggle = document.getElementById("showHandicapToggle");
+    visibilityToggle.addEventListener("click", event => {
+        console.log("Should show?", event.target.checked);
+        return new Promise(function (resolve, reject) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", TOGGLE_VISIBILITY_URL + `?isVisible=${event.target.checked}`);
+            xmlHttp.onload = () => {
+                resolve(xmlHttp.response);
+            };
+            xmlHttp.send(null);
+        })
+    });
+
+
 </script>
 
 {% endblock content %}
