@@ -60,7 +60,7 @@ def assign_handicap(users, handis, include_all=False, stringify=True):
                 else:
                     handicap = handicap.handicap
 
-            new_user = H_User(id=user.id, name=user.name, handicap=handicap if handicap else '0')
+            new_user = H_User(id=user.id, name=user.name, handicap=handicap if handicap else '0', is_visible=user.is_publicly_visible)
             lst.append(new_user)
 
     return sort_handicap(lst) if stringify else sorted(lst, key=lambda x: x.name)
