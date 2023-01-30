@@ -92,7 +92,7 @@
                                 <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
                             </td>
                             <td>
-                                <input type="date" id="date" name="date" placeholder="">
+                                <input class="form-control" type="date" id="date" name="date" placeholder="">
                             </td>
                             <td>
                                 <input class="btn btn-primary" type="submit" value="Add Round">
@@ -101,7 +101,7 @@
                     </tr>
 
                     {% for round in rounds %}
-                    <tr {% if round.included %}class="bg-light-green"{% endif %}>
+                    <tr {% if round.included %}class="bg-success-subtle"{% endif %}>
                         <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}"
                             method="POST">
                             <td>
