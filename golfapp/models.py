@@ -11,7 +11,7 @@ def load_user(user_id):
 class H_User():
     def __init__(self, id, name, handicap, is_visible):
         self.id = id
-        self.name = name
+        self.username = name
         self.handicap = handicap
         self.is_visible = is_visible
 

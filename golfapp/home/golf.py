@@ -61,13 +61,13 @@ def assign_handicap(users, handis, include_all=False, stringify=True):
 
             new_user = H_User(
                 id=user.id,
-                name=user.name,
+                name=user.username,
                 handicap=handicap if handicap else "0",
                 is_visible=user.is_publicly_visible,
             )
             lst.append(new_user)
 
-    return sort_handicap(lst) if stringify else sorted(lst, key=lambda x: x.name)
+    return sort_handicap(lst) if stringify else sorted(lst, key=lambda x: x.username)
 
 
 def find_handicap(id, handis):
@@ -88,7 +88,7 @@ def get_strokes(course, h_users):
     lst = []
     for user in h_users:
         num_strokes = strokes(course, user.handicap)
-        lst.append((user.name, num_strokes))
+        lst.append((user.username, num_strokes))
     return lst
 
 
