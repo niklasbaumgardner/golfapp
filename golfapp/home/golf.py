@@ -27,7 +27,7 @@ def calculate_handicap(rounds, courses):
         handicap = sum(get_score_diffs(rounds, courses)[:7]) / 7
     elif count >= 20:
         handicap = sum(get_score_diffs(rounds, courses)[:8]) / 8
-    
+
     return round(handicap, 2)
 
 
@@ -42,7 +42,6 @@ def get_score_diffs(rounds, courses):
         lst.append(score_diff)
     lst.sort()
     return lst
-
 
 
 def calculate_score_diff(slope, rating, score):
@@ -60,7 +59,12 @@ def assign_handicap(users, handis, include_all=False, stringify=True):
                 else:
                     handicap = handicap.handicap
 
-            new_user = H_User(id=user.id, name=user.name, handicap=handicap if handicap else '0', is_visible=user.is_publicly_visible)
+            new_user = H_User(
+                id=user.id,
+                name=user.name,
+                handicap=handicap if handicap else "0",
+                is_visible=user.is_publicly_visible,
+            )
             lst.append(new_user)
 
     return sort_handicap(lst) if stringify else sorted(lst, key=lambda x: x.name)
@@ -72,13 +76,12 @@ def find_handicap(id, handis):
 
 def calculate_strokes(course, players):
     course = Course.query.filter_by(id=course).first()
-    players = [ User.query.filter_by(id=player).first() for player in players ]
-    handis = [ Handicap.query.filter_by(user_id=player.id).first() for player in players ]
+    players = [User.query.filter_by(id=player).first() for player in players]
+    handis = [Handicap.query.filter_by(user_id=player.id).first() for player in players]
 
     h_users = assign_handicap(players, handis, stringify=False)
 
     return get_strokes(course, h_users), course.name
-
 
 
 def get_strokes(course, h_users):
@@ -104,6 +107,7 @@ def get_avg_gir(rounds):
 
     return round(total / count, 2) if count else 0
 
+
 def get_avg_fir(rounds):
     total = 0
     count = 0
@@ -114,6 +118,7 @@ def get_avg_fir(rounds):
             count += 1
 
     return round(total / count, 2) if count else 0
+
 
 def get_avg_putts(rounds):
     total = 0
@@ -131,16 +136,22 @@ def get_avg_putts(rounds):
 
     return avg_putts
 
+
 def stringify_handicap(handicap):
     if handicap < 0:
-        handicap = f'+{str(handicap)[1:]}'
+        handicap = f"+{str(handicap)[1:]}"
     else:
         handicap = str(handicap)
     return handicap
 
+
 def sort_handicap(lst):
     for ele in lst:
-        ele.handicap = float(ele.handicap) if ele.handicap[0] != '+' else -1*float(ele.handicap[1:])
+        ele.handicap = (
+            float(ele.handicap)
+            if ele.handicap[0] != "+"
+            else -1 * float(ele.handicap[1:])
+        )
 
     lst.sort(key=lambda x: x.handicap)
 
@@ -148,6 +159,7 @@ def sort_handicap(lst):
         ele.handicap = stringify_handicap(ele.handicap)
 
     return lst
+
 
 def get_included_rounds(rounds):
     num_included = 1
@@ -167,11 +179,11 @@ def get_included_rounds(rounds):
     elif count >= 20:
         num_included = 8
 
-    score_diff_indeces = sorted(enumerate(rounds[:20]), key=lambda x: float(x[1].score_diff))[:num_included]
+    score_diff_indeces = sorted(
+        enumerate(rounds[:20]), key=lambda x: float(x[1].score_diff)
+    )[:num_included]
 
     for index in score_diff_indeces:
         rounds[index[0]] = RRound(rounds[index[0]])
 
     return rounds
-
-
