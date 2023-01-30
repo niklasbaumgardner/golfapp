@@ -1,3 +1,14 @@
+.alert-absolute {
+    position: absolute;
+    z-index: 1;
+    max-width: 500px;
+    margin: -50px -.25rem 0 -.25rem;
+}
+
+.display-block {
+    display: block !important;
+}
+
 .w-80p {
     width: 80px;
 }
@@ -10,6 +21,7 @@ input[type=number]::-webkit-inner-spin-button {
 
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .mt-alerts {

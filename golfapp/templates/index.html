@@ -31,7 +31,7 @@
 </script>
 
 <div class="container-fluid">
-    <div class="container pb-5 pt-5">
+    <div class="container pb-5">
         <div class="fw-bold fs-1">
             Your handicap is {{ handicap }}
         </div>
@@ -183,18 +183,8 @@
 </div>
 {% endfor %}
 
-{{ current_user.id }}
-
+<script src="/static/js/setdate.js"></script>
 <script>
-    let date = new Date();
-    let ele = document.getElementById('date');
-    let year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-    let strDate = year + '-' + month + '-' + day;
-    ele.valueAsDate = date;
-    ele.value = strDate;
-
     let visibilityToggle = document.getElementById("showHandicapToggle");
     visibilityToggle.addEventListener("click", event => {
         console.log("Should show?", event.target.checked);

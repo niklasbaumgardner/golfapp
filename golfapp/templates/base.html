@@ -14,14 +14,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>{% block title %}{% endblock title %}</title>
+    <script src="/static/js/theme.js"></script>
 </head>
 
 
 <body class="mt-3 pt-5">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg bg-success-subtle fixed-top">
         <div class="container">
-            <!-- {% block backButton %}{% endblock backButton %} -->
+            {% block backButton %}{% endblock backButton %}
             <a class="navbar-brand" href="/">NB Golf App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,24 +39,52 @@
                     <li class="nav-item">
                         <a class="nav-link {% block viewplayers %}{% endblock viewplayers %}" href="{{ url_for('home.view_players') }}">View Players</a>
                     </li>
-                    {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a id="themeButton" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+                            <li>
+                                <a type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="light">
+                                    Light
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                                    Dark
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
+                                    <li><a class="dropdown-item" href="{{ url_for('home.hijack') }}">Hijack Handicap</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
                         <li class="nav-item">
-                            <a class="nav-link {% block hijack %}{% endblock hijack %}" href="{{ url_for('home.hijack') }}">Hijack Handicap</a>
+                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth.login') }}">Login</a>
                         </li>
                     {% endif %}
                 </ul>
-                {% if current_user.is_authenticated %}
-                    <a class="nav-link text-white-50" href="{{ url_for('auth.logout') }}">Logout from {{ current_user.email.split('@')[0] }}</a>
-                {% else %}
-                    <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth.login') }}">Login</a>
-                {% endif %}
             </div>
         </div>
     </nav>
 
-    {% block content %}{% endblock content %}
-    <!-- Optional JavaScript -->
+    <div class="container py-5 h-100">
+        {% block content %}{% endblock content %}
+    </div>
 
+    <!-- Optional JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 </html>
