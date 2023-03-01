@@ -42,7 +42,7 @@ def index():
     all_courses.sort(key=lambda x: x.name)
     stats = {}
     stats["num_rounds"] = len(rounds)
-    stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2)
+    stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
     stats["avg_gir"] = golf.get_avg_gir(rounds)
     stats["avg_fir"] = golf.get_avg_fir(rounds)
     stats["avg_putts"] = golf.get_avg_putts(rounds)
