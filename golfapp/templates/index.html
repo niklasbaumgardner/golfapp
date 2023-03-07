@@ -4,8 +4,28 @@
 {% block home %}active{% endblock home %}
 
 
-
 {% block content %}
+<script>
+    const GET_PAGE_URL = "{{ url_for('home.get_page') }}";
+    const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
+    const COURSES = {{ courses|tojson }};
+</script>
+<script src="/static/js/createElement.js"></script>
+<script src="/static/js/pagination.js"></script>
+<script src="/static/js/round.js"></script>
+<script>
+    const TOTAL_ROUNDS = {{ total }};
+    const CURRENT_PAGE = {{ page }};
+    const NUM_PAGES = {{ num_pages }};
+
+    const parser = new DOMParser();
+    const roundsArray = [];
+    const roundsPy = {{ rounds|tojson }};
+    for (let r of roundsPy) {
+        let round = new Round(...r);
+        roundsArray.push(round);
+    }
+</script>
 <script>
     const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
     function deleteRoundClick(id) {
@@ -35,20 +55,21 @@
         <div class="fw-bold fs-1">
             Your handicap is {{ handicap }}
         </div>
-        <div class="m-2">
+        <!-- <div class="m-2">
             Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
             <div class="form-check form-switch ms-3" style="display:inline-block;">
                 <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
                 <label class="form-check-label" for="showHandicapToggle"></label>
             </div>
-        </div>
-        <div>
+        </div> -->
+        <!-- <div>
+            <p class="fs-4 m-2 fw-bold">Stats for last 20 rounds</p>
             <p class="m-2"><b>{{ stats['num_rounds'] }}</b> rounds recorded</p>
             <p class="m-2">Average round: <b>{{ stats['avg_score'] }}</b></p>
             <p class="m-2">Fairways in regulation: <b>{{ stats['avg_fir'] }}</b></p>
             <p class="m-2">Greens in regulation: <b>{{ stats['avg_gir'] }}</b></p>
             <p class="m-2">Putting: <b>{{ stats['avg_putts'] }}</b></p>
-        </div>
+        </div> -->
     </div>
 </div>
 <div class="container-fluid mb-5">
@@ -72,13 +93,9 @@
                             <td>
                                 <select name="course" id="course" class="form-select"
                                     aria-label="Default select example" style="max-width: 350px;">
-                                    {% for course in all_courses %}
-                                    <option value="{{ course.id }}">{{ course.name }} {{ course.rating }}/{{
-                                        course.slope }}</option>
-                                    {% endfor %}
                                 </select>
                             </td>
-                            <td>
+                            <td class="w-140p">
                                 <input class="form-control w-80p" type="number" name="score" placeholder="Score"
                                     required>
                             </td>
@@ -100,104 +117,64 @@
                         </form>
                     </tr>
 
-                    {% for round in rounds %}
-                    <tr {% if round.included %}class="bg-success-subtle"{% endif %}>
-                        <form id="round{{ round.id }}" action="{{ url_for('home.update_round', id=round.id) }}"
-                            method="POST">
-                            <td>
-                                <span>{{ courses[round.course_id].name }}</span>
-
-                            </td>
-                            <td>
-                                <span class="show-not-edit-{{ round.id }}">{{ round.score }} / {{
-                                    courses[round.course_id].par }} ({{ round.score_diff }})</span>
-                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="score"
-                                    placeholder="Score" value="{{ round.score }}" hidden>
-                            </td>
-                            <td class="w-80p">
-                                <span class="show-not-edit-{{ round.id }}">{{ round.fir }}</span>
-                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="fir"
-                                    placeholder="FIR" value="{{ round.fir }}" hidden>
-                            </td>
-                            <td class="w-80p">
-                                <span class="show-not-edit-{{ round.id }}">{{ round.gir }}</span>
-                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="gir"
-                                    placeholder="GIR" value="{{ round.gir }}" hidden>
-                            </td>
-                            <td class="w-80p">
-                                <span class="show-not-edit-{{ round.id }}">{{ round.putts }}</span>
-                                <input class="form-control show-edit-{{ round.id }} w-80p" type="number" name="putts"
-                                    placeholder="Putts" value="{{ round.putts }}" hidden>
-                            </td>
-                            <td>
-                                <span class="show-not-edit-{{ round.id }}">{{ round.date.strftime("%B %d, %Y") }}</span>
-                                <input class="show-not-edit-{{ round.id }}" type="date" name="date"
-                                    value="{{ round.date.strftime('%Y-%m-%d') }}" hidden>
-                            </td>
-                            <td>
-                                <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
-                                    onclick="editRound('{{ round.id }}')">edit</a>
-                                <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
-                                    onclick="document.getElementById('round{{ round.id }}').submit();" hidden>update</a>
-                                |
-                                <a class="show-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
-                                    onclick="cancelEditRound('{{ round.id }}')" hidden>cancel</a>
-                                <a class="show-not-edit-{{ round.id }} no-underline p-0" href="javascript:void(0);"
-                                    onclick="deleteRoundClick('{{ round.id }}')">delete</a>
-                            </td>
-                        </form>
-                    </tr>
-                    {% endfor %}
+                    <div id="rounds"></div>
                 </tbody>
             </table>
-
         </div>
+
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li id="prev" class="page-item">
+                    <button class="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+                <li id="next" class="page-item">
+                    <button class="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 
-{% for round in rounds %}
-<div id="delete_id{{ round.id }}" class="modal" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <p class="modal-title fs-4">Delete this round?</p>
-                <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'" type="button"
-                    class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="fs-5">Are you sure you want to delete this round?</p>
-                <p class="px-5">Course: {{ courses[round.course_id].name }}</p>
-                <p class="px-5">Score: {{ round.score }}</p>
-                <p class="px-5">Date: {{ round.date.strftime("%B %d, %Y") }}</p>
-            </div>
-            <div class="modal-footer">
-                <form method="POST" action="{{ url_for('home.delete_round', id=round.id) }}">
-                    <button type="submit" id="delete_button" class="btn btn-danger">Delete</button>
-                    <button onclick="document.getElementById('delete_id{{ round.id }}').style.display='none'"
-                        type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
-                        aria-label="Close">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
+<div id="deleteModals"></div>
 
 <script src="/static/js/setdate.js"></script>
 <script>
-    let visibilityToggle = document.getElementById("showHandicapToggle");
-    visibilityToggle.addEventListener("click", event => {
-        console.log("Should show?", event.target.checked);
-        return new Promise(function (resolve, reject) {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("GET", TOGGLE_VISIBILITY_URL + `?isVisible=${event.target.checked}`);
-            xmlHttp.onload = () => {
-                resolve(xmlHttp.response);
-            };
-            xmlHttp.send(null);
-        })
-    });
+    let coursesArray = [];
+    for (let [id, course] of Object.entries(COURSES)) {
+        coursesArray.push(course);
+    }
 
+    coursesArray.sort((a, b) => a.name > b.name);
+
+    let selectCourse = document.getElementById("course");
+
+    for (let course of coursesArray) {
+        let courseOption = createElement({
+            type: "option",
+            value: course.id,
+            content: `${course.name} ${course.rating} / ${course.slope}`
+        });
+        selectCourse.appendChild(courseOption);
+    }
+
+
+    const pagination = new Pagination(roundsArray, TOTAL_ROUNDS, CURRENT_PAGE, NUM_PAGES);
+    // let visibilityToggle = document.getElementById("showHandicapToggle");
+    // visibilityToggle.addEventListener("click", event => {
+    //     console.log("Should show?", event.target.checked);
+    //     return new Promise(function (resolve, reject) {
+    //         var xmlHttp = new XMLHttpRequest();
+    //         xmlHttp.open("GET", TOGGLE_VISIBILITY_URL + `?isVisible=${event.target.checked}`);
+    //         xmlHttp.onload = () => {
+    //             resolve(xmlHttp.response);
+    //         };
+    //         xmlHttp.send(null);
+    //     })
+    // });
 
 </script>
 

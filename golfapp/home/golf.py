@@ -1,3 +1,4 @@
+from flask import url_for
 from golfapp.models import User, Course, Round, Handicap, H_User, RRound
 from golfapp.extensions import db
 import math
@@ -187,3 +188,44 @@ def get_included_rounds(rounds):
         rounds[index[0]] = RRound(rounds[index[0]])
 
     return rounds
+
+
+def jsonify_rounds(rounds):
+    lst = []
+
+    # TODO:
+    # will have to redo round db to change to date
+
+    for r in rounds:
+        temp = [
+            r.id,
+            r.course_id,
+            r.score,
+            r.score_diff,
+            r.fir,
+            r.gir,
+            r.putts,
+            r.date.strftime("%Y-%m-%d"),
+            True if type(r) == RRound and r.included else False,
+            url_for("home.update_round", id=r.id),
+        ]
+        lst.append(temp)
+
+    return lst
+
+
+def jsonify_courses():
+    courses_lst = Course.query.all()
+
+    courses = {}
+
+    for c in courses_lst:
+        courses[c.id] = {
+            "id": c.id,
+            "name": c.name,
+            "par": c.par,
+            "rating": c.rating,
+            "slope": c.slope,
+        }
+
+    return courses

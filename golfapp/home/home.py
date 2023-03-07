@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, H_User
 from golfapp.extensions import db
-from golfapp.home import golf
+from golfapp.home import golf, queries
 from datetime import datetime
 
 from golfapp.user.auth import login
@@ -26,37 +26,48 @@ def toggle_user_visibilty():
 @home.route("/", methods=["GET"])
 @login_required
 def index():
-    user = User.query.filter_by(id=current_user.get_id()).first()
-    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
-    rounds.sort(key=lambda x: x.date, reverse=True)
-    courses = {}
-    for round_ in rounds:
-        courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
+    page = request.args.get("page", 1, type=int)
+
+    rounds, total, page, num_pages = queries.get_rounds(page=page, paginate=True, sort=True)
     if len(rounds) > 0:
         handicap = golf.stringify_handicap(
             Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
         )
     else:
         handicap = "No handicap"
-    all_courses = Course.query.all()
-    all_courses.sort(key=lambda x: x.name)
+    courses = golf.jsonify_courses()
     stats = {}
-    stats["num_rounds"] = len(rounds)
-    stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
-    stats["avg_gir"] = golf.get_avg_gir(rounds)
-    stats["avg_fir"] = golf.get_avg_fir(rounds)
-    stats["avg_putts"] = golf.get_avg_putts(rounds)
+    # stats["num_rounds"] = len(rounds)
+    # stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
+    # stats["avg_gir"] = golf.get_avg_gir(rounds)
+    # stats["avg_fir"] = golf.get_avg_fir(rounds)
+    # stats["avg_putts"] = golf.get_avg_putts(rounds)
     rounds = golf.get_included_rounds(rounds)
+    rounds = golf.jsonify_rounds(rounds)
     return render_template(
         "index.html",
         rounds=rounds,
         courses=courses,
-        all_courses=all_courses,
         handicap=handicap,
-        strftime=datetime.strftime,
         stats=stats,
-        is_visible=user.is_publicly_visible,
+        is_visible=True,
+        total=total,
+        page=page,
+        num_pages=num_pages,
     )
+
+
+@home.route("/get_page")
+@login_required
+def get_page():
+    page = request.args.get("page", -1, type=int)
+
+    if page < 1:
+        return {"sucess": False}
+
+    rounds, total, page, num_pages = queries.get_rounds(page=page, paginate=True, sort=True)
+    rounds = golf.jsonify_rounds(rounds)
+    return {"page": page, "rounds": rounds}
 
 
 @home.route("/view_players", methods=["GET"])
@@ -213,6 +224,8 @@ def add_course_submit():
 @home.route("/update_round/<int:id>", methods=["POST"])
 @login_required
 def update_round(id):
+    page = request.args.get("page", 1, type=int)
+
     round = Round.query.filter_by(user_id=current_user.get_id(), id=id).first()
     if round:
         new_score = request.form.get("score")
@@ -220,6 +233,7 @@ def update_round(id):
         new_fir = request.form.get("fir")
         new_putts = request.form.get("putts")
         new_date = request.form.get("date")
+
         if new_score:
             round.score = new_score
         if new_date:
@@ -237,7 +251,7 @@ def update_round(id):
         db.session.commit()
         update_handicap()
 
-    return redirect(url_for("home.index"))
+    return redirect(url_for("home.index", page=page))
 
 
 @home.route("/delete_round/<int:id>", methods=["POST"])
