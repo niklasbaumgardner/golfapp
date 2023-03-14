@@ -1,7 +1,7 @@
 from re import T
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
-from golfapp.models import User, Course, Round, Handicap, H_User
+from golfapp.models import User, Course, Round, Handicap, Theme
 from golfapp.extensions import db
 from golfapp.home import golf, queries
 from datetime import datetime
@@ -28,7 +28,9 @@ def toggle_user_visibilty():
 def index():
     page = request.args.get("page", 1, type=int)
 
-    rounds, total, page, num_pages = queries.get_rounds(page=page, paginate=True, sort=True)
+    rounds, total, page, num_pages = queries.get_rounds(
+        page=page, paginate=True, sort=True
+    )
     if len(rounds) > 0:
         handicap = golf.stringify_handicap(
             Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
@@ -65,7 +67,9 @@ def get_page():
     if page < 1:
         return {"sucess": False}
 
-    rounds, total, page, num_pages = queries.get_rounds(page=page, paginate=True, sort=True)
+    rounds, total, page, num_pages = queries.get_rounds(
+        page=page, paginate=True, sort=True
+    )
     rounds = golf.jsonify_rounds(rounds)
     return {"page": page, "rounds": rounds}
 
@@ -280,6 +284,33 @@ def delete_round(id):
 
             update_handicap()
     return redirect(url_for("home.index"))
+
+
+@home.route("/set_theme", methods=["GET"])
+@login_required
+def set_theme():
+    color = request.args.get("theme")
+    color = "dark" if color == "dark" else "light"
+    theme = Theme.query.filter_by(user_id=current_user.get_id()).first()
+    if theme:
+        theme.color = color
+        db.session.commit()
+    else:
+        theme = Theme(user_id=current_user.get_id(), color=color)
+        db.session.add(theme)
+        db.session.commit()
+    return {"success": True}
+
+
+@home.context_processor
+def utility_processor():
+    def get_theme():
+        if current_user.is_authenticated:
+            theme = Theme.query.filter_by(user_id=current_user.get_id()).first()
+            if theme:
+                return theme.color
+        return ""
+    return dict(theme=get_theme())
 
 
 def update_handicap():

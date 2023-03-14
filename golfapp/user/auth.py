@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from golfapp.user import queries
-from golfapp.models import User
+from golfapp.models import User, Theme
 from golfapp import mail
 from golfapp import bcrypt
 
@@ -158,6 +158,17 @@ def email_unique():
     email = request.args.get("email")
 
     return {"isUnique": queries.is_email_unique(email)}
+
+
+@auth.context_processor
+def utility_processor():
+    def get_theme():
+        if current_user.is_authenticated:
+            theme = Theme.query.filter_by(user_id=current_user.get_id()).first()
+            if theme:
+                return theme.color
+        return ""
+    return dict(theme=get_theme())
 
 
 def send_reset_email(user):
