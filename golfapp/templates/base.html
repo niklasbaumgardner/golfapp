@@ -70,6 +70,7 @@
                             <ul class="dropdown-menu">
                                 {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
                                     <li><a class="dropdown-item" href="{{ url_for('home.hijack') }}">Hijack Handicap</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('home.edit_courses') }}">Edit Courses</a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>

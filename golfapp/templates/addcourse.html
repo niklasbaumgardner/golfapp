@@ -58,6 +58,11 @@
                         </div>
 
                         <div class="form-outline mb-4">
+                            <label class="form-label" for="par">Teebox</label>
+                            <input class="form-control w-50" type="text" id="teebox" name="teebox" placeholder="Gold" required>
+                        </div>
+
+                        <div class="form-outline mb-4">
                             <label class="form-label" for="par">Par</label>
                             <input class="form-control w-50" type="number" id="par" name="par" placeholder="69" required>
                         </div>
@@ -77,7 +82,7 @@
                         <label class="form-label" for="existing_courses">Existing Courses</label>
                         <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
                             {% for course in courses %}
-                                <li class="list-group-item">{{ course.name }} {{ course.rating }}/{{ course.slope }}</li>
+                                <li class="list-group-item">{{ str(course) }}</li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -97,4 +102,4 @@
     console.log(allCourses);
 </script>
 
-{% endblock content %}s
+{% endblock content %}

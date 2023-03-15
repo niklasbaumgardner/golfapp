@@ -223,6 +223,7 @@ def jsonify_courses():
         courses[c.id] = {
             "id": c.id,
             "name": c.name,
+            "teebox": c.teebox,
             "par": c.par,
             "rating": c.rating,
             "slope": c.slope,

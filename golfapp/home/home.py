@@ -209,20 +209,10 @@ def add_course_submit():
     return render_template("addcourse.html")
 
 
-# @home.route('/index', methods=['GET'])
-# @login_required
-# def index():
-#     rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
-#     courses = {}
-#     for round_ in rounds:
-#         courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
-#     if len(rounds) > 0:
-#         handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
-#     else:
-#         handicap = "No handicap"
-#     all_courses = Course.query.all()
-#     all_courses.sort(key=lambda x: x.name)
-#     return render_template('viewrounds.html', rounds=rounds, courses=courses, all_courses=all_courses, handicap=handicap, strftime=datetime.strftime)
+@home.route("/stats", methods=["GET"])
+@login_required
+def stats():
+    pass
 
 
 @home.route("/update_round/<int:id>", methods=["POST"])
@@ -302,6 +292,68 @@ def set_theme():
     return {"success": True}
 
 
+# @home.route("/test", methods=["GET"])
+# @login_required
+# def test():
+#     courses = Course.query.all()
+#     string = ""
+#     for c in courses:
+#         name = c.name
+#         lst = name.split(" - ")
+#         if len(lst) == 2:
+#             new_name = lst[0]
+#             teebox = lst[1]
+
+#             print(new_name, teebox)
+
+#             c.name = new_name
+#             c.teebox = teebox
+
+#             db.session.commit()
+#         # string += f"{c.id}, {c.name}, {c.rating}, {c.slope}\n"
+
+#     return string
+
+
+@home.route("/edit_courses", methods=["GET"])
+@login_required
+def edit_courses():
+    courses = Course.query.order_by(Course.name).all()
+
+    return render_template("editcourse.html", courses=courses)
+
+
+@home.route("/edit_course/<int:c_id>", methods=["POST"])
+@login_required
+def edit_course(c_id):
+    new_name = request.form.get("name")
+    new_teebox = request.form.get("teebox")
+    new_par = request.form.get("par")
+    new_slope = request.form.get("slope")
+    new_rating = request.form.get("rating")
+
+    queries.update_course(
+        c_id=c_id,
+        name=new_name,
+        teebox=new_teebox,
+        par=new_par,
+        slope=new_slope,
+        rating=new_rating,
+    )
+
+    return redirect(url_for("home.edit_courses"))
+
+
+@home.route("/delete_course/<int:c_id>", methods=["DELETE"])
+@login_required
+def delete_course(c_id):
+    course = Course.query.filter_by(id=c_id).first()
+    db.session.delete(course)
+    db.session.commit()
+
+    return {"success": True}
+
+
 @home.context_processor
 def utility_processor():
     def get_theme():
@@ -310,7 +362,12 @@ def utility_processor():
             if theme:
                 return theme.color
         return ""
+
     return dict(theme=get_theme())
+
+@home.context_processor
+def utility_processor():
+    return dict(str=str)
 
 
 def update_handicap():

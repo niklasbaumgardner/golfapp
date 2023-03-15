@@ -54,9 +54,11 @@ class Round {
     });
     this.element.appendChild(this.form);
 
+    let c = COURSES[this.course_id];
+
     let course = createElement({
       type: "td",
-      content: COURSES[this.course_id].name,
+      content: `${c.name} - ${c.teebox} (${c.rating} / ${c.slope})`,
     });
     this.element.appendChild(course);
 

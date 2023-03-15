@@ -14,7 +14,7 @@ function getThemeButtons() {
   return document.querySelectorAll("[data-bs-theme-value]");
 }
 
-function setTheme(theme) {
+function setTheme(theme, options) {
   theme = theme === "dark" ? "dark" : "light";
 
   console.log("setting theme", theme);
@@ -34,7 +34,9 @@ function setTheme(theme) {
   currentThemeButton.parentElement.parentElement.previousElementSibling.innerText = currentThemeButton.innerText.trim();
 
   storage.setItem("theme", theme);
-  fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
+  if (options.dontSend) {
+    fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
+  }
 }
 
 
@@ -42,6 +44,8 @@ window.addEventListener("DOMContentLoaded", () => {
   if (THEME === "") {
     let storedTheme = getTheme();
     setTheme(storedTheme);
+  } else {
+    setTheme(THEME, { dontSend: true });
   }
 
   let themeButtons = getThemeButtons();
