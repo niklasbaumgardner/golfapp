@@ -55,7 +55,7 @@ class User(db.Model, UserMixin):
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
-    teebox = db.Column(db.String(60), nullable=True)
+    teebox = db.Column(db.String(60), nullable=False)
     par = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
