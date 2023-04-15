@@ -34,7 +34,7 @@ function setTheme(theme, options) {
   currentThemeButton.parentElement.parentElement.previousElementSibling.innerText = currentThemeButton.innerText.trim();
 
   storage.setItem("theme", theme);
-  if (options.dontSend) {
+  if (options?.dontSend) {
     fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
   }
 }

@@ -195,14 +195,13 @@ def add_course():
 @home.route("/add_course_submit", methods=["POST"])
 @login_required
 def add_course_submit():
-    name = request.form["name"]
-    par = request.form["par"]
-    rating = request.form["rating"]
-    slope = request.form["slope"]
+    name = request.form.get("name")
+    teebox = request.form.get("teebox")
+    par = request.form.get("par")
+    rating = request.form.get("rating")
+    slope = request.form.get("slope")
 
-    # print(name, par, rating, slope)
-
-    new_course = Course(name=name, par=par, slope=slope, rating=rating)
+    new_course = Course(name=name, teebox=teebox, par=par, slope=slope, rating=rating)
     db.session.add(new_course)
     db.session.commit()
 
