@@ -221,7 +221,7 @@ def update_round(id):
 
     round = Round.query.filter_by(user_id=current_user.get_id(), id=id).first()
     if round:
-        new_score = request.form.get("score")
+        new_score = request.form.get("score", 99, type=float)
         new_gir = request.form.get("gir")
         new_fir = request.form.get("fir")
         new_putts = request.form.get("putts")
@@ -241,8 +241,12 @@ def update_round(id):
         round.fir = new_fir
         round.putts = new_putts
 
+        course = Course.query.filter_by(id=round.course_id).first()
+        new_score_diff = golf.calculate_score_diff(course.slope, course.rating, round.score)
+        round.score_diff = new_score_diff
+
         db.session.commit()
-        update_handicap()
+        update_handicap(updated_round=round)
 
     return redirect(url_for("home.index", page=page))
 
@@ -369,10 +373,13 @@ def utility_processor():
     return dict(str=str)
 
 
-def update_handicap():
+def update_handicap(updated_round=None):
     rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
     rounds.sort(key=lambda x: x.date, reverse=True)
     rounds = rounds[:20]
+
+    if updated_round and updated_round not in rounds:
+        return
 
     courses = {}
     for round_ in rounds:
