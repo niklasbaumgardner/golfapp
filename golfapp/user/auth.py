@@ -72,7 +72,7 @@ def signup():
             flash("Passwords don't match. Try again", "alert-primary")
             return render_template("signup.html", email=email)
 
-        queries.createUser(email=email, username=username, password=password1)
+        queries.createUser(email=email, username=username, password=password1, is_publicly_visible=True)
         flash("Sign up succesful", "alert-primary")
         return redirect(url_for("auth.login"))
 
