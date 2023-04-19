@@ -4,43 +4,48 @@ from golfapp.extensions import db
 import math
 
 
-def calculate_handicap(rounds, courses):
+def calculate_handicap(rounds):
     count = len(rounds)
     if count <= 3:
-        handicap = get_score_diffs(rounds, courses)[0] - 2
+        handicap = get_score_diffs(rounds)[0] - 2
     elif count == 4:
-        handicap = get_score_diffs(rounds, courses)[0] - 1
+        handicap = get_score_diffs(rounds)[0] - 1
     elif count == 5:
-        handicap = get_score_diffs(rounds, courses)[0]
+        handicap = get_score_diffs(rounds)[0]
     elif count == 6:
-        handicap = (sum(get_score_diffs(rounds, courses)[:2]) / 2) - 1
+        handicap = (sum(get_score_diffs(rounds)[:2]) / 2) - 1
     elif 7 <= count <= 8:
-        handicap = sum(get_score_diffs(rounds, courses)[:2]) / 2
+        handicap = sum(get_score_diffs(rounds)[:2]) / 2
     elif 9 <= count <= 11:
-        handicap = sum(get_score_diffs(rounds, courses)[:3]) / 3
+        handicap = sum(get_score_diffs(rounds)[:3]) / 3
     elif 12 <= count <= 14:
-        handicap = sum(get_score_diffs(rounds, courses)[:4]) / 4
+        handicap = sum(get_score_diffs(rounds)[:4]) / 4
     elif 15 <= count <= 16:
-        handicap = sum(get_score_diffs(rounds, courses)[:5]) / 5
+        handicap = sum(get_score_diffs(rounds)[:5]) / 5
     elif 17 <= count <= 18:
-        handicap = sum(get_score_diffs(rounds, courses)[:6]) / 6
+        handicap = sum(get_score_diffs(rounds)[:6]) / 6
     elif count == 19:
-        handicap = sum(get_score_diffs(rounds, courses)[:7]) / 7
+        handicap = sum(get_score_diffs(rounds)[:7]) / 7
     elif count >= 20:
-        handicap = sum(get_score_diffs(rounds, courses)[:8]) / 8
+        handicap = sum(get_score_diffs(rounds)[:8]) / 8
 
     return round(handicap, 2)
 
 
-def get_score_diffs(rounds, courses):
+def get_score_diffs(rounds):
+    courses = {}
     lst = []
     for rnd in rounds:
-        course = courses[rnd.course_id]
-        score_diff = calculate_score_diff(course.slope, course.rating, rnd.score)
-        rnd.score_diff = score_diff
-        db.session.commit()
+        course = courses.get(rnd.course_id)
+        if not course:
+            course = Course.query.filter_by(id=rnd.course_id).first()
+            courses[rnd.course_id] = course
+        new_score_diff = calculate_score_diff(course.slope, course.rating, rnd.score)
+        if rnd.score_diff != new_score_diff:
+            rnd.score_diff = new_score_diff
+            db.session.commit()
         # print(course.name, score_diff)
-        lst.append(score_diff)
+        lst.append(new_score_diff)
     lst.sort()
     return lst
 

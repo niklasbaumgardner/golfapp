@@ -374,18 +374,13 @@ def utility_processor():
 
 
 def update_handicap(updated_round=None):
-    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
-    rounds.sort(key=lambda x: x.date, reverse=True)
-    rounds = rounds[:20]
+    rounds = Round.query.filter_by(user_id=current_user.get_id()).order_by(Round.date.desc()).limit(20).all()
+    print(len(rounds))
 
     if updated_round and updated_round not in rounds:
         return
 
-    courses = {}
-    for round_ in rounds:
-        courses[round_.course_id] = Course.query.filter_by(id=round_.course_id).first()
-
-    handicap = golf.calculate_handicap(rounds, courses)
+    handicap = golf.calculate_handicap(rounds)
     user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
 
     if user_handicap:
