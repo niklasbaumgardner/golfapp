@@ -39,11 +39,6 @@ def index():
         handicap = "No handicap"
     courses = golf.jsonify_courses()
     stats = {}
-    # stats["num_rounds"] = len(rounds)
-    # stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
-    # stats["avg_gir"] = golf.get_avg_gir(rounds)
-    # stats["avg_fir"] = golf.get_avg_fir(rounds)
-    # stats["avg_putts"] = golf.get_avg_putts(rounds)
     rounds = golf.get_included_rounds(rounds)
     rounds = golf.jsonify_rounds(rounds)
     return render_template(
@@ -120,7 +115,6 @@ def hijack():
 
 @home.route("/calculate_strokes", methods=["GET", "POST"])
 def calculate_strokes():
-
     if request.method == "POST":
         course = request.form.get("course")
         players = request.form.getlist("players")
@@ -211,7 +205,19 @@ def add_course_submit():
 @home.route("/stats", methods=["GET"])
 @login_required
 def stats():
-    pass
+    user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
+    if not user_handicap:
+        return redirect(url_for("home.index"))
+
+    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+
+    stats = {}
+    stats["num_rounds"] = len(rounds)
+    stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
+    stats["avg_gir"] = golf.get_avg_gir(rounds)
+    stats["avg_fir"] = golf.get_avg_fir(rounds)
+    stats["avg_putts"] = golf.get_avg_putts(rounds)
+    return render_template("stats.html", handicap=user_handicap, stats=stats)
 
 
 @home.route("/update_round/<int:id>", methods=["POST"])
@@ -242,7 +248,9 @@ def update_round(id):
         round.putts = new_putts
 
         course = Course.query.filter_by(id=round.course_id).first()
-        new_score_diff = golf.calculate_score_diff(course.slope, course.rating, round.score)
+        new_score_diff = golf.calculate_score_diff(
+            course.slope, course.rating, round.score
+        )
         round.score_diff = new_score_diff
 
         db.session.commit()
@@ -368,13 +376,19 @@ def utility_processor():
 
     return dict(theme=get_theme())
 
+
 @home.context_processor
 def utility_processor():
     return dict(str=str)
 
 
 def update_handicap(updated_round=None):
-    rounds = Round.query.filter_by(user_id=current_user.get_id()).order_by(Round.date.desc()).limit(20).all()
+    rounds = (
+        Round.query.filter_by(user_id=current_user.get_id())
+        .order_by(Round.date.desc())
+        .limit(20)
+        .all()
+    )
     print(len(rounds))
 
     if updated_round and updated_round not in rounds:
