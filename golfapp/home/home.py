@@ -175,6 +175,8 @@ def add_round_submit():
 
     update_handicap()
 
+    golf.send_subscribers_message(current_user.get_id(), new_round)
+
     return redirect(url_for("home.index"))
 
 
@@ -213,7 +215,11 @@ def stats():
 
     stats = {}
     stats["num_rounds"] = len(rounds)
-    stats["avg_score"] = round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2) if len(rounds) > 0 else 0
+    stats["avg_score"] = (
+        round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2)
+        if len(rounds) > 0
+        else 0
+    )
     stats["avg_gir"] = golf.get_avg_gir(rounds)
     stats["avg_fir"] = golf.get_avg_fir(rounds)
     stats["avg_putts"] = golf.get_avg_putts(rounds)
@@ -383,12 +389,7 @@ def utility_processor():
 
 
 def update_handicap(updated_round=None):
-    rounds = (
-        Round.query.filter_by(user_id=current_user.get_id())
-        .order_by(Round.date.desc())
-        .limit(20)
-        .all()
-    )
+    rounds = queries.get_rounds(sort=True, max_rounds=20)
     print(len(rounds))
 
     if updated_round and updated_round not in rounds:

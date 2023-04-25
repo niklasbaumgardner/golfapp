@@ -1,7 +1,38 @@
 from flask import url_for
+from flask_mail import Message
+from flask_login import current_user
 from golfapp.models import User, Course, Round, Handicap, H_User, RRound
 from golfapp.extensions import db
+from golfapp.home import queries
+from golfapp import mail
 import math
+import random
+
+
+GOOD_SARCASTIC_MESSAGES = [
+    "Oh wow, congratulations on being able to hit a small ball into a large hole. You must be so proud.",
+    "I'm sure winning at golf is really going to impress all the ladies at the retirement home.",
+    "I'm so happy for you, now you can add 'golf pro' to your list of career options.",
+    "I'm amazed at how well you played, considering how little effort you put into actually practicing.",
+    "Well done on your golf game! It's always nice to see someone excel at a sport that's basically just walking and hitting a ball.",
+    "Congratulations, you've officially reached the pinnacle of your golfing career. It's all downhill from here.",
+    "I'm sure your opponent was really impressed by your incredible skills at hitting a ball with a stick.",
+    "Wow, it's almost like you were born to play golf. Maybe you should quit your day job and become a professional golfer.",
+    "I heard Tiger Woods called. He's thinking of retiring now that he knows you're on the scene.",
+    "I hope you're ready for all the fame and fortune that comes with being a golfing superstar. Don't forget about us little people when you're on the cover of Golf Digest.",
+]
+BAD_SARCASTIC_MESSAGES = [
+    "Congratulations on winning the 'worst golf player of the year' award. You totally deserve it!",
+    "I heard the grass on the golf course is really tough to play on. Maybe next time you should bring a lawnmower.",
+    "Looks like you had a great time out there, even if the golf ball didn't want to cooperate with you.",
+    "I guess it's a good thing that golf isn't a team sport, otherwise you would have let the whole team down.",
+    "Well, at least now you have a good excuse for why you're not a professional golfer.",
+    "I think you're ready to apply for a job as a golf course landscaper. You clearly have a lot of experience hitting balls into the rough.",
+    "Looks like you had a great workout today, what with all the swinging and missing you did out there.",
+    "Don't worry, I'm sure you'll do better next time. Or maybe not. Who knows?",
+    "I'm sure your opponents were thrilled to have such an easy win against you. It's always nice to boost one's self-esteem, isn't it?",
+    "Well, at least you got some fresh air and exercise today. That's something, right?",
+]
 
 
 def calculate_handicap(rounds):
@@ -235,3 +266,46 @@ def jsonify_courses():
         }
 
     return courses
+
+
+def is_round_in_included(round, included_rounds):
+    round_id_set = set()
+    for rnd in included_rounds:
+        if type(rnd) == RRound:
+            round_id_set.add(rnd.id)
+
+    return round.id in round_id_set
+
+
+def get_random_message(new_round):
+    included_rounds = get_included_rounds(queries.get_rounds(sort=True, max_rounds=20))
+    course = queries.get_course(new_round.course_id)
+
+    index = random.randint(0, 9)
+
+    message = f"""
+    {current_user.username} shot {new_round.score} at {course.name}.
+
+    { GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
+
+    Please thank ChatGPT for the wonderful message.
+    """
+
+    return message
+
+
+def send_subscribers_message(user_id, new_round):
+    subscribers = queries.get_subscribers(user_id=user_id)
+
+    if not subscribers:
+        return
+
+    subscribers_emails = [
+        queries.get_user(subscriber.user_id).email for subscriber in subscribers
+    ]
+
+    msg = Message(
+        f"{current_user.username} just added a new round", recipients=subscribers_emails
+    )
+    msg.body = get_random_message(new_round=new_round)
+    mail.send(msg)

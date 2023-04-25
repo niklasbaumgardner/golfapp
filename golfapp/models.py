@@ -86,3 +86,16 @@ class Theme(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     color = db.Column(db.String, nullable=False)
+
+
+class Subscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subscribed_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+class Subscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subscribtion_id = db.Column(
+        db.Integer, db.ForeignKey("subscription.id"), nullable=False
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
