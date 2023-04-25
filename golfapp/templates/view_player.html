@@ -6,8 +6,9 @@
 
 {% block content %}
 <script>
-    const GET_PAGE_URL = "{{ url_for('home.get_page') }}";
+    const GET_PAGE_URL = "{{ url_for('home.get_page', id=user.id) }}";
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
+    const VIEW_PLAYER_URL = "{{ url_for('home.view_player', id=0) }}".slice(0, -1);
     const COURSES = {{ courses|tojson }};
 </script>
 <script src="/static/js/createElement.js"></script>
@@ -53,25 +54,23 @@
 <div class="container-fluid">
     <div class="container pb-5">
         <div class="fw-bold fs-1">
-            Your handicap is {{ handicap }}
+            {% if is_me %}
+                Your handicap is {{ handicap }}
+            {% else %}
+                {{ user.username }}'s handicap is {{ handicap }}
+            {% endif %}
         </div>
-        <div>
-            <a href="{{ url_for('home.stats') }}">View more stats</a>
-        </div>
+        {% if is_me %}
+            <div>
+                <a href="{{ url_for('home.stats') }}">View more stats</a>
+            </div>
+        {% endif %}
         <!-- <div class="m-2">
             Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
             <div class="form-check form-switch ms-3" style="display:inline-block;">
                 <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
                 <label class="form-check-label" for="showHandicapToggle"></label>
             </div>
-        </div> -->
-        <!-- <div>
-            <p class="fs-4 m-2 fw-bold">Stats for last 20 rounds</p>
-            <p class="m-2"><b>{{ stats['num_rounds'] }}</b> rounds recorded</p>
-            <p class="m-2">Average round: <b>{{ stats['avg_score'] }}</b></p>
-            <p class="m-2">Fairways in regulation: <b>{{ stats['avg_fir'] }}</b></p>
-            <p class="m-2">Greens in regulation: <b>{{ stats['avg_gir'] }}</b></p>
-            <p class="m-2">Putting: <b>{{ stats['avg_putts'] }}</b></p>
         </div> -->
     </div>
 </div>
@@ -91,34 +90,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <form action="{{ url_for('home.add_round_submit') }}" method="POST">
-                            <td>
-                                <select name="course" id="course" class="form-select"
-                                    aria-label="Default select example" style="max-width: 350px;">
-                                </select>
-                            </td>
-                            <td class="w-140p">
-                                <input class="form-control w-80p" type="number" name="score" placeholder="Score"
-                                    required>
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
-                            </td>
-                            <td>
-                                <input class="form-control" type="date" id="date" name="date" placeholder="">
-                            </td>
-                            <td>
-                                <input class="btn btn-primary" type="submit" value="Add Round">
-                            </td>
-                        </form>
-                    </tr>
+                    {% if is_me %}
+                        <tr>
+                            <form action="{{ url_for('home.add_round_submit') }}" method="POST">
+                                <td>
+                                    <select name="course" id="course" class="form-select"
+                                        aria-label="Default select example" style="max-width: 350px;">
+                                    </select>
+                                </td>
+                                <td class="w-140p">
+                                    <input class="form-control w-80p" type="number" name="score" placeholder="Score"
+                                        required>
+                                </td>
+                                <td>
+                                    <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
+                                </td>
+                                <td>
+                                    <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
+                                </td>
+                                <td>
+                                    <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="date" id="date" name="date" placeholder="">
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary" type="submit" value="Add Round">
+                                </td>
+                            </form>
+                        </tr>
+                    {% endif %}
 
                     <div id="rounds"></div>
                 </tbody>
@@ -155,13 +156,15 @@
 
     let selectCourse = document.getElementById("course");
 
-    for (let course of coursesArray) {
-        let courseOption = createElement({
-            type: "option",
-            value: course.id,
-            content: `${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
-        });
-        selectCourse.appendChild(courseOption);
+    if (selectCourse) {
+        for (let course of coursesArray) {
+            let courseOption = createElement({
+                type: "option",
+                value: course.id,
+                content: `${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
+            });
+            selectCourse.appendChild(courseOption);
+        }
     }
 
 

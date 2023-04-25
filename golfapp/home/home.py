@@ -31,46 +31,84 @@ def index():
     rounds, total, page, num_pages = queries.get_rounds(
         page=page, paginate=True, sort=True
     )
-    if len(rounds) > 0:
-        handicap = golf.stringify_handicap(
-            Handicap.query.filter_by(user_id=current_user.get_id()).first().handicap
-        )
+    handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
+    if handicap:
+        handicap = golf.stringify_handicap(handicap.handicap)
     else:
         handicap = "No handicap"
+
     courses = golf.jsonify_courses()
-    stats = {}
     rounds = golf.get_included_rounds(rounds)
     rounds = golf.jsonify_rounds(rounds)
+    user = queries.get_user(current_user.get_id())
     return render_template(
-        "index.html",
+        "view_player.html",
+        user=user,
         rounds=rounds,
         courses=courses,
         handicap=handicap,
-        stats=stats,
         is_visible=True,
+        total=total,
+        page=page,
+        num_pages=num_pages,
+        is_me=True,
+    )
+
+
+@home.route("/view_player/<int:id>", methods=["GET"])
+def view_player(id):
+    page = request.args.get("page", 1, type=int)
+
+    if current_user.is_authenticated and current_user.id == id:
+        return redirect(url_for("home.index", page=page))
+
+    rounds, total, page, num_pages = queries.get_rounds_for_user_id(
+        user_id=id, page=page, paginate=True, sort=True
+    )
+
+    handicap = Handicap.query.filter_by(user_id=id).first()
+    if handicap:
+        handicap = golf.stringify_handicap(handicap.handicap)
+    else:
+        handicap = "No handicap"
+
+    courses = golf.jsonify_courses()
+    rounds = golf.get_included_rounds(rounds)
+    rounds = golf.jsonify_rounds(rounds)
+    user = queries.get_user(id)
+    return render_template(
+        "view_player.html",
+        user=user,
+        rounds=rounds,
+        courses=courses,
+        handicap=handicap,
         total=total,
         page=page,
         num_pages=num_pages,
     )
 
 
-@home.route("/get_page")
-@login_required
-def get_page():
+@home.route("/get_page", defaults={"id": None})
+@home.route("/get_page/<int:id>")
+def get_page(id):
     page = request.args.get("page", -1, type=int)
 
     if page < 1:
         return {"sucess": False}
 
-    rounds, total, page, num_pages = queries.get_rounds(
-        page=page, paginate=True, sort=True
+    if not id and not current_user.is_authenticated:
+        return {"page": page, "rounds": []}
+    elif not id:
+        id = current_user.id
+
+    rounds, total, page, num_pages = queries.get_rounds_for_user_id(
+        user_id=id, page=page, paginate=True, sort=True
     )
     rounds = golf.jsonify_rounds(rounds)
     return {"page": page, "rounds": rounds}
 
 
 @home.route("/view_players", methods=["GET"])
-@login_required
 def view_players():
     users = User.query.filter_by(is_publicly_visible=True).all()
     handis = Handicap.query.all()
