@@ -284,12 +284,12 @@ def get_random_message(new_round):
     index = random.randint(0, 9)
 
     message = f"""
-    {current_user.username} shot {new_round.score} at {course.name}.
+{current_user.username} shot {new_round.score} at {course.name}.
 
-    { GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
+{ GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
 
-    Please thank ChatGPT for the wonderful message.
-    """
+Please thank ChatGPT for the wonderful message.
+"""
 
     return message
 
