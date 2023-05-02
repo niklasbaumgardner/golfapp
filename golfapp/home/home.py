@@ -249,18 +249,56 @@ def stats():
     if not user_handicap:
         return redirect(url_for("home.index"))
 
-    rounds = Round.query.filter_by(user_id=current_user.get_id()).all()
+    rounds = queries.get_rounds()
+
+    if len(rounds) == 0:
+        return redirect(url_for("home.index"))
 
     stats = {}
-    stats["num_rounds"] = len(rounds)
-    stats["avg_score"] = (
-        round(sum(map(lambda x: x.score, rounds)) / len(rounds), 2)
-        if len(rounds) > 0
-        else 0
+    handicap_rounds = {}
+
+    if len(rounds) > 20:
+        newest_rounds = rounds[:20]
+    else:
+        newest_rounds = rounds
+
+    handicap_rounds["num_rounds"] = len(newest_rounds)
+    handicap_rounds["avg_score"] = round(
+        sum(map(lambda x: x.score, newest_rounds)) / len(newest_rounds), 2
     )
-    stats["avg_gir"] = golf.get_avg_gir(rounds)
-    stats["avg_fir"] = golf.get_avg_fir(rounds)
-    stats["avg_putts"] = golf.get_avg_putts(rounds)
+    handicap_rounds["avg_gir"] = golf.get_avg_gir(newest_rounds)
+    handicap_rounds["avg_fir"] = golf.get_avg_fir(newest_rounds)
+    handicap_rounds["avg_putts"] = golf.get_avg_putts(newest_rounds)
+
+    if len(rounds) > 20:
+        previous_rounds_stats = {}
+        previous_rounds = rounds[20:]
+
+        previous_rounds_stats["num_rounds"] = len(previous_rounds)
+        previous_rounds_stats["avg_score"] = round(
+            sum(map(lambda x: x.score, previous_rounds)) / len(previous_rounds), 2
+        )
+        previous_rounds_stats["avg_gir"] = golf.get_avg_gir(previous_rounds)
+        previous_rounds_stats["avg_fir"] = golf.get_avg_fir(previous_rounds)
+        previous_rounds_stats["avg_putts"] = golf.get_avg_putts(previous_rounds)
+
+        stats["previous_rounds_stats"] = previous_rounds_stats
+
+        all_rounds = {}
+
+        all_rounds["num_rounds"] = len(rounds)
+        all_rounds["avg_score"] = round(
+            sum(map(lambda x: x.score, rounds)) / len(rounds), 2
+        )
+        all_rounds["avg_gir"] = golf.get_avg_gir(rounds)
+        all_rounds["avg_fir"] = golf.get_avg_fir(rounds)
+        all_rounds["avg_putts"] = golf.get_avg_putts(rounds)
+
+        stats["all_rounds"] = all_rounds
+
+
+
+    stats["handicap_rounds"] = handicap_rounds
     return render_template("stats.html", handicap=user_handicap, stats=stats)
 
 
@@ -428,7 +466,6 @@ def utility_processor():
 
 def update_handicap(updated_round=None):
     rounds = queries.get_rounds(sort=True, max_rounds=20)
-    print(len(rounds))
 
     if updated_round and updated_round not in rounds:
         return

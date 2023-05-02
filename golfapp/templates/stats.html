@@ -20,13 +20,31 @@
       </div>
     </div> -->
     <div>
-      Coming soon...
-      <!-- <p class="fs-4 m-2 fw-bold">Stats for last 20 rounds</p>
-      <p class="m-2"><b>{{ stats['num_rounds'] }}</b> rounds recorded</p>
-      <p class="m-2">Average round: <b>{{ stats['avg_score'] }}</b></p>
-      <p class="m-2">Fairways in regulation: <b>{{ stats['avg_fir'] }}</b></p>
-      <p class="m-2">Greens in regulation: <b>{{ stats['avg_gir'] }}</b></p>
-      <p class="m-2">Putting: <b>{{ stats['avg_putts'] }}</b></p> -->
+      <!-- Coming soon... -->
+      <p class="fs-4 m-2 fw-bold">Stats for most recent rounds used in handicap calculation</p>
+      <p class="m-2"><b>{{ stats['handicap_rounds']['num_rounds'] }}</b> rounds recorded</p>
+      <p class="m-2">Average round: <b>{{ stats['handicap_rounds']['avg_score'] }}</b></p>
+      <p class="m-2">Fairways in regulation: <b>{{ stats['handicap_rounds']['avg_fir'] }}</b></p>
+      <p class="m-2">Greens in regulation: <b>{{ stats['handicap_rounds']['avg_gir'] }}</b></p>
+      <p class="m-2">Putting: <b>{{ stats['handicap_rounds']['avg_putts'] }}</b></p>
+    </div>
+    <br>
+    <div>
+      <p class="fs-4 m-2 fw-bold">Stats for previous rounds</p>
+      <p class="m-2"><b>{{ stats['previous_rounds_stats']['num_rounds'] }}</b> rounds recorded</p>
+      <p class="m-2">Average round: <b>{{ stats['previous_rounds_stats']['avg_score'] }}</b></p>
+      <p class="m-2">Fairways in regulation: <b>{{ stats['previous_rounds_stats']['avg_fir'] }}</b></p>
+      <p class="m-2">Greens in regulation: <b>{{ stats['previous_rounds_stats']['avg_gir'] }}</b></p>
+      <p class="m-2">Putting: <b>{{ stats['previous_rounds_stats']['avg_putts'] }}</b></p>
+    </div>
+    <br>
+    <div>
+      <p class="fs-4 m-2 fw-bold">Stats for all rounds</p>
+      <p class="m-2"><b>{{ stats['all_rounds']['num_rounds'] }}</b> rounds recorded</p>
+      <p class="m-2">Average round: <b>{{ stats['all_rounds']['avg_score'] }}</b></p>
+      <p class="m-2">Fairways in regulation: <b>{{ stats['all_rounds']['avg_fir'] }}</b></p>
+      <p class="m-2">Greens in regulation: <b>{{ stats['all_rounds']['avg_gir'] }}</b></p>
+      <p class="m-2">Putting: <b>{{ stats['all_rounds']['avg_putts'] }}</b></p>
     </div>
   </div>
 </div>

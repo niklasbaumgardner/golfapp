@@ -141,8 +141,11 @@ def get_avg_gir(rounds):
         if round_.gir:
             total += round_.gir
             count += 1
+    if count:
+        girs = round(total / count, 2)
+        return f"{girs} ({round(100 * girs / 18, 2)}%)"
 
-    return round(total / count, 2) if count else 0
+    return 0
 
 
 def get_avg_fir(rounds):
@@ -154,7 +157,11 @@ def get_avg_fir(rounds):
             total += round_.fir
             count += 1
 
-    return round(total / count, 2) if count else 0
+    if count:
+        firs = round(total / count, 2)
+        return f"{firs} ({round(100 * firs / 14, 2)}%)"
+
+    return 0
 
 
 def get_avg_putts(rounds):
