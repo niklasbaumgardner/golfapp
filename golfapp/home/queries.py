@@ -85,5 +85,8 @@ def get_subscription(user_id):
 def get_subscribers(user_id):
     subscription = get_subscription(user_id=user_id)
 
+    if not subscription:
+        return
+
     subscribers = Subscriber.query.filter_by(subscribtion_id=subscription.id).all()
     return subscribers
