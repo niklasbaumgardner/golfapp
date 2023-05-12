@@ -181,6 +181,11 @@ class Round {
       })
     );
 
+    if (!IS_ME) {
+      this.created = true;
+      return this.element;
+    }
+
     let editTd = createElement({ type: "td" });
     this.element.appendChild(editTd);
 
