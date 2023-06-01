@@ -1,0 +1,15 @@
+{
+  "background_color": "black",
+  "description": "Golf app by Niklas Baumgardner ",
+  "display": "minimal-ui",
+  "icons": [
+    {
+      "src": "images/golf.png",
+      "sizes": "563x563",
+      "type": "image/png"
+    }
+  ],
+  "name": "GolfApp",
+  "short_name": "GolfApp",
+  "start_url": "/"
+}
