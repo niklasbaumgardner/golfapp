@@ -284,7 +284,7 @@ def is_round_in_included(round, included_rounds):
     return round.id in round_id_set
 
 
-def get_random_message(new_round):
+def get_random_message(new_round, user_id):
     included_rounds = get_included_rounds(queries.get_rounds(sort=True, max_rounds=20))
     course = queries.get_course(new_round.course_id)
 
@@ -292,6 +292,8 @@ def get_random_message(new_round):
 
     message = f"""
 {current_user.username} shot {new_round.score} at {course.name}.
+
+View the rest of thier rounds at {url_for('home.view_player', id=user_id, _external=True)}
 
 { GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
 
@@ -303,6 +305,7 @@ Please thank ChatGPT for the wonderful message.
 
 def send_subscribers_message(user_id, new_round):
     subscribers = queries.get_subscribers(user_id=user_id)
+    print(subscribers)
 
     if not subscribers:
         return
@@ -314,5 +317,5 @@ def send_subscribers_message(user_id, new_round):
     msg = Message(
         f"{current_user.username} just added a new round", recipients=subscribers_emails
     )
-    msg.body = get_random_message(new_round=new_round)
+    msg.body = get_random_message(new_round=new_round, user_id=user_id)
     mail.send(msg)
