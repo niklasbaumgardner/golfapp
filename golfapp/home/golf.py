@@ -130,7 +130,7 @@ def get_strokes(course, h_users):
 
 
 def strokes(course, handi):
-    return int(math.ceil(handi * course.slope / 113))
+    return int(math.ceil(handi * (course.slope / 113) + (course.rating - course.par)))
 
 
 def get_avg_gir(rounds):
