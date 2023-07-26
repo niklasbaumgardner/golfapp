@@ -5,7 +5,7 @@ from golfapp import bcrypt
 
 def createUser(email, username, password):
     hash_ = hashPassword(password=password)
-    new_user = User(email=email, username=username, password=hash_)
+    new_user = User(email=email, username=username, password=hash_, is_publicly_visible=True)
     db.session.add(new_user)
     db.session.commit()
 
@@ -33,7 +33,7 @@ def updateUser(id, username, email):
     db.session.commit()
 
 
-def updateUserPasswod(id, password):
+def updateUserPassword(id, password):
     if not password or not id:
         return
 
