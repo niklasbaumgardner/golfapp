@@ -296,8 +296,6 @@ def stats():
 
         stats["all_rounds"] = all_rounds
 
-
-
     stats["handicap_rounds"] = handicap_rounds
     return render_template("stats.html", handicap=user_handicap, stats=stats)
 
@@ -445,6 +443,42 @@ def delete_course(c_id):
     db.session.commit()
 
     return {"success": True}
+
+
+@home.route("/subscribers", methods=["GET"])
+@login_required
+def subscribers():
+    users = queries.get_users()
+    users_map = {}
+
+    subscriptions = []
+    no_subscription = []
+    for user in users:
+        users_map[user.id] = user
+
+        subscription = queries.get_subscription(user.id)
+        if not subscription:
+            no_subscription.append(user)
+            continue
+        subscriptions.append(
+            [subscription, queries.get_subscribers(subscription_id=subscription.id)]
+        )
+
+    return render_template(
+        "subscribers.html",
+        users=users_map,
+        subscriptions=subscriptions,
+        no_subscription=no_subscription,
+    )
+
+@home.route("/create_subscription", methods=["POST"])
+@login_required
+def create_subscription():
+    user_id = request.form.get("user_id")
+    if user_id:
+        queries.create_subscription(user_id=user_id)
+
+    return redirect(url_for("home.subscribers"))
 
 
 @home.context_processor

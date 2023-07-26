@@ -10,6 +10,10 @@ def get_user(user_id):
     return user
 
 
+def get_users():
+    return User.query.all()
+
+
 def get_rounds(page=1, paginate=False, sort=False, max_rounds=None):
     return get_rounds_for_user_id(
         user_id=current_user.get_id(),
@@ -82,7 +86,11 @@ def get_subscription(user_id):
     return subscription
 
 
-def get_subscribers(user_id):
+def get_subscribers(subscription_id):
+    return Subscriber.query.filter_by(subscribtion_id=subscription_id).all()
+
+
+def get_subscribers_for_user_id(user_id):
     subscription = get_subscription(user_id=user_id)
 
     if not subscription:

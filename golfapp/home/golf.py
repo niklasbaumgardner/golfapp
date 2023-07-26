@@ -293,7 +293,7 @@ def get_random_message(new_round, user_id):
     message = f"""
 {current_user.username} shot {new_round.score} at {course.name}.
 
-View the rest of thier rounds at {url_for('home.view_player', id=user_id, _external=True)}
+View the rest of their rounds at {url_for('home.view_player', id=user_id, _external=True)}
 
 { GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
 
@@ -304,7 +304,7 @@ Please thank ChatGPT for the wonderful message.
 
 
 def send_subscribers_message(user_id, new_round):
-    subscribers = queries.get_subscribers(user_id=user_id)
+    subscribers = queries.get_subscribers_for_user_id(user_id=user_id)
     print(subscribers)
 
     if not subscribers:
