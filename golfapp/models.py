@@ -22,6 +22,7 @@ class RRound:
         self.id = round.id
         self.user_id = round.user_id
         self.course_id = round.course_id
+        self.teebox_id = round.teebox_id
         self.score = round.score
         self.score_diff = round.score_diff
         self.gir = round.gir
@@ -55,19 +56,22 @@ class User(db.Model, UserMixin):
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
-    teebox = db.Column(db.String(60), nullable=False)
+
+
+class CourseTeebox(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     par = db.Column(db.Integer, nullable=False)
+    teebox = db.Column(db.String(60), nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
-
-    def __str__(self):
-        return f"{self.name} - {self.teebox} ({self.rating} / {self.slope})"
 
 
 class Round(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
+    teebox_id = db.Column(db.Integer, db.ForeignKey("course_teebox.id"), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     score_diff = db.Column(db.Float, nullable=True)
     gir = db.Column(db.Float, nullable=True)

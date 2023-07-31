@@ -10,6 +10,7 @@
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
     const VIEW_PLAYER_URL = "{{ url_for('home.view_player', id=0) }}".slice(0, -1);
     const COURSES = {{ courses|tojson }};
+    const TEEBOXES = {};
 </script>
 <script src="/static/js/createElement.js"></script>
 <script src="/static/js/pagination.js"></script>
@@ -78,7 +79,7 @@
 <div class="container-fluid mb-5">
     <div class="container">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped-even">
                 <thead>
                     <tr>
                         <th scope="col">Course</th>
@@ -97,11 +98,18 @@
                         <tr>
                             <form action="{{ url_for('home.add_round_submit') }}" method="POST">
                                 <td>
-                                    <select name="course" id="course" class="form-select"
-                                        aria-label="Default select example" style="max-width: 350px;">
-                                    </select>
+                                    <div class="row gy-2">
+                                        <div class="col-12 col-xxl-7">
+                                            <select name="course" id="course" class="form-select">
+                                                <option value="" selected disabled hidden>Select course</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-xxl-5">
+                                            <select name="teebox" id="teebox" class="form-select" hidden></select>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="w-140p">
+                                <td>
                                     <input class="form-control w-80p" type="number" name="score" placeholder="Score"
                                         required>
                                 </td>
@@ -160,14 +168,58 @@
     let selectCourse = document.getElementById("course");
 
     if (selectCourse) {
+        selectCourse.addEventListener("input", onCourseSelect);
+
         for (let course of coursesArray) {
             let courseOption = createElement({
                 type: "option",
                 value: course.id,
-                content: `${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
+                content: course.name, //`${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
             });
             selectCourse.appendChild(courseOption);
         }
+    }
+
+    function createTeeboxElements(teeboxes) {
+        let teeboxSelect = document.getElementById("teebox");
+        let children = teeboxSelect.children;
+        for (let i = children.length; i > 0; i--) {
+            let child = children[i - 1];
+            child.remove();
+        }
+        teeboxSelect.hidden = false;
+
+        let teeboxesArr = Object.entries(teeboxes);
+
+        if (teeboxesArr.length > 1) {
+            let defaultOption = createElement({
+                type: "option",
+                value: "",
+                content: "Select teebox",
+                hidden: true,
+                disabled: true,
+                selected: true,
+            });
+            teeboxSelect.appendChild(defaultOption);
+        }
+
+        for (let [id, teebox] of teeboxesArr) {
+            let option = createElement({
+                type: "option",
+                value: teebox.id,
+                content: `${teebox.teebox} (${teebox.rating} / ${teebox.slope})`
+            });
+            teeboxSelect.appendChild(option);
+        }
+
+        console.log(teeboxes);
+    }
+
+    function onCourseSelect(event) {
+        console.log(event);
+        let courseId = event.target.value;
+        let teeboxes = COURSES[courseId].teeboxes;
+        createTeeboxElements(teeboxes);
     }
 
 

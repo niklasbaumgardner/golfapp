@@ -39,6 +39,14 @@ function createElement(options) {
     ele.hidden = true;
   }
 
+  if (options.selected) {
+    ele.selected = true;
+  }
+
+  if (options.disabled) {
+    ele.disabled = true;
+  }
+
   if (options.value !== undefined) {
     ele.value = options.value;
   }

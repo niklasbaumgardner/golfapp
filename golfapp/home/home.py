@@ -1,7 +1,7 @@
 from re import T
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
-from golfapp.models import User, Course, Round, Handicap, Theme
+from golfapp.models import User, Course, Round, Handicap, Theme, CourseTeebox
 from golfapp.extensions import db
 from golfapp.home import golf, queries
 from datetime import datetime
@@ -155,16 +155,16 @@ def hijack():
 def calculate_strokes():
     if request.method == "POST":
         course = request.form.get("course")
+        teebox = request.form.get("teebox")
         players = request.form.getlist("players")
         # print(course, players)
         players = [int(player) for player in players]
         # print(course, players)
-        strokes, course_name = golf.calculate_strokes(course, players)
+        strokes, course_name = golf.calculate_strokes(course, teebox, players)
         strokes.sort(key=lambda x: x[1])
         return render_template("strokes.html", strokes=strokes, course=course_name)
 
-    courses = Course.query.all()
-    courses.sort(key=lambda x: x.name)
+    courses = golf.jsonify_courses()
     users = User.query.all()
     handis = Handicap.query.all()
     h_users = golf.assign_handicap(users, handis)
@@ -175,8 +175,7 @@ def calculate_strokes():
 @home.route("/add_round", methods=["GET"])
 @login_required
 def add_round():
-    courses = Course.query.all()
-    courses.sort(key=lambda x: x.name)
+    courses = queries.get_courses(sort=True)
     return render_template("addround.html", courses=courses)
 
 
@@ -184,6 +183,7 @@ def add_round():
 @login_required
 def add_round_submit():
     course_id = request.form["course"]
+    teebox_id = request.form.get("teebox")
     score = request.form["score"]
     gir = request.form.get("gir")
     fir = request.form.get("fir")
@@ -202,6 +202,7 @@ def add_round_submit():
     new_round = Round(
         user_id=current_user.get_id(),
         course_id=course_id,
+        teebox_id=teebox_id,
         score=score,
         gir=gir,
         fir=fir,
@@ -221,9 +222,13 @@ def add_round_submit():
 @home.route("/add_course", methods=["GET"])
 @login_required
 def add_course():
-    courses = Course.query.all()
-    courses.sort(key=lambda x: x.name)
-    return render_template("addcourse.html", courses=courses)
+    courses = queries.get_courses(sort=True)
+    courses_and_teeboxes = []
+    for c in courses:
+        teeboxes = queries.get_teeboxes_for_course(course_id=c.id)
+        courses_and_teeboxes.append([c, teeboxes])
+
+    return render_template("addcourse.html", courses=courses_and_teeboxes)
 
 
 @home.route("/add_course_submit", methods=["POST"])
@@ -235,9 +240,26 @@ def add_course_submit():
     rating = request.form.get("rating")
     slope = request.form.get("slope")
 
-    new_course = Course(name=name, teebox=teebox, par=par, slope=slope, rating=rating)
-    db.session.add(new_course)
-    db.session.commit()
+    course = queries.get_course_by_name(name=name)
+    if course:
+        new_teebox = CourseTeebox(
+            course_id=course.id, teebox=teebox, par=par, slope=slope, rating=rating
+        )
+        db.session.add(new_teebox)
+        db.session.commit()
+
+    else:
+        new_course = Course(name=name)
+        db.session.add(new_course)
+        db.session.commit()
+
+        print(new_course.id)
+
+        new_teebox = CourseTeebox(
+            course_id=new_course, teebox=teebox, par=par, slope=slope, rating=rating
+        )
+        db.session.add(new_teebox)
+        db.session.commit()
 
     return render_template("addcourse.html")
 
@@ -409,7 +431,7 @@ def set_theme():
 @home.route("/edit_courses", methods=["GET"])
 @login_required
 def edit_courses():
-    courses = Course.query.order_by(Course.name).all()
+    courses = queries.get_courses(sort=True)
 
     return render_template("editcourse.html", courses=courses)
 
@@ -470,6 +492,7 @@ def subscribers():
         subscriptions=subscriptions,
         no_subscription=no_subscription,
     )
+
 
 @home.route("/create_subscription", methods=["POST"])
 @login_required

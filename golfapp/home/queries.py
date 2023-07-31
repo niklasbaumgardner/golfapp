@@ -1,4 +1,4 @@
-from golfapp.models import Round, Course, Subscription, Subscriber, User
+from golfapp.models import Round, Course, Subscription, Subscriber, User, CourseTeebox
 from golfapp.extensions import db
 from sqlalchemy import extract
 from flask_login import current_user
@@ -50,9 +50,25 @@ def get_rounds_for_user_id(
     return rounds.all()
 
 
+def get_rounds_for_course_id(course_id):
+    return Round.query.filter_by(course_id=course_id).all()
+
+
+def get_courses(sort=False):
+    courses = Course.query
+    if sort:
+        courses = courses.order_by(Course.name)
+
+    return courses
+
+
 def get_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
     return course
+
+
+def get_course_by_name(name):
+    return Course.query.filter_by(name=name).first()
 
 
 def update_course(c_id, name, teebox, par, slope, rating):
@@ -65,6 +81,26 @@ def update_course(c_id, name, teebox, par, slope, rating):
     course.rating = rating
 
     db.session.commit()
+
+
+def create_teebox(course_id, par, teebox, rating, slope):
+    teebox = CourseTeebox(
+        course_id=course_id, par=par, teebox=teebox, rating=rating, slope=slope
+    )
+    db.session.add(teebox)
+    db.session.commit()
+
+
+def get_teebox(teebox_id):
+    return CourseTeebox.query.filter_by(id=teebox_id).first()
+
+
+def get_teeboxes_for_course(course_id):
+    return CourseTeebox.query.filter_by(course_id=course_id).all()
+
+
+def get_teeboxes():
+    return CourseTeebox.query.all()
 
 
 def create_subscription(user_id):

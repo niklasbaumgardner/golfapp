@@ -50,15 +50,16 @@ input[type=number] {
 		left: -9999px;
 	}
 	
-	tr { border: 1px solid #ccc; }
+	tr {
+        border: 1px solid var(--bs-border-color);
+    }
 	
 	td { 
 		/* Behave  like a "row" */
-		border: none;
-		border-bottom: 1px solid #eee; 
 		position: relative;
 		padding-left: 50% !important;
         width: auto !important;
+        min-height: 41px;
 	}
 	
 	td:before { 
@@ -128,5 +129,12 @@ tr.round > td:not(:nth-child(2), :nth-child(3)) {
 
 :root[data-bs-theme="dark"] .table-hover > tbody > tr:hover {
     background-color: #1a1d20;
-    cursor: pointer;
+}
+
+.table-striped-even > tbody > tr:nth-child(even) {
+    background-color: var(--bs-table-striped-bg);
+}
+
+:root[data-bs-theme="dark"] .table-striped-even > tbody > tr:nth-child(even) {
+    background-color: var(--bs-light-bg-subtle);
 }

@@ -4,6 +4,7 @@ class Round {
   constructor(
     id,
     course_id,
+    teebox_id,
     score,
     score_diff,
     fir,
@@ -15,6 +16,7 @@ class Round {
   ) {
     this.id = id;
     this.course_id = course_id;
+    this.teebox_id = teebox_id;
     this.score = score;
     this.score_diff = score_diff;
     this.fir = fir;
@@ -55,10 +57,11 @@ class Round {
     this.element.appendChild(this.form);
 
     let c = COURSES[this.course_id];
+    let t = c.teeboxes[this.teebox_id];
 
     let course = createElement({
       type: "td",
-      content: `${c.name} - ${c.teebox} (${c.rating} / ${c.slope})`,
+      content: `${c.name} - ${t.teebox} (${t.rating} / ${t.slope})`,
     });
     this.element.appendChild(course);
 
@@ -69,7 +72,9 @@ class Round {
       createElement({
         type: "span",
         classString: `show-not-edit-${this.id}`,
-        content: `${this.score} / ${COURSES[this.course_id].par} (${this.score_diff})`,
+        content: `${this.score} / ${t.par} (${
+          this.score_diff
+        })`,
       })
     );
 

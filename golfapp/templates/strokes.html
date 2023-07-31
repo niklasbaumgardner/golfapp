@@ -6,6 +6,13 @@
 
 
 {% block content %}
+    {% if courses %}
+        <script>
+            const COURSES = {{ courses|tojson }};
+        </script>
+    {% endif %}
+    <script src="/static/js/createElement.js"></script>
+
     <div class="card">
         <div class="card-body p-5">
             <p class="card-title fs-2 mb-3">Strokes</p>
@@ -46,12 +53,17 @@
 
                         </div>
                         <div class="col-sm">
-                            <label class="form-label" for="course">Choose a course:</label>
-                            <select name="course" id="course" class="form-select" aria-label="Default select example">
-                                {% for course in courses %}
-                                    <option value="{{ course.id }}">{{ str(course) }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="row gy-2">
+                                <div class="col-12">
+                                    <label class="form-label" for="course">Choose a course:</label>
+                                    <select name="course" id="course" class="form-select">
+                                        <option value="" selected disabled hidden>Select course</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <select name="teebox" id="teebox" class="form-select" hidden></select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -64,4 +76,70 @@
         </div>
     </div>
 
+    <script>
+        let coursesArray = [];
+        for (let [id, course] of Object.entries(COURSES)) {
+            coursesArray.push(course);
+        }
+
+        coursesArray.sort((a, b) => a.name > b.name);
+
+        let selectCourse = document.getElementById("course");
+        console.log(selectCourse);
+
+        if (selectCourse) {
+            selectCourse.addEventListener("input", onCourseSelect);
+
+            for (let course of coursesArray) {
+                let courseOption = createElement({
+                    type: "option",
+                    value: course.id,
+                    content: course.name, //`${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
+                });
+                selectCourse.appendChild(courseOption);
+            }
+        }
+
+        function createTeeboxElements(teeboxes) {
+            let teeboxSelect = document.getElementById("teebox");
+            let children = teeboxSelect.children;
+            for (let i = children.length; i > 0; i--) {
+                let child = children[i - 1];
+                child.remove();
+            }
+            teeboxSelect.hidden = false;
+
+            let teeboxesArr = Object.entries(teeboxes);
+
+            if (teeboxesArr.length > 1) {
+                let defaultOption = createElement({
+                    type: "option",
+                    value: "",
+                    content: "Select teebox",
+                    hidden: true,
+                    disabled: true,
+                    selected: true,
+                });
+                teeboxSelect.appendChild(defaultOption);
+            }
+
+            for (let [id, teebox] of teeboxesArr) {
+                let option = createElement({
+                    type: "option",
+                    value: teebox.id,
+                    content: `${teebox.teebox} (${teebox.rating} / ${teebox.slope})`
+                });
+                teeboxSelect.appendChild(option);
+            }
+
+            console.log(teeboxes);
+        }
+
+        function onCourseSelect(event) {
+            console.log(event);
+            let courseId = event.target.value;
+            let teeboxes = COURSES[courseId].teeboxes;
+            createTeeboxElements(teeboxes);
+        }
+    </script>
 {% endblock content %}s

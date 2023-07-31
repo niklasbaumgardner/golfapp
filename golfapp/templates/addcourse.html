@@ -81,8 +81,12 @@
                     <div class="col-sm">
                         <label class="form-label" for="existing_courses">Existing Courses</label>
                         <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
-                            {% for course in courses %}
-                                <li class="list-group-item">{{ str(course) }}</li>
+                            {% for course, teeboxes in courses %}
+                                <li class="list-group-item">{{ course.name }}
+                                    ({% for teebox in teeboxes %}
+                                        {{ teebox.teebox }},
+                                    {% endfor %})
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>

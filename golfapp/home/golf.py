@@ -64,14 +64,14 @@ def calculate_handicap(rounds):
 
 
 def get_score_diffs(rounds):
-    courses = {}
+    teeboxes = {}
     lst = []
     for rnd in rounds:
-        course = courses.get(rnd.course_id)
-        if not course:
-            course = Course.query.filter_by(id=rnd.course_id).first()
-            courses[rnd.course_id] = course
-        new_score_diff = calculate_score_diff(course.slope, course.rating, rnd.score)
+        teebox = teeboxes.get(rnd.teebox_id)
+        if not teebox:
+            teebox = queries.get_teebox(rnd.teebox_id)
+            teeboxes[rnd.teebox_id] = teebox
+        new_score_diff = calculate_score_diff(teebox.slope, teebox.rating, rnd.score)
         if rnd.score_diff != new_score_diff:
             rnd.score_diff = new_score_diff
             db.session.commit()
@@ -111,26 +111,27 @@ def find_handicap(id, handis):
     return next(filter(lambda x: x.user_id == id, handis), None)
 
 
-def calculate_strokes(course, players):
-    course = Course.query.filter_by(id=course).first()
+def calculate_strokes(course, teebox, players):
+    course = queries.get_course(course_id=course)
+    teebox = queries.get_teebox(teebox_id=teebox)
     players = [User.query.filter_by(id=player).first() for player in players]
     handis = [Handicap.query.filter_by(user_id=player.id).first() for player in players]
 
     h_users = assign_handicap(players, handis, stringify=False)
 
-    return get_strokes(course, h_users), course.name
+    return get_strokes(teebox, h_users), course.name
 
 
-def get_strokes(course, h_users):
+def get_strokes(teebox, h_users):
     lst = []
     for user in h_users:
-        num_strokes = strokes(course, user.handicap)
+        num_strokes = strokes(teebox, user.handicap)
         lst.append((user.username, num_strokes))
     return lst
 
 
-def strokes(course, handi):
-    return int(math.ceil(handi * (course.slope / 113) + (course.rating - course.par)))
+def strokes(teebox, handi):
+    return int(math.ceil(handi * (teebox.slope / 113) + (teebox.rating - teebox.par)))
 
 
 def get_avg_gir(rounds):
@@ -243,6 +244,7 @@ def jsonify_rounds(rounds):
         temp = [
             r.id,
             r.course_id,
+            r.teebox_id,
             r.score,
             r.score_diff,
             r.fir,
@@ -257,22 +259,39 @@ def jsonify_rounds(rounds):
     return lst
 
 
-def jsonify_courses():
-    courses_lst = Course.query.all()
+def jsonify_courses(sort=False):
+    courses_lst = queries.get_courses(sort=sort)
 
     courses = {}
 
     for c in courses_lst:
+        teeboxes = jsonify_teeboxes(course_id=c.id)
+
         courses[c.id] = {
             "id": c.id,
             "name": c.name,
-            "teebox": c.teebox,
-            "par": c.par,
-            "rating": c.rating,
-            "slope": c.slope,
+            "teeboxes": teeboxes,
         }
 
     return courses
+
+
+def jsonify_teeboxes(course_id):
+    teeboxes_lst = queries.get_teeboxes_for_course(course_id=course_id)
+
+    teeboxes = {}
+
+    for t in teeboxes_lst:
+        teeboxes[t.id] = {
+            "id": t.id,
+            "course_id": course_id,
+            "teebox": t.teebox,
+            "par": t.par,
+            "rating": t.rating,
+            "slope": t.slope,
+        }
+
+    return teeboxes
 
 
 def is_round_in_included(round, included_rounds):
