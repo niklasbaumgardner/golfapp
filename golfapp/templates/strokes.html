@@ -82,7 +82,7 @@
             coursesArray.push(course);
         }
 
-        coursesArray.sort((a, b) => a.name > b.name);
+        coursesArray.sort((a, b) => { return a.name.localeCompare(b.name); });
 
         let selectCourse = document.getElementById("course");
         console.log(selectCourse);

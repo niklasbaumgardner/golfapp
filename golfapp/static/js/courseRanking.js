@@ -79,7 +79,7 @@ class CourseHandler {
 
   init() {
     this.courses.sort((a, b) => {
-      return a.name > b.name;
+      return a.name.localeCompare(b.name);
     });
     for (let c of this.courses) {
       new CourseOption(c.id, c.name, this.selectCoursesEl);
