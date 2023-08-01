@@ -1,4 +1,12 @@
-from golfapp.models import Round, Course, Subscription, Subscriber, User, CourseTeebox
+from golfapp.models import (
+    Round,
+    Course,
+    Subscription,
+    Subscriber,
+    User,
+    CourseTeebox,
+    CourseRanking,
+)
 from golfapp.extensions import db
 from sqlalchemy import extract
 from flask_login import current_user
@@ -59,7 +67,7 @@ def get_courses(sort=False):
     if sort:
         courses = courses.order_by(Course.name)
 
-    return courses
+    return courses.all()
 
 
 def get_course(course_id):
@@ -101,6 +109,43 @@ def get_teeboxes_for_course(course_id):
 
 def get_teeboxes():
     return CourseTeebox.query.all()
+
+
+def create_course_ranking(course_id, rating):
+    course_ranking = CourseRanking(
+        user_id=current_user.id, course_id=course_id, rating=rating
+    )
+    db.session.add(course_ranking)
+    db.session.commit()
+
+
+def get_course_ranking(course_ranking_id):
+    return CourseRanking.query.filter_by(id=course_ranking_id).first()
+
+
+def get_course_rankings():
+    return get_course_rankings_for_user(user_id=current_user.id)
+
+
+def get_course_rankings_for_user(user_id):
+    return (
+        CourseRanking.query.filter_by(user_id=user_id)
+        .order_by(CourseRanking.rating)
+        .all()
+    )
+
+
+def get_course_ranking_by_course_and_user(course_id, user_id):
+    return CourseRanking.query.filter_by(user_id=user_id, course_id=course_id).first()
+
+
+def update_course_ranking(rating, course_ranking=None, course_ranking_id=None):
+    if not course_ranking and not course_ranking_id:
+        return
+    if not course_ranking:
+        course_ranking = get_course_ranking(course_ranking_id=course_ranking_id)
+    course_ranking.rating = rating
+    db.session.commit()
 
 
 def create_subscription(user_id):

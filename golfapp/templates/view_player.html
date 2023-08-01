@@ -62,11 +62,14 @@
                 {{ user.username }}'s handicap is {{ handicap }}
             {% endif %}
         </div>
-        {% if is_me %}
-            <div>
+        <div class="row">
+            {% if is_me %}
                 <a href="{{ url_for('home.stats') }}">View more stats</a>
-            </div>
-        {% endif %}
+                <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View my course ranking</a>
+            {% else %}
+                <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View course ranking</a>
+            {% endif %}
+        </div>
         <!-- <div class="m-2">
             Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
             <div class="form-check form-switch ms-3" style="display:inline-block;">
@@ -78,7 +81,7 @@
 </div>
 <div class="container-fluid mb-5">
     <div class="container">
-        <div class="table-responsive">
+        <div class="table-mobile">
             <table class="table table-striped-even">
                 <thead>
                     <tr>

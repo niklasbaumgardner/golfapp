@@ -103,3 +103,10 @@ class Subscriber(db.Model):
         db.Integer, db.ForeignKey("subscription.id"), nullable=False
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+class CourseRanking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
+    rating = db.Column(db.Float, nullable=True)

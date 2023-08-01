@@ -116,6 +116,51 @@ def view_players():
     return render_template("viewplayers.html", users=h_users)
 
 
+@home.route("/course_ranking", defaults={"user_id": None}, methods=["GET"])
+@home.route("/course_ranking/<int:user_id>", methods=["GET", "POST"])
+def course_ranking(user_id):
+    if not user_id and not current_user.is_authenticated:
+        return redirect(url_for("auth.login"))
+
+    if request.method == "POST":
+        if user_id == current_user.id:
+            course_id = request.form.get("course")
+            rating = request.form.get("rating")
+
+            course_ranking = queries.get_course_ranking_by_course_and_user(
+                course_id=course_id, user_id=current_user.id
+            )
+            if course_ranking:
+                queries.update_course_ranking(
+                    course_ranking=course_ranking, rating=rating
+                )
+            else:
+                queries.create_course_ranking(course_id, rating)
+            return redirect(url_for("home.course_ranking"))
+
+    if not user_id and current_user.is_authenticated:
+        user_id = current_user.id
+
+    is_me = current_user.is_authenticated and user_id == current_user.id
+    return render_template("courseranking.html", user_id=user_id, is_me=is_me)
+
+
+@home.route("/get_course_ranking_data/<int:user_id>", methods=["GET"])
+def get_course_ranking_data(user_id):
+    ranking_data = queries.get_course_rankings_for_user(user_id=user_id)
+    ranking_data_lst = []
+    for r in ranking_data:
+        ranking_data_lst.append(
+            dict(id=r.id, user_id=r.user_id, course_id=r.course_id, rating=r.rating)
+        )
+    courses = queries.get_courses()
+    courses_lst = []
+    for c in courses:
+        courses_lst.append(dict(id=c.id, name=c.name))
+
+    return {"ranking_data": ranking_data_lst, "courses": courses_lst}
+
+
 @home.route("/hijack", methods=["GET", "POST"])
 @login_required
 def hijack():
