@@ -19,7 +19,14 @@ class CourseRanking {
     }
 
     this.courseRankingArr.sort((a, b) => {
-      return Math.max(a.rating, b.rating);
+      if (a.rating < b.rating) {
+        return 1;
+      }
+      if (a.rating > b.rating) {
+        return -1;
+      }
+      // a must be equal to b
+      return 0;
     });
 
     let ranking = document.querySelector("tbody");
