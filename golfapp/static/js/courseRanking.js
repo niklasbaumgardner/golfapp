@@ -19,7 +19,7 @@ class CourseRanking {
     }
 
     this.courseRankingArr.sort((a, b) => {
-      return a.rating < b.rating;
+      return Math.max(a.rating, b.rating);
     });
 
     let ranking = document.querySelector("tbody");
