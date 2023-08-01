@@ -27,36 +27,45 @@
                   <thead>
                       <tr>
                           <th scope="col">Name</th>
-                          <th scope="col">Teebox</th>
-                          <th scope="col">Par</th>
-                          <th scope="col">Slope</th>
-                          <th scope="col">Rating</th>
+                          <th scope="col">Teeboxes</th>
+                          <th></th>
+                          <th></th>
                       </tr>
                   </thead>
                   <tbody>
-                    {% for course in courses %}
+                    {% for course_id, course in courses.items() %}
                       <tr>
-                        <form action="{{ url_for('home.edit_course', c_id=course.id) }}" method="POST">
+                        <form action="{{ url_for('home.edit_course', c_id=course_id) }}" method="POST">
                             <td>
                               <input class="form-control" type="text" name="name" value="{{ course.name }}" required>
                             </td>
                             <td>
-                              <input class="form-control" type="text" name="teebox" value="{{ course.teebox }}" required>
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Teebox</th>
+                                    <th scope="col">Par</th>
+                                    <th scope="col">Slope</th>
+                                    <th scope="col">Rating</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for teebox_id, teebox in course.teeboxes.items() %}
+                                    <tr>
+                                      <td>{{ teebox.teebox }}</td>
+                                      <td>{{ teebox.par }}</td>
+                                      <td>{{ teebox.slope }}</td>
+                                      <td>{{ teebox.rating }}</td>
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
                             </td>
                             <td>
-                              <input class="form-control" type="number" name="par" value="{{ course.par }}" required>
+                              <input class="form-control btn btn-primary" type="submit" value="Update">
                             </td>
                             <td>
-                              <input class="form-control" type="number" step=".1" name="slope" value="{{ course.slope }}" required>
-                            </td>
-                            <td>
-                              <input class="form-control" type="number" step=".1" name="rating" value="{{ course.rating }}" required>
-                            </td>
-                            <td>
-                              <input class="form-control" type="submit" value="Update">
-                            </td>
-                            <td>
-                              <button class="form-control" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
+                              <button class="form-control btn btn-danger" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
                             </td>
                         </form>
                       </tr>

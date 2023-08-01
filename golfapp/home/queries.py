@@ -79,14 +79,10 @@ def get_course_by_name(name):
     return Course.query.filter_by(name=name).first()
 
 
-def update_course(c_id, name, teebox, par, slope, rating):
+def update_course(c_id, name):
     course = get_course(course_id=c_id)
 
     course.name = name
-    course.teebox = teebox
-    course.par = par
-    course.slope = slope
-    course.rating = rating
 
     db.session.commit()
 

@@ -476,7 +476,7 @@ def set_theme():
 @home.route("/edit_courses", methods=["GET"])
 @login_required
 def edit_courses():
-    courses = queries.get_courses(sort=True)
+    courses = golf.jsonify_courses(sort=True)
 
     return render_template("editcourse.html", courses=courses)
 
@@ -485,18 +485,10 @@ def edit_courses():
 @login_required
 def edit_course(c_id):
     new_name = request.form.get("name")
-    new_teebox = request.form.get("teebox")
-    new_par = request.form.get("par")
-    new_slope = request.form.get("slope")
-    new_rating = request.form.get("rating")
 
     queries.update_course(
         c_id=c_id,
         name=new_name,
-        teebox=new_teebox,
-        par=new_par,
-        slope=new_slope,
-        rating=new_rating,
     )
 
     return redirect(url_for("home.edit_courses"))
