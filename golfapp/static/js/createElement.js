@@ -101,3 +101,31 @@ function createElement(options) {
 
   return ele;
 }
+
+class CustomElement {
+  get markup() {
+    return `<template><p>Hello world</p></template>`;
+  }
+
+  get fragment() {
+    if (!this.template) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(this.markup, "text/html");
+      this.template = document.importNode(doc.querySelector("template"), true);
+    }
+    let fragment = this.template.content.cloneNode(true);
+    return fragment;
+  }
+
+  addToAnchor(anchor) {
+    this.anchor = anchor;
+    this.anchor.appendChild(this.fragment);
+  }
+
+  querySelector(query) {
+    return this.anchor?.querySelector(query);
+  }
+  querySelectorAll(query) {
+    return this.anchor?.querySelectorAll(query);
+  }
+}
