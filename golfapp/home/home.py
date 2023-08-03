@@ -301,7 +301,7 @@ def add_course_submit():
         print(new_course.id)
 
         new_teebox = CourseTeebox(
-            course_id=new_course, teebox=teebox, par=par, slope=slope, rating=rating
+            course_id=new_course.id, teebox=teebox, par=par, slope=slope, rating=rating
         )
         db.session.add(new_teebox)
         db.session.commit()
