@@ -65,13 +65,19 @@ function getAverageCourseRating(courseRankings, courses) {
   return Object.values(courseData);
 }
 
+function getWeight(number) {
+  return Math.min(95 + number, 100) / 100;
+}
+
 function averageRating(array) {
-  return (
+  let averageRating =
     array.reduce(
       (acumulator, currentValue) => acumulator + currentValue.rating,
       0
-    ) / array.length
-  );
+    ) / array.length;
+
+  let weight = getWeight(array.length);
+  return averageRating * weight;
 }
 
 class TableRow extends CustomElement {
