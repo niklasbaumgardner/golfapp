@@ -146,23 +146,35 @@ def course_ranking(user_id):
         user_id = current_user.id
 
     is_me = current_user.is_authenticated and user_id == current_user.id
-    return render_template("courseranking.html", user_id=user_id, is_me=is_me)
+    user = queries.get_user(user_id=user_id)
+    return render_template("courseranking.html", user_id=user_id, username=user.username, is_me=is_me)
 
 
 @home.route("/get_course_ranking_data/<int:user_id>", methods=["GET"])
 def get_course_ranking_data(user_id):
     ranking_data = queries.get_course_rankings_for_user(user_id=user_id)
-    ranking_data_lst = []
-    for r in ranking_data:
-        ranking_data_lst.append(
-            dict(id=r.id, user_id=r.user_id, course_id=r.course_id, rating=r.rating)
-        )
+    ranking_data_lst = [r.to_json() for r in ranking_data]
     courses = queries.get_courses()
-    courses_lst = []
-    for c in courses:
-        courses_lst.append(dict(id=c.id, name=c.name))
+    courses_lst = [c.to_json() for c in courses]
 
     return {"ranking_data": ranking_data_lst, "courses": courses_lst}
+
+
+@home.route("/course_rankings", methods={"GET"})
+def course_rankings():
+    return render_template("courserankings.html")
+
+
+@home.route("/get_all_course_ranking_data", methods=["GET"])
+def get_all_course_ranking_data():
+    users = queries.get_users()
+    course_rankings = queries.get_all_course_rankings()
+    courses = queries.get_courses()
+
+    u_dict = {u.id: u.to_json() for u in users}
+    c_dict = {c.id: c.to_json() for c in courses}
+    cr_dict = {cr.id: cr.to_json() for cr in course_rankings}
+    return {"users": u_dict, "courses": c_dict, "course_rankings": cr_dict}
 
 
 @home.route("/hijack", methods=["GET", "POST"])
@@ -520,7 +532,10 @@ def delete_course(c_id):
         teeboxes_rounds_count += len(queries.get_rounds_by_teebox_id(teebox_id=t.id))
 
     if teeboxes_rounds_count > 0:
-        return {"success": False, "info": f"{len(rounds)} rounds have a teebox from this course"}
+        return {
+            "success": False,
+            "info": f"{len(rounds)} rounds have a teebox from this course",
+        }
 
     for t in teeboxes:
         queries.delete_teebox(teebox_id=t.id)

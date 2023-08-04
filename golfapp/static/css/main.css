@@ -29,7 +29,7 @@ input[type=number] {
 }
 
 .mt-alerts {
-    position:fixed;
+    position: fixed;
     z-index: 999;
 }
 
@@ -37,63 +37,86 @@ input[type=number] {
     background-color: #d1e7dd;
 }
 
+.rating-by-user {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 15ch;
+    display: inline-block;
+}
+
+span.rating-by-user {
+    margin-right: 1ch;
+}
+
 @media (max-width: 1000px) {
-    	/* Force table to not be like tables anymore */
-	.table-mobile table, .table-mobile thead, .table-mobile tbody, .table-mobile th, .table-mobile td, .table-mobile tr {
-		display: block; 
-	}
-	
-	/* Hide table headers (but not display: none;, for accessibility) */
-	.table-mobile thead tr {
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
-	
-	.table-mobile tr {
+
+    /* Force table to not be like tables anymore */
+    .table-mobile table,
+    .table-mobile thead,
+    .table-mobile tbody,
+    .table-mobile th,
+    .table-mobile td,
+    .table-mobile tr {
+        display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    .table-mobile thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table-mobile tr {
         border: 1px solid var(--bs-border-color);
     }
-	
-	.table-mobile td {
-		/* Behave  like a "row" */
-		position: relative;
-		padding-left: 50% !important;
+
+    .table-mobile td {
+        /* Behave  like a "row" */
+        position: relative;
+        padding-left: 50% !important;
         width: auto !important;
         min-height: 41px;
-	}
-	
-	.table-mobile td:before {
-		/* Now like a table header */
-		position: absolute;
-		/* Top/left values mimic padding */
-		top: 6px;
-		left: 6px;
-		width: 45%; 
-		padding-right: 10px; 
-		white-space: nowrap;
-	}
+    }
+
+    .table-mobile td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
 
     .table-mobile td:nth-of-type(1):before {
         content: "Course";
         font-weight: bold;
     }
-	.table-mobile td:nth-of-type(2):before {
+
+    .table-mobile td:nth-of-type(2):before {
         content: "Score / Par";
         font-weight: bold;
     }
-	.table-mobile td:nth-of-type(3):before {
+
+    .table-mobile td:nth-of-type(3):before {
         content: "FIR";
         font-weight: bold;
     }
-	.table-mobile td:nth-of-type(4):before {
+
+    .table-mobile td:nth-of-type(4):before {
         content: "GIR";
         font-weight: bold;
     }
-	.table-mobile td:nth-of-type(5):before  {
+
+    .table-mobile td:nth-of-type(5):before {
         content: "Putts";
         font-weight: bold;
     }
-	.table-mobile td:nth-of-type(6):before  {
+
+    .table-mobile td:nth-of-type(6):before {
         content: "Date";
         font-weight: bold;
     }
@@ -103,6 +126,7 @@ input[type=number] {
         content: "Name";
         font-weight: bold;
     }
+
     .table-mobile td.handicap:nth-of-type(2):before {
         content: "Handicap";
         font-weight: bold;
@@ -114,7 +138,7 @@ input[type=number] {
     }
 }
 
-tr.round > td:not(:nth-child(2), :nth-child(3)) {
+tr.round>td:not(:nth-child(2), :nth-child(3)) {
     text-align: center;
 }
 
@@ -122,19 +146,19 @@ tr.round > td:not(:nth-child(2), :nth-child(3)) {
     padding: 1px 4px;
 }
 
-.table-hover > tbody > tr:hover {
+.table-hover>tbody>tr:hover {
     background-color: #ced4da;
     cursor: pointer;
 }
 
-:root[data-bs-theme="dark"] .table-hover > tbody > tr:hover {
+:root[data-bs-theme="dark"] .table-hover>tbody>tr:hover {
     background-color: #1a1d20;
 }
 
-.table-striped-even > tbody > tr:nth-child(even) {
+.table-striped-even>tbody>tr:nth-child(even) {
     background-color: var(--bs-table-striped-bg);
 }
 
-:root[data-bs-theme="dark"] .table-striped-even > tbody > tr:nth-child(even) {
+:root[data-bs-theme="dark"] .table-striped-even>tbody>tr:nth-child(even) {
     background-color: var(--bs-light-bg-subtle);
 }

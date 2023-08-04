@@ -158,6 +158,10 @@ def get_course_rankings_for_user(user_id):
     )
 
 
+def get_all_course_rankings():
+    return CourseRanking.query.all()
+
+
 def get_course_ranking_by_course_and_user(course_id, user_id):
     return CourseRanking.query.filter_by(user_id=user_id, course_id=course_id).first()
 

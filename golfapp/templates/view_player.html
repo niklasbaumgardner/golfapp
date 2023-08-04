@@ -107,6 +107,12 @@
                                             </select>
                                         </div>
                                         <div class="col-12 col-xxl-5">
+                                            <div id="course-not-found-text">
+                                                <small>
+                                                    <span>Don't see the course you're looking for?</span>
+                                                    <a href="{{ url_for('home.add_course') }}">Add a course here</a>
+                                                </small>
+                                            </div>
                                             <select name="teebox" id="teebox" class="form-select" hidden></select>
                                         </div>
                                     </div>
@@ -221,6 +227,8 @@
         console.log(event);
         let courseId = event.target.value;
         let teeboxes = COURSES[courseId].teeboxes;
+        let courseNotFoundText = document.getElementById("course-not-found-text");
+        courseNotFoundText.hidden = true;
         createTeeboxElements(teeboxes);
     }
 

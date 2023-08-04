@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Course Rankings{% endblock title %}
+{% block courserankings %}active{% endblock courserankings %}
+
+
+{% block content %}
+<script>
+  const GET_ALL_RANKING_DATA_URL = "{{ url_for('home.get_all_course_ranking_data') }}";
+  const COURSE_RANKING_USER_URL = "{{ url_for('home.course_ranking', user_id=0) }}"
+</script>
+
+<div class="container mb-5">
+  <div class="container pb-5">
+    <div class="fs-2">
+        Average course rankings
+    </div>
+  </div>
+  <table class="table table-striped-even">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Course</th>
+        <th>Average Rating</th>
+        <th>All ratings</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script src="/static/js/courseRankings.mjs" type="module"></script>
+
+{% endblock content %}

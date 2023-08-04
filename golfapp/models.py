@@ -52,10 +52,16 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
+    def to_json(self):
+        return dict(id=self.id, username=self.username)
+
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
+
+    def to_json(self):
+        return dict(id=self.id, name=self.name)
 
 
 class CourseTeebox(db.Model):
@@ -65,6 +71,16 @@ class CourseTeebox(db.Model):
     teebox = db.Column(db.String(60), nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
+
+    def to_json(self):
+        return dict(
+            id=self.id,
+            course_id=self.course_id,
+            teebox=self.teebox,
+            par=self.par,
+            slope=self.slope,
+            rating=self.rating,
+        )
 
 
 class Round(db.Model):
@@ -78,6 +94,20 @@ class Round(db.Model):
     fir = db.Column(db.Float, nullable=True)
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.DateTime, nullable=False)
+
+    def to_json(self):
+        return dict(
+            id=self.id,
+            user_id=self.user_id,
+            course_id=self.course_id,
+            teebox_id=self.teebox_id,
+            score=self.score,
+            score_diff=self.score_diff,
+            gir=self.gir,
+            fir=self.fir,
+            putts=self.putts,
+            date=self.date,
+        )
 
 
 class Handicap(db.Model):
@@ -110,3 +140,11 @@ class CourseRanking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     rating = db.Column(db.Float, nullable=True)
+
+    def to_json(self):
+        return dict(
+            id=self.id,
+            user_id=self.user_id,
+            course_id=self.course_id,
+            rating=self.rating,
+        )
