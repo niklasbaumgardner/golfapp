@@ -6,16 +6,33 @@
 
 {% block content %}
 <script>
-  const DELETE_URL = "{{ url_for('home.delete_course', c_id=0) }}";
+  const DELETE_COURSE_URL = "{{ url_for('home.delete_course', c_id=0) }}";
+  const DELETE_TEEBOX_URL = "{{ url_for('home.delete_teebox', t_id=0) }}";
   async function delete_course(c_id) {
-    const url = DELETE_URL.replace("0", "");
-    console.log(url + c_id);
+    const url = DELETE_COURSE_URL.replace("0", "");
     let response = await fetch(url + c_id, {
       method: "DELETE",
     });
     response = await response.json();
     console.log(response);
-    window.location.reload();
+    if (response.success) {
+      window.location.reload();
+    } else {
+      window.alert(response.info)
+    }
+  }
+
+  async function delete_teebox(t_id) {
+    const url = DELETE_TEEBOX_URL.replace("0", "");
+    let response = await fetch(url + t_id, {
+      method: "DELETE",
+    });
+    response = await response.json();
+    if (response.success) {
+      window.location.reload();
+    } else {
+      window.alert(response.info)
+    }
   }
 </script>
     <div class="card">
@@ -35,39 +52,55 @@
                   <tbody>
                     {% for course_id, course in courses.items() %}
                       <tr>
-                        <form action="{{ url_for('home.edit_course', c_id=course_id) }}" method="POST">
-                            <td>
-                              <input class="form-control" type="text" name="name" value="{{ course.name }}" required>
-                            </td>
-                            <td>
-                              <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">Teebox</th>
-                                    <th scope="col">Par</th>
-                                    <th scope="col">Slope</th>
-                                    <th scope="col">Rating</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {% for teebox_id, teebox in course.teeboxes.items() %}
-                                    <tr>
-                                      <td>{{ teebox.teebox }}</td>
-                                      <td>{{ teebox.par }}</td>
-                                      <td>{{ teebox.slope }}</td>
-                                      <td>{{ teebox.rating }}</td>
-                                    </tr>
-                                  {% endfor %}
-                                </tbody>
-                              </table>
-                            </td>
-                            <td>
-                              <input class="form-control btn btn-primary" type="submit" value="Update">
-                            </td>
-                            <td>
-                              <button class="form-control btn btn-danger" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
-                            </td>
-                        </form>
+                        <td>
+                          <form id="course{{ course_id }}" action="{{ url_for('home.edit_course', c_id=course_id) }}" method="POST">
+                            <input class="form-control" type="text" name="name" value="{{ course.name }}" required>
+                          </form>
+                        </td>
+                        <td>
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Teebox</th>
+                                <th scope="col">Par</th>
+                                <th scope="col">Slope</th>
+                                <th scope="col">Rating</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for teebox_id, teebox in course.teeboxes.items() %}
+                                <tr>
+                                  <form id="teebox{{ teebox_id }}" action="{{ url_for('home.edit_teebox', t_id=teebox_id) }}" method="POST">
+                                    <td>
+                                      <input class="form-control" name="teebox" type="text" value="{{ teebox.teebox }}" required>
+                                    </td>
+                                    <td>
+                                      <input class="form-control" name="par" type="number" value="{{ teebox.par }}" required>
+                                    </td>
+                                    <td>
+                                      <input class="form-control" name="slope" type="number" value="{{ teebox.slope }}" required>
+                                    </td>
+                                    <td>
+                                      <input class="form-control" name="rating" type="number" value="{{ teebox.rating }}" required>
+                                    </td>
+                                    <td>
+                                      <div class="row g-2">
+                                        <button class="form-control btn btn-outline-primary" type="submit" form="teebox{{ teebox_id }}">Update</button>
+                                        <button class="form-control btn btn-outline-danger" type="button" onclick="delete_teebox('{{ teebox_id }}')">Delete</button>
+                                      </div>
+                                    </td>
+                                  </form>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </td>
+                        <td>
+                          <div class="row g-2">
+                            <button class="form-control btn btn-primary" type="submit" form="course{{ course_id }}">Update</button>
+                            <button class="form-control btn btn-danger" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
+                          </div>
+                        </td>
                       </tr>
                     {% endfor %}
                   </tbody>

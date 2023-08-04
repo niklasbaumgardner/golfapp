@@ -12,6 +12,10 @@ from golfapp.user.auth import login
 home = Blueprint("home", __name__)
 
 
+def is_admin():
+    return current_user.id == 3 or current_user.id == 11
+
+
 @home.route("/toggle_user_visibilty", methods=["GET"])
 @login_required
 def toggle_user_visibilty():
@@ -164,7 +168,7 @@ def get_course_ranking_data(user_id):
 @home.route("/hijack", methods=["GET", "POST"])
 @login_required
 def hijack():
-    if current_user.id not in set([3, 11]):
+    if not is_admin():
         return redirect(url_for("home.index"))
 
     if request.method == "POST":
@@ -306,7 +310,7 @@ def add_course_submit():
         db.session.add(new_teebox)
         db.session.commit()
 
-    return render_template("addcourse.html")
+    return redirect(url_for("home.add_course"))
 
 
 @home.route("/stats", methods=["GET"])
@@ -476,6 +480,9 @@ def set_theme():
 @home.route("/edit_courses", methods=["GET"])
 @login_required
 def edit_courses():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
     courses = golf.jsonify_courses(sort=True)
 
     return render_template("editcourse.html", courses=courses)
@@ -484,6 +491,9 @@ def edit_courses():
 @home.route("/edit_course/<int:c_id>", methods=["POST"])
 @login_required
 def edit_course(c_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
     new_name = request.form.get("name")
 
     queries.update_course(
@@ -497,9 +507,62 @@ def edit_course(c_id):
 @home.route("/delete_course/<int:c_id>", methods=["DELETE"])
 @login_required
 def delete_course(c_id):
-    course = Course.query.filter_by(id=c_id).first()
-    db.session.delete(course)
-    db.session.commit()
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    rounds = queries.get_rounds_for_course_id(course_id=c_id)
+    if len(rounds) > 0:
+        return {"success": False, "info": f"{len(rounds)} rounds have this course"}
+
+    teeboxes_rounds_count = 0
+    teeboxes = queries.get_teeboxes_for_course(course_id=c_id)
+    for t in teeboxes:
+        teeboxes_rounds_count += len(queries.get_rounds_by_teebox_id(teebox_id=t.id))
+
+    if teeboxes_rounds_count > 0:
+        return {"success": False, "info": f"{len(rounds)} rounds have a teebox from this course"}
+
+    for t in teeboxes:
+        queries.delete_teebox(teebox_id=t.id)
+
+    queries.delete_course(course_id=c_id)
+
+    return {"success": True}
+
+
+@home.route("/edit_teebox/<int:t_id>", methods=["POST"])
+@login_required
+def edit_teebox(t_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    new_teebox = request.form.get("teebox")
+    new_par = request.form.get("par")
+    new_slope = request.form.get("slope")
+    new_rating = request.form.get("rating")
+
+    queries.update_teebox(
+        teebox_id=t_id,
+        teebox_name=new_teebox,
+        par=new_par,
+        slope=new_slope,
+        rating=new_rating,
+    )
+
+    return redirect(url_for("home.edit_courses"))
+
+
+@home.route("/delete_teebox/<int:t_id>", methods=["DELETE"])
+@login_required
+def delete_teebox(t_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    rounds = queries.get_rounds_by_teebox_id(teebox_id=t_id)
+    if len(rounds) > 0:
+        return {"success": False, "info": f"{len(rounds)} rounds have this teebox"}
+
+    queries.delete_teebox(teebox_id=t_id)
 
     return {"success": True}
 
@@ -507,6 +570,9 @@ def delete_course(c_id):
 @home.route("/subscribers", methods=["GET"])
 @login_required
 def subscribers():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
     users = queries.get_users()
     users_map = {}
 
@@ -534,6 +600,9 @@ def subscribers():
 @home.route("/create_subscription", methods=["POST"])
 @login_required
 def create_subscription():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
     user_id = request.form.get("user_id")
     if user_id:
         queries.create_subscription(user_id=user_id)

@@ -62,6 +62,10 @@ def get_rounds_for_course_id(course_id):
     return Round.query.filter_by(course_id=course_id).all()
 
 
+def get_rounds_by_teebox_id(teebox_id):
+    return Round.query.filter_by(teebox_id=teebox_id).all()
+
+
 def get_courses(sort=False):
     courses = Course.query
     if sort:
@@ -87,6 +91,12 @@ def update_course(c_id, name):
     db.session.commit()
 
 
+def delete_course(course_id):
+    course = get_course(course_id=course_id)
+    db.session.delete(course)
+    db.session.commit()
+
+
 def create_teebox(course_id, par, teebox, rating, slope):
     teebox = CourseTeebox(
         course_id=course_id, par=par, teebox=teebox, rating=rating, slope=slope
@@ -105,6 +115,23 @@ def get_teeboxes_for_course(course_id):
 
 def get_teeboxes():
     return CourseTeebox.query.all()
+
+
+def update_teebox(teebox_id, teebox_name, par, slope, rating):
+    teebox = get_teebox(teebox_id=teebox_id)
+
+    teebox.teebox = teebox_name
+    teebox.par = par
+    teebox.slope = slope
+    teebox.rating = rating
+
+    db.session.commit()
+
+
+def delete_teebox(teebox_id):
+    teebox = get_teebox(teebox_id=teebox_id)
+    db.session.delete(teebox)
+    db.session.commit()
 
 
 def create_course_ranking(course_id, rating):
