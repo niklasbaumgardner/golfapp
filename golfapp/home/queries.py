@@ -181,10 +181,8 @@ def create_subscription(user_id):
     db.session.commit()
 
 
-def create_subscriber(subscribtion_id):
-    subscriber = Subscriber(
-        subscribtion_id=subscribtion_id, user_id=current_user.get_id()
-    )
+def create_subscriber(subscribtion_id, user_id):
+    subscriber = Subscriber(subscribtion_id=subscribtion_id, user_id=user_id)
     db.session.add(subscriber)
     db.session.commit()
 

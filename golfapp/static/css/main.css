@@ -49,6 +49,10 @@ span.rating-by-user {
     margin-right: 1ch;
 }
 
+.subscribers {
+    display: inline-grid;
+}
+
 @media (max-width: 1000px) {
 
     /* Force table to not be like tables anymore */

@@ -147,7 +147,9 @@ def course_ranking(user_id):
 
     is_me = current_user.is_authenticated and user_id == current_user.id
     user = queries.get_user(user_id=user_id)
-    return render_template("courseranking.html", user_id=user_id, username=user.username, is_me=is_me)
+    return render_template(
+        "courseranking.html", user_id=user_id, username=user.username, is_me=is_me
+    )
 
 
 @home.route("/get_course_ranking_data/<int:user_id>", methods=["GET"])
@@ -588,28 +590,30 @@ def subscribers():
     if not is_admin():
         return redirect(url_for("home.index"))
 
+    return render_template("subscribers.html")
+
+
+@home.route("/get_subscription_data", methods=["GET"])
+def get_subscription_data():
     users = queries.get_users()
-    users_map = {}
 
-    subscriptions = []
-    no_subscription = []
+    s_dict = {}
+
     for user in users:
-        users_map[user.id] = user
-
         subscription = queries.get_subscription(user.id)
         if not subscription:
-            no_subscription.append(user)
             continue
-        subscriptions.append(
-            [subscription, queries.get_subscribers(subscription_id=subscription.id)]
-        )
 
-    return render_template(
-        "subscribers.html",
-        users=users_map,
-        subscriptions=subscriptions,
-        no_subscription=no_subscription,
-    )
+        s_dict[user.id] = {
+            "subscription": subscription.to_json(),
+            "subscribers": [
+                s.to_json()
+                for s in queries.get_subscribers(subscription_id=subscription.id)
+            ],
+        }
+
+    u_dict = {u.id: u.to_json() for u in users}
+    return {"users": u_dict, "subscription_data": s_dict}
 
 
 @home.route("/create_subscription", methods=["POST"])
@@ -621,6 +625,20 @@ def create_subscription():
     user_id = request.form.get("user_id")
     if user_id:
         queries.create_subscription(user_id=user_id)
+
+    return redirect(url_for("home.subscribers"))
+
+
+@home.route("/create_subscriber/<int:subscription_id>", methods=["POST"])
+@login_required
+def create_subscriber(subscription_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    user_id = request.form.get("user_id")
+    print(user_id, subscription_id)
+    if subscription_id and user_id:
+        queries.create_subscriber(subscribtion_id=subscription_id, user_id=user_id)
 
     return redirect(url_for("home.subscribers"))
 
