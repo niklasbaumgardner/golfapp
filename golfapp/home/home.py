@@ -636,7 +636,6 @@ def create_subscriber(subscription_id):
         return redirect(url_for("home.index"))
 
     user_id = request.form.get("user_id")
-    print(user_id, subscription_id)
     if subscription_id and user_id:
         queries.create_subscriber(subscribtion_id=subscription_id, user_id=user_id)
 
