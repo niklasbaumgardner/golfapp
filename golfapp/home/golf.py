@@ -131,7 +131,7 @@ def get_strokes(teebox, h_users):
 
 
 def strokes(teebox, handi):
-    return int(math.ceil(handi * (teebox.slope / 113) + (teebox.rating - teebox.par)))
+    return int(round(handi * (teebox.slope / 113) + (teebox.rating - teebox.par)))
 
 
 def get_avg_gir(rounds):
