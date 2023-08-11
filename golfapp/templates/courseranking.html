@@ -5,7 +5,7 @@
 
 {% block content %}
 <script>
-  const GET_RANKING_DATA_URL = "{{ url_for('home.get_course_ranking_data', user_id=user_id) }}";
+  const GET_RANKING_DATA_URL = "{{ url_for('api.get_course_ranking_data', user_id=user_id) }}";
   const COURSE_RANKING_EDIT = "{{ url_for('home.course_ranking', user_id=user_id) }}";
   const IS_ME = "{{ is_me }}" === "True";
 </script>
@@ -58,16 +58,6 @@
   </table>
 </div>
 
-<script src="/static/js/courseRanking.js"></script>
-<script async>
-  async function get_page_data() {
-    let respone = await fetch(GET_RANKING_DATA_URL);
-    let data = await respone.json();
-
-    const COURSE_RANKING = new CourseRanking(data.courses, data.ranking_data);
-  }
-
-  get_page_data();
-</script>
+<script src="/static/js/courseRanking.mjs" type="module"></script>
 
 {% endblock content %}

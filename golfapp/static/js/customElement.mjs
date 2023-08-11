@@ -1,6 +1,11 @@
-"use strict";
+import {
+  LitElement,
+  html,
+} from "https://cdn.jsdelivr.net/gh/lit/dist@2/core/lit-core.min.js";
 
-function createElement(options) {
+export { html };
+
+export function createElement(options) {
   if (!options.type) {
     options.type = "div";
   }
@@ -102,7 +107,7 @@ function createElement(options) {
   return ele;
 }
 
-class CustomElement {
+export class CustomElement {
   get markup() {
     return `<template><p>Hello world</p></template>`;
   }
@@ -127,5 +132,37 @@ class CustomElement {
   }
   querySelectorAll(query) {
     return this.anchor?.querySelectorAll(query);
+  }
+}
+
+function query(el, selector) {
+  return () => el.querySelector(selector);
+}
+
+function queryAll(el, selector) {
+  return () => el.querySelectorAll(selector);
+}
+
+export class NikElement extends LitElement {
+  constructor() {
+    super();
+    let { queries } = this.constructor;
+    if (queries) {
+      for (let [selectorName, selector] of Object.entries(queries)) {
+        if (selector.all) {
+          Object.defineProperty(this, selectorName, {
+            get: queryAll(this, selector.all),
+          });
+        } else {
+          Object.defineProperty(this, selectorName, {
+            get: query(this, selector),
+          });
+        }
+      }
+    }
+  }
+
+  createRenderRoot() {
+    return this;
   }
 }

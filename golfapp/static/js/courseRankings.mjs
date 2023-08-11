@@ -1,3 +1,5 @@
+import { CustomElement } from "./customElement.mjs";
+
 let users = null;
 async function getPageData() {
   let respone = await fetch(GET_ALL_RANKING_DATA_URL);
@@ -100,7 +102,7 @@ class TableRow extends CustomElement {
     for (let [i, obj] of this.ratingsArray.entries()) {
       let username = users[obj.user_id].username;
       let url = COURSE_RANKING_USER_URL.replace("0", obj.user_id);
-      let ratingSpan = `<a class="rating-by-user" href="${url}" target="_blank" title="Rating from ${username}">${obj.rating} by ${username}</a>`;
+      let ratingSpan = `<a class="rating-by-user" href="${url}" title="Rating from ${username}">${obj.rating} by ${username}</a>`;
       if (i !== this.ratingsArray.length - 1) {
         ratingSpan += '<span class="rating-by-user">,  </span>';
       }

@@ -7,43 +7,13 @@
 
 {% block content %}
 <script>
-    function check_existing_courses(event) {
-        let name = event.target.value.toLowerCase();
-        let matchingDiv = document.querySelector("#matching-courses-div");
-        matchingDiv.hidden = true;
-        if (name.length < 3) {
-            return;
-        }
-
-        let matches = [];
-
-        for (let course of allCourses) {
-            if (course.toLowerCase().includes(name)) {
-                console.log(course, name);
-                matches.push(course);
-            }
-        }
-        let listDiv = document.querySelector("#matching-courses-list");
-        listDiv.innerHTML = "";
-
-        if (matches < 1) {
-            return;
-        }
-
-        matchingDiv.hidden = false;
-
-        for (let match of matches) {
-            let p = document.createElement("p");
-            p.innerText = " - " + match;
-            listDiv.appendChild(p);
-        }
-    }
+    const GET_COURSE_TEEBOX_DATA = "{{ url_for('api.get_course_and_teebox_data') }}";
 </script>
 
     <div class="card">
         <div class="card-body p-5">
             <p class="card-title fs-2 mb-3">Add Course</p>
-            <form action="{{ url_for('home.add_course_submit') }}" method="POST">
+            <form action="{{ url_for('home.add_course') }}" method="POST">
                 <div class="row">
                     <div class="col-sm mb-4">
                         <div id="matching-courses-div" class="text-danger" hidden>
@@ -79,15 +49,8 @@
 
                     </div>
                     <div class="col-sm">
-                        <label class="form-label" for="existing_courses">Existing Courses</label>
-                        <ul name="existing_courses" class="list-group better-scroll" id="style-1" style="max-height: 400px;overflow-y: scroll;">
-                            {% for course, teeboxes in courses %}
-                                <li class="list-group-item">{{ course.name }}
-                                    ({% for teebox in teeboxes %}
-                                        {{ teebox.teebox }},
-                                    {% endfor %})
-                                </li>
-                            {% endfor %}
+                        <label class="form-label" for="existing-courses">Existing Courses</label>
+                        <ul name="existing-courses" class="list-group better-scroll" id="existing-courses" style="max-height: 400px;overflow-y: scroll;">
                         </ul>
                     </div>
                 </div>
@@ -100,10 +63,6 @@
         </div>
     </div>
 
-<script>
-    document.getElementById("course_name").addEventListener("input", check_existing_courses);
-    const allCourses = Array.from(document.querySelectorAll("ul[name='existing_courses'] > li"), x => x.innerText);
-    console.log(allCourses);
-</script>
+<script src="/static/js/addCourse.mjs" type="module"></script>
 
 {% endblock content %}

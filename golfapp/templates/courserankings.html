@@ -6,7 +6,7 @@
 
 {% block content %}
 <script>
-  const GET_ALL_RANKING_DATA_URL = "{{ url_for('home.get_all_course_ranking_data') }}";
+  const GET_ALL_RANKING_DATA_URL = "{{ url_for('api.get_all_course_ranking_data') }}";
   const COURSE_RANKING_USER_URL = "{{ url_for('home.course_ranking', user_id=0) }}"
 </script>
 

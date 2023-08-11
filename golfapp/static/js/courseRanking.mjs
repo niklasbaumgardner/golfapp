@@ -1,4 +1,13 @@
-"use strict";
+import { CustomElement } from "./customElement.mjs";
+
+async function getPageData() {
+  let respone = await fetch(GET_RANKING_DATA_URL);
+  let data = await respone.json();
+
+  const COURSE_RANKING = new CourseRanking(data.courses, data.ranking_data);
+}
+
+getPageData();
 
 class CourseRanking {
   constructor(courses, courseRankingArr) {

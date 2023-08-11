@@ -1,6 +1,6 @@
-"use strict";
+import { createElement } from "./customElement.mjs";
 
-class Round {
+export class Round {
   constructor(
     id,
     course_id,

@@ -6,50 +6,21 @@
 
 {% block content %}
 <script>
-    const GET_PAGE_URL = "{{ url_for('home.get_page', id=user.id) }}";
+    const GET_PAGE_URL = "{{ url_for('api.get_page', id=user.id) }}";
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
     const VIEW_PLAYER_URL = "{{ url_for('home.view_player', id=0) }}".slice(0, -1);
+    const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
     const COURSES = {{ courses|tojson }};
     const TEEBOXES = {};
-</script>
-<script src="/static/js/pagination.js"></script>
-<script src="/static/js/round.js"></script>
-<script>
     const IS_ME = "{{ is_me }}" === "True";
     const TOTAL_ROUNDS = {{ total }};
     const CURRENT_PAGE = {{ page }};
     const NUM_PAGES = {{ num_pages }};
-
-    const parser = new DOMParser();
     const roundsArray = [];
     const roundsPy = {{ rounds|tojson }};
-    for (let r of roundsPy) {
-        let round = new Round(...r);
-        roundsArray.push(round);
-    }
 </script>
 <script>
-    const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
-    function deleteRoundClick(id) {
-        document.getElementById(`delete_id${id}`).style.display = 'block';
-    }
-    function toggleHidden(eles) {
-        for (let ele of eles) {
-            ele.hidden = !ele.hidden;
-        }
-    }
-    function toggleEditElements(id) {
-        let editEles = document.querySelectorAll(`.show-edit-${id}`);
-        toggleHidden(editEles);
-        let nonEditEles = document.querySelectorAll(`.show-not-edit-${id}`);
-        toggleHidden(nonEditEles);
-    }
-    function cancelEditRound(id) {
-        toggleEditElements(id);
-    }
-    function editRound(id) {
-        toggleEditElements(id);
-    }
+
 </script>
 
 <div class="container-fluid">
@@ -139,7 +110,6 @@
                             </form>
                         </tr>
                     {% endif %}
-
                     <div id="rounds"></div>
                 </tbody>
             </table>
@@ -165,88 +135,6 @@
 <div id="deleteModals"></div>
 
 <script src="/static/js/setdate.js"></script>
-<script>
-    let coursesArray = [];
-    for (let [id, course] of Object.entries(COURSES)) {
-        coursesArray.push(course);
-    }
-
-    coursesArray.sort((a, b) => { return a.name.localeCompare(b.name); });
-
-    let selectCourse = document.getElementById("course");
-
-    if (selectCourse) {
-        selectCourse.addEventListener("input", onCourseSelect);
-
-        for (let course of coursesArray) {
-            let courseOption = createElement({
-                type: "option",
-                value: course.id,
-                content: course.name, //`${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
-            });
-            selectCourse.appendChild(courseOption);
-        }
-    }
-
-    function createTeeboxElements(teeboxes) {
-        let teeboxSelect = document.getElementById("teebox");
-        let children = teeboxSelect.children;
-        for (let i = children.length; i > 0; i--) {
-            let child = children[i - 1];
-            child.remove();
-        }
-        teeboxSelect.hidden = false;
-
-        let teeboxesArr = Object.entries(teeboxes);
-
-        if (teeboxesArr.length > 1) {
-            let defaultOption = createElement({
-                type: "option",
-                value: "",
-                content: "Select teebox",
-                hidden: true,
-                disabled: true,
-                selected: true,
-            });
-            teeboxSelect.appendChild(defaultOption);
-        }
-
-        for (let [id, teebox] of teeboxesArr) {
-            let option = createElement({
-                type: "option",
-                value: teebox.id,
-                content: `${teebox.teebox} (${teebox.rating} / ${teebox.slope})`
-            });
-            teeboxSelect.appendChild(option);
-        }
-
-        console.log(teeboxes);
-    }
-
-    function onCourseSelect(event) {
-        console.log(event);
-        let courseId = event.target.value;
-        let teeboxes = COURSES[courseId].teeboxes;
-        let courseNotFoundText = document.getElementById("course-not-found-text");
-        courseNotFoundText.hidden = true;
-        createTeeboxElements(teeboxes);
-    }
-
-
-    const pagination = new Pagination(roundsArray, TOTAL_ROUNDS, CURRENT_PAGE, NUM_PAGES);
-    // let visibilityToggle = document.getElementById("showHandicapToggle");
-    // visibilityToggle.addEventListener("click", event => {
-    //     console.log("Should show?", event.target.checked);
-    //     return new Promise(function (resolve, reject) {
-    //         var xmlHttp = new XMLHttpRequest();
-    //         xmlHttp.open("GET", TOGGLE_VISIBILITY_URL + `?isVisible=${event.target.checked}`);
-    //         xmlHttp.onload = () => {
-    //             resolve(xmlHttp.response);
-    //         };
-    //         xmlHttp.send(null);
-    //     })
-    // });
-
-</script>
+<script src="/static/js/viewPlayer.mjs" type="module"></script>
 
 {% endblock content %}

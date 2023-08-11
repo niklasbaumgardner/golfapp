@@ -92,26 +92,6 @@ def view_player(id):
     )
 
 
-@home.route("/get_page", defaults={"id": None})
-@home.route("/get_page/<int:id>")
-def get_page(id):
-    page = request.args.get("page", -1, type=int)
-
-    if page < 1:
-        return {"sucess": False}
-
-    if not id and not current_user.is_authenticated:
-        return {"page": page, "rounds": []}
-    elif not id:
-        id = current_user.id
-
-    rounds, total, page, num_pages = queries.get_rounds_for_user_id(
-        user_id=id, page=page, paginate=True, sort=True
-    )
-    rounds = golf.jsonify_rounds(rounds)
-    return {"page": page, "rounds": rounds}
-
-
 @home.route("/view_players", methods=["GET"])
 def view_players():
     users = User.query.filter_by(is_publicly_visible=True).all()
@@ -152,31 +132,9 @@ def course_ranking(user_id):
     )
 
 
-@home.route("/get_course_ranking_data/<int:user_id>", methods=["GET"])
-def get_course_ranking_data(user_id):
-    ranking_data = queries.get_course_rankings_for_user(user_id=user_id)
-    ranking_data_lst = [r.to_json() for r in ranking_data]
-    courses = queries.get_courses()
-    courses_lst = [c.to_json() for c in courses]
-
-    return {"ranking_data": ranking_data_lst, "courses": courses_lst}
-
-
 @home.route("/course_rankings", methods={"GET"})
 def course_rankings():
     return render_template("courserankings.html")
-
-
-@home.route("/get_all_course_ranking_data", methods=["GET"])
-def get_all_course_ranking_data():
-    users = queries.get_users()
-    course_rankings = queries.get_all_course_rankings()
-    courses = queries.get_courses()
-
-    u_dict = {u.id: u.to_json() for u in users}
-    c_dict = {c.id: c.to_json() for c in courses}
-    cr_dict = {cr.id: cr.to_json() for cr in course_rankings}
-    return {"users": u_dict, "courses": c_dict, "course_rankings": cr_dict}
 
 
 @home.route("/hijack", methods=["GET", "POST"])
@@ -285,46 +243,35 @@ def add_round_submit():
 @home.route("/add_course", methods=["GET"])
 @login_required
 def add_course():
-    courses = queries.get_courses(sort=True)
-    courses_and_teeboxes = []
-    for c in courses:
-        teeboxes = queries.get_teeboxes_for_course(course_id=c.id)
-        courses_and_teeboxes.append([c, teeboxes])
+    if request.method == "POST":
+        name = request.form.get("name")
+        teebox = request.form.get("teebox")
+        par = request.form.get("par")
+        rating = request.form.get("rating")
+        slope = request.form.get("slope")
 
-    return render_template("addcourse.html", courses=courses_and_teeboxes)
+        course = queries.get_course_by_name(name=name)
+        if course:
+            new_teebox = CourseTeebox(
+                course_id=course.id, teebox=teebox, par=par, slope=slope, rating=rating
+            )
+            db.session.add(new_teebox)
+            db.session.commit()
 
+        else:
+            new_course = Course(name=name)
+            db.session.add(new_course)
+            db.session.commit()
 
-@home.route("/add_course_submit", methods=["POST"])
-@login_required
-def add_course_submit():
-    name = request.form.get("name")
-    teebox = request.form.get("teebox")
-    par = request.form.get("par")
-    rating = request.form.get("rating")
-    slope = request.form.get("slope")
+            new_teebox = CourseTeebox(
+                course_id=new_course.id, teebox=teebox, par=par, slope=slope, rating=rating
+            )
+            db.session.add(new_teebox)
+            db.session.commit()
 
-    course = queries.get_course_by_name(name=name)
-    if course:
-        new_teebox = CourseTeebox(
-            course_id=course.id, teebox=teebox, par=par, slope=slope, rating=rating
-        )
-        db.session.add(new_teebox)
-        db.session.commit()
+        return redirect(url_for("home.add_course"))
 
-    else:
-        new_course = Course(name=name)
-        db.session.add(new_course)
-        db.session.commit()
-
-        print(new_course.id)
-
-        new_teebox = CourseTeebox(
-            course_id=new_course.id, teebox=teebox, par=par, slope=slope, rating=rating
-        )
-        db.session.add(new_teebox)
-        db.session.commit()
-
-    return redirect(url_for("home.add_course"))
+    return render_template("addcourse.html")
 
 
 @home.route("/stats", methods=["GET"])

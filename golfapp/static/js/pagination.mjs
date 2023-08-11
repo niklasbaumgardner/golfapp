@@ -1,8 +1,8 @@
-"use strict";
+import { Round } from "./round.mjs";
 
 const PER_PAGE = 20;
 
-class Pagination {
+export class Pagination {
   #BUTTONS_VISIBLE = 5;
   constructor(rounds, numRounds, currentPage, numPages) {
     this.currentRequests = {};

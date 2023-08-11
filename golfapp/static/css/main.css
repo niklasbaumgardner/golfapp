@@ -150,6 +150,14 @@ tr.round>td:not(:nth-child(2), :nth-child(3)) {
     padding: 1px 4px;
 }
 
+.table-striped-even>tbody>tr:nth-child(even) {
+    background-color: var(--bs-table-striped-bg);
+}
+
+:root[data-bs-theme="dark"] .table-striped-even>tbody>tr:nth-child(even) {
+    background-color: var(--bs-light-bg-subtle);
+}
+
 .table-hover>tbody>tr:hover {
     background-color: #ced4da;
     cursor: pointer;
@@ -157,12 +165,4 @@ tr.round>td:not(:nth-child(2), :nth-child(3)) {
 
 :root[data-bs-theme="dark"] .table-hover>tbody>tr:hover {
     background-color: #1a1d20;
-}
-
-.table-striped-even>tbody>tr:nth-child(even) {
-    background-color: var(--bs-table-striped-bg);
-}
-
-:root[data-bs-theme="dark"] .table-striped-even>tbody>tr:nth-child(even) {
-    background-color: var(--bs-light-bg-subtle);
 }

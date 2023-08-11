@@ -28,6 +28,9 @@ def create_app():
     from golfapp.home.home import home as home_blueprint
     app.register_blueprint(home_blueprint)
 
+    from golfapp.home.api import api as api_blueprint
+    app.register_blueprint(api_blueprint)
+
     with app.app_context():
         db.create_all()
 
