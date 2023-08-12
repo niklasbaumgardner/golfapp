@@ -240,7 +240,7 @@ def add_round_submit():
     return redirect(url_for("home.index"))
 
 
-@home.route("/add_course", methods=["GET"])
+@home.route("/add_course", methods=["GET", "POST"])
 @login_required
 def add_course():
     if request.method == "POST":
