@@ -257,15 +257,6 @@ export class Round {
     });
     this.showEdit.appendChild(cancelButton);
 
-    this.pageInput = createElement({
-      type: "input",
-      classString: "page-number",
-      name: "page",
-      inputType: "number",
-      hidden: true,
-    });
-    this.element.appendChild(this.pageInput);
-
     this.deleteModal.renderElement();
 
     this.created = true;
@@ -297,8 +288,7 @@ export class Round {
 
   handleUpdateRound(event) {
     event.preventDefault();
-    this.pageInput.value = pagination.currentPage;
-    this.element.firstChild.submit();
+    this.form.submit();
   }
 
   handleCancelEditRound(event) {

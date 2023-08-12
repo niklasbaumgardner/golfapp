@@ -359,9 +359,9 @@ def update_round(id):
         round.fir = new_fir
         round.putts = new_putts
 
-        course = Course.query.filter_by(id=round.course_id).first()
+        teebox = queries.get_teebox(teebox_id=round.teebox_id)
         new_score_diff = golf.calculate_score_diff(
-            course.slope, course.rating, round.score
+            teebox.slope, teebox.rating, round.score
         )
         round.score_diff = new_score_diff
 
