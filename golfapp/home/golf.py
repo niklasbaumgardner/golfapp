@@ -302,8 +302,18 @@ def is_round_in_included(round, included_rounds):
 
     return round.id in round_id_set
 
+def get_handicap_change_message(old_handicap, new_handicap):
+    if not old_handicap:
+        return f"handicap is now {stringify_handicap(new_handicap)}"
+    elif old_handicap == new_handicap:
+        return f"handicap remained the same at {stringify_handicap(new_handicap)}"
+    elif old_handicap > new_handicap:
+        return f"handicap improved from {stringify_handicap(old_handicap)} to {stringify_handicap(new_handicap)}"
+    elif old_handicap < new_handicap:
+        return f"handicap decreased {stringify_handicap(old_handicap)} to {stringify_handicap(new_handicap)}"
 
-def get_random_message(new_round, user_id):
+
+def get_random_message(new_round, user_id, old_handicap, new_handicap):
     included_rounds = get_included_rounds(queries.get_rounds(sort=True, max_rounds=20))
     course = queries.get_course(new_round.course_id)
 
@@ -311,6 +321,7 @@ def get_random_message(new_round, user_id):
 
     message = f"""
 {current_user.username} shot {new_round.score} at {course.name}.
+Their {get_handicap_change_message(old_handicap, new_handicap)}.
 
 View the rest of their rounds at {url_for('home.view_player', id=user_id, _external=True)}
 
@@ -322,9 +333,8 @@ Please thank ChatGPT for the wonderful message.
     return message
 
 
-def send_subscribers_message(user_id, new_round):
+def send_subscribers_message(user_id, new_round, old_handicap, new_handicap):
     subscribers = queries.get_subscribers_for_user_id(user_id=user_id)
-    print(subscribers)
 
     if not subscribers:
         return
@@ -336,5 +346,10 @@ def send_subscribers_message(user_id, new_round):
     msg = Message(
         f"{current_user.username} just added a new round", recipients=subscribers_emails
     )
-    msg.body = get_random_message(new_round=new_round, user_id=user_id)
+    msg.body = get_random_message(
+        new_round=new_round,
+        user_id=user_id,
+        old_handicap=old_handicap,
+        new_handicap=new_handicap,
+    )
     mail.send(msg)

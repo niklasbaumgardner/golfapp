@@ -233,9 +233,11 @@ def add_round_submit():
     db.session.add(new_round)
     db.session.commit()
 
-    update_handicap()
+    old_handicap, new_handicap = update_handicap()
 
-    golf.send_subscribers_message(current_user.get_id(), new_round)
+    golf.send_subscribers_message(
+        current_user.get_id(), new_round, old_handicap, new_handicap
+    )
 
     return redirect(url_for("home.index"))
 
@@ -264,7 +266,11 @@ def add_course():
             db.session.commit()
 
             new_teebox = CourseTeebox(
-                course_id=new_course.id, teebox=teebox, par=par, slope=slope, rating=rating
+                course_id=new_course.id,
+                teebox=teebox,
+                par=par,
+                slope=slope,
+                rating=rating,
             )
             db.session.add(new_teebox)
             db.session.commit()
@@ -615,13 +621,18 @@ def update_handicap(updated_round=None):
     handicap = golf.calculate_handicap(rounds)
     user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
 
+    old_handicap = None
+
     if user_handicap:
+        old_handicap = user_handicap.handicap
         user_handicap.handicap = handicap
         db.session.commit()
     else:
         new_handicap = Handicap(user_id=current_user.get_id(), handicap=handicap)
         db.session.add(new_handicap)
         db.session.commit()
+
+    return old_handicap, handicap
 
 
 def get_datetime(str_date):
