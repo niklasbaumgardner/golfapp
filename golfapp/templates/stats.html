@@ -11,15 +11,42 @@
 
 <div class="container-fluid">
   <div class="container pb-5">
-    <div class="row fs-2 mb-5">
-      <div class="col-4 text-start">
-        Your handicap is {{ handicap.handicap }}
+    <div class="row mb-5">
+      <div class="col-4">
+        <div class="row fs-2">
+          <div class="text-start">
+            Your handicap is {{ handicap.handicap }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="text-start">
+            Your handicap is the best 8 of the last 20 rounds
+          </div>
+        </div>
       </div>
-      <div class="col-4 text-center">
-        Your averagecap is {{ averagecap }}
+      <div class="col-4">
+        <div class="row fs-2">
+          <div class="text-center">
+            Your averagecap is {{ averagecap }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="text-center">
+            Your averagecap is the average of the last 20 rounds
+          </div>
+        </div>
       </div>
-      <div class="col-4 text-end">
-        Your anticap is {{ anticap }}
+      <div class="col-4">
+        <div class="row fs-2">
+          <div class="text-end">
+            Your anticap is {{ anticap }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="text-end">
+            Your anticap is the worst 8 of the last 20 rounds
+          </div>
+        </div>
       </div>
     </div>
     <div class="row">

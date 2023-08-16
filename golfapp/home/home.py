@@ -341,6 +341,7 @@ def stats():
     dates, handicaps = golf.get_handicap_graph_list()
     anticap = golf.get_anitcap()
     averagecap = golf.get_averagecap()
+
     return render_template(
         "stats.html",
         handicap=user_handicap,
