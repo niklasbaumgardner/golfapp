@@ -93,7 +93,7 @@ class Round(db.Model):
     gir = db.Column(db.Float, nullable=True)
     fir = db.Column(db.Float, nullable=True)
     putts = db.Column(db.Float, nullable=True)
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.Date, nullable=False)
 
     def to_json(self):
         return dict(

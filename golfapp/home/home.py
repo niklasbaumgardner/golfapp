@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, Theme, CourseTeebox
 from golfapp.extensions import db
 from golfapp.home import golf, queries
-from datetime import datetime
+from datetime import date
 
 from golfapp.user.auth import login
 
@@ -212,7 +212,7 @@ def add_round_submit():
     putts = request.form.get("putts")
     date_ = request.form.get("date")
     # print(date_)
-    date_ = get_datetime(date_)
+    date_ = get_date_from_string(date_)
 
     gir = gir if gir else None
     fir = fir if fir else None
@@ -648,7 +648,10 @@ def update_handicap(updated_round=None):
     return old_handicap, handicap
 
 
-def get_datetime(str_date):
+def get_date_from_string(str_date):
+    if not str_date:
+        return None
+
     year, month, day = str_date.strip().split("-")
 
-    return datetime(int(year), int(month), int(day))
+    return date(int(year), int(month), int(day))
