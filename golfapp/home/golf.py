@@ -35,35 +35,37 @@ BAD_SARCASTIC_MESSAGES = [
 ]
 
 
-def calculate_handicap(rounds):
+def calculate_handicap(rounds, reverse=False):
     count = len(rounds)
+    score_diffs = get_score_diffs(rounds, reverse)
+
     if count <= 3:
-        handicap = get_score_diffs(rounds)[0] - 2
+        handicap = score_diffs[0] - 2
     elif count == 4:
-        handicap = get_score_diffs(rounds)[0] - 1
+        handicap = score_diffs[0] - 1
     elif count == 5:
-        handicap = get_score_diffs(rounds)[0]
+        handicap = score_diffs[0]
     elif count == 6:
-        handicap = (sum(get_score_diffs(rounds)[:2]) / 2) - 1
+        handicap = (sum(score_diffs[:2]) / 2) - 1
     elif 7 <= count <= 8:
-        handicap = sum(get_score_diffs(rounds)[:2]) / 2
+        handicap = sum(score_diffs[:2]) / 2
     elif 9 <= count <= 11:
-        handicap = sum(get_score_diffs(rounds)[:3]) / 3
+        handicap = sum(score_diffs[:3]) / 3
     elif 12 <= count <= 14:
-        handicap = sum(get_score_diffs(rounds)[:4]) / 4
+        handicap = sum(score_diffs[:4]) / 4
     elif 15 <= count <= 16:
-        handicap = sum(get_score_diffs(rounds)[:5]) / 5
+        handicap = sum(score_diffs[:5]) / 5
     elif 17 <= count <= 18:
-        handicap = sum(get_score_diffs(rounds)[:6]) / 6
+        handicap = sum(score_diffs[:6]) / 6
     elif count == 19:
-        handicap = sum(get_score_diffs(rounds)[:7]) / 7
+        handicap = sum(score_diffs[:7]) / 7
     elif count >= 20:
-        handicap = sum(get_score_diffs(rounds)[:8]) / 8
+        handicap = sum(score_diffs[:8]) / 8
 
     return round(handicap, 2)
 
 
-def get_score_diffs(rounds):
+def get_score_diffs(rounds, reverse=False):
     teeboxes = {}
     lst = []
     for rnd in rounds:
@@ -78,6 +80,8 @@ def get_score_diffs(rounds):
         # print(course.name, score_diff)
         lst.append(new_score_diff)
     lst.sort()
+    if reverse:
+        lst.reverse()
     return lst
 
 
@@ -234,6 +238,67 @@ def get_included_rounds(rounds):
     return rounds
 
 
+def get_dates_for_range(first, last):
+    num_day = last - first
+    step = num_day // 10
+
+    dates = []
+    curr = first
+    while curr < last:
+        dates.append(curr)
+        curr += step
+
+    dates.append(last)
+
+    return dates, step
+
+
+def get_next_smallest_date_index(rounds, target_date):
+    for i, round in enumerate(rounds):
+        if round.date > target_date:
+            return i - 1
+    return len(rounds) - 1
+
+
+def get_handicap_graph_list():
+    rounds = queries.get_rounds(sort=True)
+    rounds.reverse()
+
+    first_date = rounds[0].date
+    last_date = rounds[-1].date
+    dates, step = get_dates_for_range(first_date, last_date)
+
+    dates.pop(0)
+
+    handicaps = []
+    for date in dates:
+        end_index = get_next_smallest_date_index(rounds, date)
+        start_index = 0
+        if end_index > 20:
+            start_index = end_index - 20
+
+        rounds_in_date_range = rounds[start_index : end_index + 1]
+        handicap_for_date = calculate_handicap(rounds_in_date_range)
+        handicaps.append(handicap_for_date)
+
+    return [d.strftime("%m/%d/%Y") for d in dates], handicaps
+
+
+def get_anitcap():
+    rounds = queries.get_rounds(sort=True, max_rounds=20)
+    anticap = calculate_handicap(rounds=rounds, reverse=True)
+
+    return anticap
+
+
+def get_averagecap():
+    rounds = queries.get_rounds(sort=True, max_rounds=20)
+    score_diffs = get_score_diffs(rounds=rounds)
+    averagecap = round(sum(score_diffs) / len(score_diffs), 2)
+
+    return averagecap
+
+
 def jsonify_rounds(rounds):
     lst = []
 
@@ -301,6 +366,7 @@ def is_round_in_included(round, included_rounds):
             round_id_set.add(rnd.id)
 
     return round.id in round_id_set
+
 
 def get_handicap_change_message(old_handicap, new_handicap):
     if not old_handicap:

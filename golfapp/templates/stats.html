@@ -4,49 +4,30 @@
 
 
 {% block content %}
+
 <script>
+  const LINE_GRAPH_DATA = {{ line_graph_data|tojson }};
 </script>
 
 <div class="container-fluid">
   <div class="container pb-5">
-    <div class="fw-bold fs-1">
-      Your handicap is {{ handicap.handicap }}
-    </div>
-    <!-- <div class="m-2">
-      Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
-      <div class="form-check form-switch ms-3" style="display:inline-block;">
-        <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
-        <label class="form-check-label" for="showHandicapToggle"></label>
+    <div class="row fs-2 mb-5">
+      <div class="col-4 text-start">
+        Your handicap is {{ handicap.handicap }}
       </div>
-    </div> -->
-    <div>
-      <!-- Coming soon... -->
-      <p class="fs-4 m-2 fw-bold">Stats for most recent rounds used in handicap calculation</p>
-      <p class="m-2"><b>{{ stats['handicap_rounds']['num_rounds'] }}</b> rounds recorded</p>
-      <p class="m-2">Average round: <b>{{ stats['handicap_rounds']['avg_score'] }}</b></p>
-      <p class="m-2">Fairways in regulation: <b>{{ stats['handicap_rounds']['avg_fir'] }}</b></p>
-      <p class="m-2">Greens in regulation: <b>{{ stats['handicap_rounds']['avg_gir'] }}</b></p>
-      <p class="m-2">Putting: <b>{{ stats['handicap_rounds']['avg_putts'] }}</b></p>
+      <div class="col-4 text-center">
+        Your averagecap is {{ averagecap }}
+      </div>
+      <div class="col-4 text-end">
+        Your anticap is {{ anticap }}
+      </div>
     </div>
-    <br>
-    <div>
-      <p class="fs-4 m-2 fw-bold">Stats for previous rounds</p>
-      <p class="m-2"><b>{{ stats['previous_rounds_stats']['num_rounds'] }}</b> rounds recorded</p>
-      <p class="m-2">Average round: <b>{{ stats['previous_rounds_stats']['avg_score'] }}</b></p>
-      <p class="m-2">Fairways in regulation: <b>{{ stats['previous_rounds_stats']['avg_fir'] }}</b></p>
-      <p class="m-2">Greens in regulation: <b>{{ stats['previous_rounds_stats']['avg_gir'] }}</b></p>
-      <p class="m-2">Putting: <b>{{ stats['previous_rounds_stats']['avg_putts'] }}</b></p>
-    </div>
-    <br>
-    <div>
-      <p class="fs-4 m-2 fw-bold">Stats for all rounds</p>
-      <p class="m-2"><b>{{ stats['all_rounds']['num_rounds'] }}</b> rounds recorded</p>
-      <p class="m-2">Average round: <b>{{ stats['all_rounds']['avg_score'] }}</b></p>
-      <p class="m-2">Fairways in regulation: <b>{{ stats['all_rounds']['avg_fir'] }}</b></p>
-      <p class="m-2">Greens in regulation: <b>{{ stats['all_rounds']['avg_gir'] }}</b></p>
-      <p class="m-2">Putting: <b>{{ stats['all_rounds']['avg_putts'] }}</b></p>
+    <div class="row">
+      <canvas id="handicap-graph"></canvas>
     </div>
   </div>
 </div>
+
+<script src="/static/js/stats.mjs" type="module"></script>
 
 {% endblock content %}

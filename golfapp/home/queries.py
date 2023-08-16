@@ -10,7 +10,6 @@ from golfapp.models import (
 from golfapp.extensions import db
 from sqlalchemy import extract
 from flask_login import current_user
-from datetime import date
 
 
 def get_user(user_id):

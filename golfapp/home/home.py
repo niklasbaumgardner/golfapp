@@ -283,6 +283,7 @@ def add_course():
 @home.route("/stats", methods=["GET"])
 @login_required
 def stats():
+    golf.get_handicap_graph_list()
     user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
     if not user_handicap:
         return redirect(url_for("home.index"))
@@ -292,50 +293,61 @@ def stats():
     if len(rounds) == 0:
         return redirect(url_for("home.index"))
 
-    stats = {}
-    handicap_rounds = {}
+    # stats = {}
+    # handicap_rounds = {}
 
-    if len(rounds) > 20:
-        newest_rounds = rounds[:20]
-    else:
-        newest_rounds = rounds
+    # if len(rounds) > 20:
+    #     newest_rounds = rounds[:20]
+    # else:
+    #     newest_rounds = rounds
 
-    handicap_rounds["num_rounds"] = len(newest_rounds)
-    handicap_rounds["avg_score"] = round(
-        sum(map(lambda x: x.score, newest_rounds)) / len(newest_rounds), 2
+    # handicap_rounds["num_rounds"] = len(newest_rounds)
+    # handicap_rounds["avg_score"] = round(
+    #     sum(map(lambda x: x.score, newest_rounds)) / len(newest_rounds), 2
+    # )
+    # handicap_rounds["avg_gir"] = golf.get_avg_gir(newest_rounds)
+    # handicap_rounds["avg_fir"] = golf.get_avg_fir(newest_rounds)
+    # handicap_rounds["avg_putts"] = golf.get_avg_putts(newest_rounds)
+
+    # if len(rounds) > 20:
+    #     previous_rounds_stats = {}
+    #     previous_rounds = rounds[20:]
+
+    #     previous_rounds_stats["num_rounds"] = len(previous_rounds)
+    #     previous_rounds_stats["avg_score"] = round(
+    #         sum(map(lambda x: x.score, previous_rounds)) / len(previous_rounds), 2
+    #     )
+    #     previous_rounds_stats["avg_gir"] = golf.get_avg_gir(previous_rounds)
+    #     previous_rounds_stats["avg_fir"] = golf.get_avg_fir(previous_rounds)
+    #     previous_rounds_stats["avg_putts"] = golf.get_avg_putts(previous_rounds)
+
+    #     stats["previous_rounds_stats"] = previous_rounds_stats
+
+    #     all_rounds = {}
+
+    #     all_rounds["num_rounds"] = len(rounds)
+    #     all_rounds["avg_score"] = round(
+    #         sum(map(lambda x: x.score, rounds)) / len(rounds), 2
+    #     )
+    #     all_rounds["avg_gir"] = golf.get_avg_gir(rounds)
+    #     all_rounds["avg_fir"] = golf.get_avg_fir(rounds)
+    #     all_rounds["avg_putts"] = golf.get_avg_putts(rounds)
+
+    #     stats["all_rounds"] = all_rounds
+
+    # TODO: return handicap, anticap, average of last 20
+    # also a list a [[dates], [handicap for respective date]] to show a graph of handicap over time
+    # stats["handicap_rounds"] = handicap_rounds
+    dates, handicaps = golf.get_handicap_graph_list()
+    anticap = golf.get_anitcap()
+    averagecap = golf.get_averagecap()
+    return render_template(
+        "stats.html",
+        handicap=user_handicap,
+        line_graph_data={"dates": dates, "handicaps": handicaps},
+        anticap=anticap,
+        averagecap=averagecap,
     )
-    handicap_rounds["avg_gir"] = golf.get_avg_gir(newest_rounds)
-    handicap_rounds["avg_fir"] = golf.get_avg_fir(newest_rounds)
-    handicap_rounds["avg_putts"] = golf.get_avg_putts(newest_rounds)
-
-    if len(rounds) > 20:
-        previous_rounds_stats = {}
-        previous_rounds = rounds[20:]
-
-        previous_rounds_stats["num_rounds"] = len(previous_rounds)
-        previous_rounds_stats["avg_score"] = round(
-            sum(map(lambda x: x.score, previous_rounds)) / len(previous_rounds), 2
-        )
-        previous_rounds_stats["avg_gir"] = golf.get_avg_gir(previous_rounds)
-        previous_rounds_stats["avg_fir"] = golf.get_avg_fir(previous_rounds)
-        previous_rounds_stats["avg_putts"] = golf.get_avg_putts(previous_rounds)
-
-        stats["previous_rounds_stats"] = previous_rounds_stats
-
-        all_rounds = {}
-
-        all_rounds["num_rounds"] = len(rounds)
-        all_rounds["avg_score"] = round(
-            sum(map(lambda x: x.score, rounds)) / len(rounds), 2
-        )
-        all_rounds["avg_gir"] = golf.get_avg_gir(rounds)
-        all_rounds["avg_fir"] = golf.get_avg_fir(rounds)
-        all_rounds["avg_putts"] = golf.get_avg_putts(rounds)
-
-        stats["all_rounds"] = all_rounds
-
-    stats["handicap_rounds"] = handicap_rounds
-    return render_template("stats.html", handicap=user_handicap, stats=stats)
 
 
 @home.route("/update_round/<int:id>", methods=["POST"])
