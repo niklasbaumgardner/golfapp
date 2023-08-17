@@ -6,13 +6,16 @@
 {% block content %}
 
 <script>
+  const GET_ROUNDS_URL = "{{ url_for('api.get_rounds') }}";
   const LINE_GRAPH_DATA = {{ line_graph_data|tojson }};
 </script>
+<script src="/static/js/nouislider.js"></script>
+<link href="/static/css/nouislider.min.css" rel="stylesheet">
 
 <div class="container-fluid">
-  <div class="container pb-5">
-    <div class="row mb-5">
-      <div class="col-4">
+  <div class="container mb-5">
+    <div class="row mb-5 gy-3">
+      <div class="col-12 col-lg-4">
         <div class="row fs-2">
           <div class="text-start">
             Your handicap is {{ handicap.handicap }}
@@ -24,7 +27,7 @@
           </div>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-12 col-lg-4">
         <div class="row fs-2">
           <div class="text-center">
             Your averagecap is {{ averagecap }}
@@ -36,7 +39,7 @@
           </div>
         </div>
       </div>
-      <div class="col-4">
+      <div class="col-12 col-lg-4">
         <div class="row fs-2">
           <div class="text-end">
             Your anticap is {{ anticap }}
@@ -49,8 +52,50 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row my-5">
       <canvas id="handicap-graph"></canvas>
+    </div>
+    <div class="row my-5 gy-3">
+      <span class="fs-3 mb-4">Select a range of rounds:</span>
+      <div id="slider"></div>
+      <div class="row mt-5 pt-5">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Average round</h5>
+              <p class="card-text"><span id="avg-round"></span></p>
+              <p class="card-text"><small class="text-body-secondary">out of <span class="num-rounds"></span> rounds</small></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Fairways in regulation per round</h5>
+              <p class="card-text"><span id="fir"></span></p>
+              <p class="card-text"><small class="text-body-secondary">out of <span class="num-rounds"></span> rounds</small></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Greens in regulation per round</h5>
+              <p class="card-text"><span id="gir"></span></p>
+              <p class="card-text"><small class="text-body-secondary">out of <span class="num-rounds"></span> rounds</small></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Average putts per round</h5>
+              <p class="card-text"><span id="putts"></span></p>
+              <p class="card-text"><small class="text-body-secondary">out of <span class="num-rounds"></span> rounds</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

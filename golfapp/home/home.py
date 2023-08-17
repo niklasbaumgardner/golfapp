@@ -283,7 +283,6 @@ def add_course():
 @home.route("/stats", methods=["GET"])
 @login_required
 def stats():
-    golf.get_handicap_graph_list()
     user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
     if not user_handicap:
         return redirect(url_for("home.index"))

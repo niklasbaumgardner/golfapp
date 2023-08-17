@@ -46,3 +46,8 @@ def get_all_course_rankings_dict():
 def get_all_course_rankings_list():
     course_rankings = queries.get_all_course_rankings()
     return [cr.to_json() for cr in course_rankings]
+
+
+def get_rounds_list():
+    rounds = queries.get_rounds(sort=True, reverse_sort=True)
+    return [r.to_json() for r in rounds]

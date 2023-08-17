@@ -47,3 +47,10 @@ def get_page(id):
     )
     rounds = golf.jsonify_rounds(rounds)
     return {"page": page, "rounds": rounds}
+
+
+@api.route("/get_rounds", methods=["GET"])
+@login_required
+def get_rounds():
+    rounds = apiHelpers.get_rounds_list()
+    return {"rounds": rounds}
