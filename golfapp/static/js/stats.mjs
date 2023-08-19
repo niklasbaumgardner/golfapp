@@ -5,8 +5,11 @@ let ROUNDS;
 
 const AVG_ROUND = document.getElementById("avg-round");
 const FIR = document.getElementById("fir");
+const FIR_PERCENT = document.getElementById("fir-percent");
 const GIR = document.getElementById("gir");
+const GIR_PERCENT = document.getElementById("gir-percent");
 const PUTTS = document.getElementById("putts");
+const PUTTS_PER_HOLE = document.getElementById("putts-hole");
 
 const COLORS = {
   light: {
@@ -74,7 +77,6 @@ getPageData();
 
 function calculateStats(start, end) {
   let tempRounds = ROUNDS.slice(start, end + 1);
-  console.log(tempRounds);
 
   let avgRoundArr = [];
   let fir = [];
@@ -97,19 +99,20 @@ function calculateStats(start, end) {
     ".num-rounds"
   ).textContent = avgRound.numRounds;
 
+  FIR_PERCENT.textContent = round((100 * avgFir.average) / 14, 2);
   FIR.textContent = avgFir.average;
   FIR.parentElement.parentElement.querySelector(".num-rounds").textContent =
     avgFir.numRounds;
 
+  GIR_PERCENT.textContent = round((100 * avgGir.average) / 18, 2);
   GIR.textContent = avgGir.average;
   GIR.parentElement.parentElement.querySelector(".num-rounds").textContent =
     avgGir.numRounds;
 
+  PUTTS_PER_HOLE.textContent = round(avgPutts.average / 18, 2);
   PUTTS.textContent = avgPutts.average;
   PUTTS.parentElement.parentElement.querySelector(".num-rounds").textContent =
     avgPutts.numRounds;
-
-  console.log(avgFir, fir, gir, putts);
 }
 
 function average(array) {
@@ -151,7 +154,7 @@ function createLineChart(ctx) {
       datasets: [
         {
           id: "handicap",
-          label: "Handicap over time",
+          label: "Handicap",
           data: LINE_GRAPH_DATA.handicaps,
           backgroundColor: "rgb(0, 184, 148)",
           borderColor: "rgb(0, 184, 148)",

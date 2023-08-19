@@ -24,7 +24,7 @@
 </script>
 
 <div class="container-fluid">
-    <div class="container pb-5">
+    <div class="row">
         <div class="fw-bold fs-1">
             {% if is_me %}
                 Your handicap is {{ handicap }}
@@ -47,89 +47,90 @@
                 <label class="form-check-label" for="showHandicapToggle"></label>
             </div>
         </div> -->
+        <div class="row my-5">
+            <canvas id="rounds-graph"></canvas>
+        </div>
     </div>
 </div>
-<div class="container-fluid mb-5">
-    <div class="container">
-        <div class="table-mobile">
-            <table class="table table-striped-even">
-                <thead>
-                    <tr>
-                        <th scope="col">Course</th>
-                        <th scope="col">Score / Par</th>
-                        <th scope="col" class="w-80p text-center">FIR</th>
-                        <th scope="col" class="w-80p text-center">GIR</th>
-                        <th scope="col" class="w-80p text-center">Putts</th>
-                        <th scope="col" class="text-center">Date</th>
-                        {% if is_me %}
-                            <th scope="col"></th>
-                        {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
+<div class="row mb-5">
+    <div class="table-mobile">
+        <table class="table table-striped-even">
+            <thead>
+                <tr>
+                    <th scope="col">Course</th>
+                    <th scope="col">Score / Par</th>
+                    <th scope="col" class="w-80p text-center">FIR</th>
+                    <th scope="col" class="w-80p text-center">GIR</th>
+                    <th scope="col" class="w-80p text-center">Putts</th>
+                    <th scope="col" class="text-center">Date</th>
                     {% if is_me %}
-                        <tr>
-                            <form action="{{ url_for('home.add_round_submit') }}" method="POST">
-                                <td>
-                                    <div class="row gy-2">
-                                        <div class="col-12 col-xxl-7">
-                                            <select name="course" id="course" class="form-select">
-                                                <option value="" selected disabled hidden>Select course</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 col-xxl-5">
-                                            <div id="course-not-found-text">
-                                                <small>
-                                                    <span>Don't see the course you're looking for?</span>
-                                                    <a href="{{ url_for('home.add_course') }}">Add a course here</a>
-                                                </small>
-                                            </div>
-                                            <select name="teebox" id="teebox" class="form-select" hidden></select>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="score" placeholder="Score"
-                                        required>
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
-                                </td>
-                                <td>
-                                    <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
-                                </td>
-                                <td>
-                                    <input class="form-control" type="date" id="date" name="date" placeholder="">
-                                </td>
-                                <td>
-                                    <input class="btn btn-primary" type="submit" value="Add Round">
-                                </td>
-                            </form>
-                        </tr>
+                        <th scope="col"></th>
                     {% endif %}
-                    <div id="rounds"></div>
-                </tbody>
-            </table>
-        </div>
-
-        <nav aria-label="...">
-            <ul class="pagination">
-                <li id="prev" class="page-item">
-                    <button class="page-link">
-                        <span aria-hidden="true">&laquo;</span>
-                    </button>
-                </li>
-                <li id="next" class="page-item">
-                    <button class="page-link">
-                        <span aria-hidden="true">&raquo;</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
+                </tr>
+            </thead>
+            <tbody>
+                {% if is_me %}
+                    <tr>
+                        <form action="{{ url_for('home.add_round_submit') }}" method="POST">
+                            <td>
+                                <div class="row gy-2">
+                                    <div class="col-12 col-xxl-7">
+                                        <select name="course" id="course" class="form-select">
+                                            <option value="" selected disabled hidden>Select course</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-xxl-5">
+                                        <div id="course-not-found-text">
+                                            <small>
+                                                <span>Don't see the course you're looking for?</span>
+                                                <a href="{{ url_for('home.add_course') }}">Add a course here</a>
+                                            </small>
+                                        </div>
+                                        <select name="teebox" id="teebox" class="form-select" hidden></select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="score" placeholder="Score"
+                                    required>
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
+                            </td>
+                            <td>
+                                <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
+                            </td>
+                            <td>
+                                <input class="form-control" type="date" id="date" name="date" placeholder="">
+                            </td>
+                            <td>
+                                <input class="btn btn-primary" type="submit" value="Add Round">
+                            </td>
+                        </form>
+                    </tr>
+                {% endif %}
+                <div id="rounds"></div>
+            </tbody>
+        </table>
     </div>
+
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li id="prev" class="page-item">
+                <button class="page-link">
+                    <span aria-hidden="true">&laquo;</span>
+                </button>
+            </li>
+            <li id="next" class="page-item">
+                <button class="page-link">
+                    <span aria-hidden="true">&raquo;</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <div id="deleteModals"></div>
