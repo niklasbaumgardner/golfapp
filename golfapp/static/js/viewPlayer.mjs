@@ -61,7 +61,7 @@ let data = roundsReversed.map((obj) => {
 });
 let labels = roundsReversed.map((obj) => {
   let courseName = COURSES[obj.course_id].name;
-  return [courseName, dateAsString(obj.date)];
+  return [`${obj.score} at ${courseName}`, dateAsString(obj.date)];
 });
 
 const ctx = document.getElementById("rounds-graph").getContext("2d");
