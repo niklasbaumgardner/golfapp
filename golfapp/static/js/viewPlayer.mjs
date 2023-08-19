@@ -159,6 +159,7 @@ function createBarChart(ctx, data, labels) {
         },
       },
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: {
           beginAtZero: true,
