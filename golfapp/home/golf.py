@@ -376,7 +376,7 @@ def get_handicap_change_message(old_handicap, new_handicap):
     elif old_handicap > new_handicap:
         return f"handicap improved from {stringify_handicap(old_handicap)} to {stringify_handicap(new_handicap)}"
     elif old_handicap < new_handicap:
-        return f"handicap decreased {stringify_handicap(old_handicap)} to {stringify_handicap(new_handicap)}"
+        return f"handicap worsened from {stringify_handicap(old_handicap)} to {stringify_handicap(new_handicap)}"
 
 
 def get_random_message(new_round, user_id, old_handicap, new_handicap):
