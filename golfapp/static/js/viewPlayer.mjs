@@ -55,7 +55,7 @@ let theme = document.documentElement.dataset.bsTheme;
 
 chartJs.Chart.register(...chartJs.registerables);
 
-let roundsReversed = roundsArray.reverse();
+let roundsReversed = roundsArray.toReversed();
 let data = roundsReversed.map((obj) => {
   return obj.score;
 });
