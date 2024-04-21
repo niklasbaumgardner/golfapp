@@ -39,43 +39,43 @@ const pagination = new Pagination(
   NUM_PAGES
 );
 
-const COLORS = {
-  light: {
-    labelColor: "rgb(33, 37, 41)",
-    gridColor: "rgba(0, 0, 0, .11)",
-    tickColor: "rgb(33, 37, 41)",
-  },
-  dark: {
-    labelColor: "rgb(173, 181, 189)",
-    gridColor: "rgba(255, 255, 255, .11)",
-    tickColor: "rgb(173, 181, 189)",
-  },
-};
-let theme = document.documentElement.dataset.bsTheme;
+// const COLORS = {
+//   light: {
+//     labelColor: "rgb(33, 37, 41)",
+//     gridColor: "rgba(0, 0, 0, .11)",
+//     tickColor: "rgb(33, 37, 41)",
+//   },
+//   dark: {
+//     labelColor: "rgb(173, 181, 189)",
+//     gridColor: "rgba(255, 255, 255, .11)",
+//     tickColor: "rgb(173, 181, 189)",
+//   },
+// };
+// let theme = document.documentElement.dataset.bsTheme;
 
-chartJs.Chart.register(...chartJs.registerables);
+// chartJs.Chart.register(...chartJs.registerables);
 
-let roundsReversed = roundsArray.toReversed();
-let data = roundsReversed.map((obj) => {
-  return obj.score;
-});
-let labels = roundsReversed.map((obj) => {
-  let courseName = COURSES[obj.course_id].name;
-  return [`${obj.score} at ${courseName}`, dateAsString(obj.date)];
-});
+// let roundsReversed = roundsArray.toReversed();
+// let data = roundsReversed.map((obj) => {
+//   return obj.score;
+// });
+// let labels = roundsReversed.map((obj) => {
+//   let courseName = COURSES[obj.course_id].name;
+//   return [`${obj.score} at ${courseName}`, dateAsString(obj.date)];
+// });
 
-const ctx = document.getElementById("rounds-graph").getContext("2d");
-let lineChart = createBarChart(ctx, data, labels);
+// const ctx = document.getElementById("rounds-graph").getContext("2d");
+// let lineChart = createBarChart(ctx, data, labels);
 
-let observer = new MutationObserver((mutations) => {
-  theme = document.documentElement.dataset.bsTheme;
-  if (lineChart) {
-    lineChart.destroy();
-  }
-  lineChart = createBarChart(ctx, data, labels);
-});
+// let observer = new MutationObserver((mutations) => {
+//   theme = document.documentElement.dataset.bsTheme;
+//   if (lineChart) {
+//     lineChart.destroy();
+//   }
+//   lineChart = createBarChart(ctx, data, labels);
+// });
 
-observer.observe(document.documentElement, { attributes: true });
+// observer.observe(document.documentElement, { attributes: true });
 
 function dateAsString(date) {
   date = new Date(date + "T00:00:00");
@@ -124,66 +124,179 @@ function onCourseSelect(event) {
   createTeeboxElements(teeboxes);
 }
 
-function createBarChart(ctx, data, labels) {
-  return new chartJs.Chart(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {
-          id: "handicap",
-          data,
-          backgroundColor: "rgb(0, 184, 148)",
-          borderColor: "rgb(0, 184, 148)",
-          borderWidth: 2,
-          color: COLORS[theme].labelColor,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: false,
-          labels: {
-            color: COLORS[theme].labelColor,
-          },
-        },
-        title: {
-          display: true,
-          text: "Most recent rounds",
-          color: COLORS[theme].labelColor,
-          font: {
-            size: 19,
-            weight: "normal",
-          },
+// function createBarChart(ctx, data, labels) {
+//   return new chartJs.Chart(ctx, {
+//     type: "bar",
+//     data: {
+//       labels,
+//       datasets: [
+//         {
+//           id: "handicap",
+//           data,
+//           backgroundColor: "rgb(0, 184, 148)",
+//           borderColor: "rgb(0, 184, 148)",
+//           borderWidth: 2,
+//           color: COLORS[theme].labelColor,
+//         },
+//       ],
+//     },
+//     options: {
+//       plugins: {
+//         legend: {
+//           display: false,
+//           labels: {
+//             color: COLORS[theme].labelColor,
+//           },
+//         },
+//         title: {
+//           display: true,
+//           text: "Most recent rounds",
+//           color: COLORS[theme].labelColor,
+//           font: {
+//             size: 19,
+//             weight: "normal",
+//           },
+//         },
+//       },
+//       responsive: true,
+//       maintainAspectRatio: false,
+//       scales: {
+//         y: {
+//           beginAtZero: true,
+//           labels: {
+//             color: COLORS[theme].labelColor,
+//           },
+//           grid: {
+//             color: COLORS[theme].gridColor,
+//           },
+//           ticks: {
+//             color: COLORS[theme].tickColor,
+//           },
+//         },
+//         x: {
+//           grid: {
+//             color: COLORS[theme].gridColor,
+//           },
+//           ticks: {
+//             color: COLORS[theme].tickColor,
+//             maxRotation: 90,
+//             minRotation: 90,
+//           },
+//         },
+//       },
+//     },
+//   });
+// }
+
+class RoundsGridManager {
+  constructor() {
+    this.roundsGridEl = document.getElementById("roundsGrid");
+    this.roundsGridEl.addEventListener("cellEditingStopped", this);
+
+    this.createDataGrid();
+
+    this.setupThemeWatcher();
+  }
+
+  handleEvent(event) {
+    console.log(event);
+  }
+
+  createDataGrid() {
+    const rowData = [];
+    for (let string of roundsArray) {
+      rowData.push(string);
+    }
+
+    const columnDefs = [
+      {
+        field: "course",
+        // editable: true,
+        cellRenderer: (param) => {
+          let course = COURSES[param.data.course_id];
+          let teebox = course.teeboxes[param.data.teebox_id];
+
+          return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
         },
       },
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          labels: {
-            color: COLORS[theme].labelColor,
-          },
-          grid: {
-            color: COLORS[theme].gridColor,
-          },
-          ticks: {
-            color: COLORS[theme].tickColor,
-          },
-        },
-        x: {
-          grid: {
-            color: COLORS[theme].gridColor,
-          },
-          ticks: {
-            color: COLORS[theme].tickColor,
-            maxRotation: 90,
-            minRotation: 90,
-          },
+      {
+        field: "score",
+        headerName: "Score / Par",
+        editable: true,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          step: 1,
         },
       },
-    },
-  });
+      {
+        field: "fir",
+        headerName: "FIR",
+        editable: true,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          step: 1,
+        },
+      },
+      {
+        field: "gir",
+        headerName: "GIR",
+        editable: true,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          step: 1,
+        },
+      },
+      {
+        field: "putts",
+        editable: true,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          step: 1,
+        },
+      },
+      {
+        field: "date",
+        editable: true,
+        cellEditor: "agDateStringCellEditor",
+        cellRenderer: (param) => {
+          let date = param.data.date;
+
+          return `<sl-format-date  month="long" day="numeric" year="numeric" date="${date}"></sl-format-date>`;
+        },
+      },
+    ];
+
+    const gridOptions = {
+      columnDefs,
+      rowData,
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+        defaultMinWidth: 75,
+        columnLimits: [
+          {
+            colId: "name",
+            minWidth: 300,
+          },
+        ],
+      },
+      onRowDataUpdated: (event) => {
+        let height =
+          document.querySelector(".ag-center-cols-container").scrollHeight +
+          document.querySelector(".ag-header-row").scrollHeight;
+
+        if (height < 192) {
+          height = 192;
+        }
+
+        this.roundsGridEl.style.height = `${height + 3}px`;
+      },
+      defaultColDef: {},
+      onCellEditingStopped: (event) => this.handleEvent(event),
+    };
+    this.dataGrid = agGrid.createGrid(this.roundsGridEl, gridOptions);
+  }
 }
+
+new RoundsGridManager();
+
+console.log(roundsArray);

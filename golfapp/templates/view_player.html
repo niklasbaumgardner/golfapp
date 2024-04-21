@@ -5,6 +5,7 @@
 
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 <script>
     const GET_PAGE_URL = "{{ url_for('api.get_page', id=user.id) }}";
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
@@ -47,11 +48,14 @@
                 <label class="form-check-label" for="showHandicapToggle"></label>
             </div>
         </div> -->
-        <div class="row my-5" style="min-height: 400px;">
+        <!-- <div class="row my-5" style="min-height: 400px;">
             <canvas id="rounds-graph"></canvas>
-        </div>
+        </div> -->
     </div>
 </div>
+
+<div id="roundsGrid" style="height: 800px;" class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"></div>
+
 <div class="row mb-5">
     <div class="table-mobile">
         <table class="table table-striped-even">
