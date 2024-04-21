@@ -1,6 +1,6 @@
 from golfapp.extensions import db, login_manager
 from flask_login import UserMixin
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer
 import os
 
 
@@ -39,15 +39,15 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
 
-    def get_reset_token(self, expire_sec=600):
-        s = Serializer(os.environ.get("SECRET_KEY"), expire_sec)
+    def get_reset_token(self):
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
         return s.dumps({"user_id": self.id}).decode("utf-8")
 
     @staticmethod
-    def verify_reset_token(token):
-        s = Serializer(os.environ.get("SECRET_KEY"))
+    def verify_reset_token(token, expire_sec=600):
+        s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
         try:
-            user_id = s.loads(token).get("user_id")
+            user_id = s.loads(token, max_age=expire_sec).get("user_id")
         except:
             return None
         return User.query.get(user_id)
