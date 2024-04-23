@@ -1,9 +1,9 @@
 let date = new Date();
-let ele = document.getElementById('date');
+let ele = document.getElementById("date");
 let year = date.getFullYear();
-let month = (date.getMonth() + 1).toString().padStart(2, '0');
-let day = date.getDate().toString().padStart(2, '0');
-let strDate = year + '-' + month + '-' + day;
+let month = (date.getMonth() + 1).toString().padStart(2, "0");
+let day = date.getDate().toString().padStart(2, "0");
+let strDate = year + "-" + month + "-" + day;
 
 if (ele) {
   ele.valueAsDate = date;

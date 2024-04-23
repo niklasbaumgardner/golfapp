@@ -8,138 +8,66 @@
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 <script>
     const GET_PAGE_URL = "{{ url_for('api.get_page', id=user.id) }}";
+    const EDIT_ROUND_URL = "{{ url_for('home.edit_round', id=0) }}".slice(0, -1);
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
     const VIEW_PLAYER_URL = "{{ url_for('home.view_player', id=0) }}".slice(0, -1);
+    const ADD_ROUND_URL = "{{ url_for('home.add_round_submit') }}";
+    const ADD_COURSE_URL = "{{ url_for('home.add_course') }}";
+    const GET_COURSES_URL = "{{ url_for('api.get_courses') }}"
     const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
     const COURSES = {{ courses|tojson }};
-    const TEEBOXES = {};
     const IS_ME = "{{ is_me }}" === "True";
-    const TOTAL_ROUNDS = {{ total }};
-    const CURRENT_PAGE = {{ page }};
-    const NUM_PAGES = {{ num_pages }};
-    const roundsArray = [];
-    const roundsPy = {{ rounds|tojson }};
-</script>
-<script>
-
+    const ROUNDS = {{ rounds|tojson }};
 </script>
 
-<div class="container-fluid">
+<div class="row mb-5">
+    <div class="fw-bold fs-1">
+        {% if is_me %}
+            Your handicap is {{ handicap }}
+        {% else %}
+            {{ user.username }}'s handicap is {{ handicap }}
+        {% endif %}
+    </div>
     <div class="row">
-        <div class="fw-bold fs-1">
+        <div class="col">
             {% if is_me %}
-                Your handicap is {{ handicap }}
-            {% else %}
-                {{ user.username }}'s handicap is {{ handicap }}
-            {% endif %}
-        </div>
-        <div class="row">
-            {% if is_me %}
-                <a href="{{ url_for('home.stats') }}">View more stats</a>
+                <a href="{{ url_for('home.stats') }}">View more stats</a><br/>
                 <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View my course ranking</a>
             {% else %}
                 <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View course ranking</a>
             {% endif %}
         </div>
-        <!-- <div class="m-2">
-            Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
-            <div class="form-check form-switch ms-3" style="display:inline-block;">
-                <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
-                <label class="form-check-label" for="showHandicapToggle"></label>
+        {% if is_me %}
+            <div class="col text-end">
+                <sl-button id="addNewRoundButton" variant="success">Add new round</sl-button>
             </div>
-        </div> -->
-        <!-- <div class="row my-5" style="min-height: 400px;">
-            <canvas id="rounds-graph"></canvas>
-        </div> -->
+        {% endif %}
     </div>
+    <!-- <div class="m-2">
+        Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
+        <div class="form-check form-switch ms-3" style="display:inline-block;">
+            <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
+            <label class="form-check-label" for="showHandicapToggle"></label>
+        </div>
+    </div> -->
+    <!-- <div class="row my-5" style="min-height: 400px;">
+        <canvas id="rounds-graph"></canvas>
+    </div> -->
 </div>
 
-<div id="roundsGrid" style="height: 800px;" class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"></div>
-
-<div class="row mb-5">
-    <div class="table-mobile">
-        <table class="table table-striped-even">
-            <thead>
-                <tr>
-                    <th scope="col">Course</th>
-                    <th scope="col">Score / Par</th>
-                    <th scope="col" class="w-80p text-center">FIR</th>
-                    <th scope="col" class="w-80p text-center">GIR</th>
-                    <th scope="col" class="w-80p text-center">Putts</th>
-                    <th scope="col" class="text-center">Date</th>
-                    {% if is_me %}
-                        <th scope="col"></th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% if is_me %}
-                    <tr>
-                        <form action="{{ url_for('home.add_round_submit') }}" method="POST">
-                            <td>
-                                <div class="row gy-2">
-                                    <div class="col-12 col-xxl-7">
-                                        <select name="course" id="course" class="form-select">
-                                            <option value="" selected disabled hidden>Select course</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 col-xxl-5">
-                                        <div id="course-not-found-text">
-                                            <small>
-                                                <span>Don't see the course you're looking for?</span>
-                                                <a href="{{ url_for('home.add_course') }}">Add a course here</a>
-                                            </small>
-                                        </div>
-                                        <select name="teebox" id="teebox" class="form-select" hidden></select>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="score" placeholder="Score"
-                                    required>
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="fir" placeholder="FIR">
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="gir" placeholder="GIR">
-                            </td>
-                            <td>
-                                <input class="form-control w-80p" type="number" name="putts" placeholder="Putts">
-                            </td>
-                            <td>
-                                <input class="form-control" type="date" id="date" name="date" placeholder="">
-                            </td>
-                            <td>
-                                <input class="btn btn-primary" type="submit" value="Add Round">
-                            </td>
-                        </form>
-                    </tr>
-                {% endif %}
-                <div id="rounds"></div>
-            </tbody>
-        </table>
-    </div>
-
-    <nav aria-label="...">
-        <ul class="pagination">
-            <li id="prev" class="page-item">
-                <button class="page-link">
-                    <span aria-hidden="true">&laquo;</span>
-                </button>
-            </li>
-            <li id="next" class="page-item">
-                <button class="page-link">
-                    <span aria-hidden="true">&raquo;</span>
-                </button>
-            </li>
-        </ul>
-    </nav>
+<div class="d-flex justify-content-center">
+    <div id="roundsGrid" style="height: 800px;width: 952px;" class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"></div>
 </div>
+
+<add-round></add-round>
+
 
 <div id="deleteModals"></div>
 
-<script src="/static/js/setdate.js"></script>
+
+
+<script src="/static/js/setdate.js" defer></script>
 <script src="/static/js/viewPlayer.mjs" type="module"></script>
+<script src="/static/js/addRoundEl.mjs" type="module"></script>
 
 {% endblock content %}

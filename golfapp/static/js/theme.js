@@ -1,17 +1,27 @@
 "use strict";
 
-const storage = window["localStorage"];
+const themeStorage = window["localStorage"];
 
 function getTheme() {
-  return storage.getItem("theme");
+  return themeStorage.getItem("theme");
 }
 
 function getThemeButton(theme) {
-  return document.querySelector(`[data-bs-theme-value="${theme}"]`);
+  return document.getElementById(theme);
 }
 
 function getThemeButtons() {
-  return document.querySelectorAll("[data-bs-theme-value]");
+  let menu = document.getElementById("theme-selector");
+  return menu.querySelectorAll("sl-menu-item");
+}
+
+function getThemeIcon(theme) {
+  return document.getElementById(`${theme}-icon`);
+}
+
+function getThemeIcons() {
+  let button = document.getElementById("theme-button");
+  return button.querySelectorAll("sl-icon");
 }
 
 function setTheme(theme, options) {
@@ -19,28 +29,33 @@ function setTheme(theme, options) {
 
   console.log("setting theme", theme);
 
+  themeStorage.setItem("theme", theme);
   // Set html element theme
   document.documentElement.setAttribute("data-bs-theme", theme);
+  document.documentElement.classList.toggle("sl-theme-dark", theme === "dark");
+  document.documentElement.classList.toggle(
+    "sl-theme-light",
+    theme === "light"
+  );
 
   // Set all buttons to inactive
   for (let button of getThemeButtons()) {
-    button.classList.remove("active");
+    button.checked = button.id === theme;
   }
 
-  // Set theme button to active
-  let currentThemeButton = getThemeButton(theme);
-  currentThemeButton.classList.add("active");
+  for (let icon of getThemeIcons()) {
+    icon.hidden = true;
+  }
 
-  currentThemeButton.parentElement.parentElement.previousElementSibling.innerText =
-    currentThemeButton.innerText.trim();
+  let currentThemeIcon = getThemeIcon(theme);
+  currentThemeIcon.hidden = false;
 
-  storage.setItem("theme", theme);
   if (!(options?.dontSend === true)) {
     fetch(THEME_URL + "?" + new URLSearchParams({ theme }));
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+(() => {
   if (THEME === "") {
     let storedTheme = getTheme();
     setTheme(storedTheme);
@@ -48,12 +63,9 @@ window.addEventListener("DOMContentLoaded", () => {
     setTheme(THEME, { dontSend: true });
   }
 
-  let themeButtons = getThemeButtons();
-
-  for (let button of themeButtons) {
-    button.addEventListener("click", () => {
-      let theme = button.getAttribute("data-bs-theme-value");
-      setTheme(theme);
-    });
-  }
-});
+  let themeSelector = document.getElementById("theme-selector");
+  themeSelector.addEventListener("sl-select", (event) => {
+    let theme = event.detail.item.id;
+    setTheme(theme);
+  });
+})();

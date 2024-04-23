@@ -1,197 +1,8 @@
-import { createElement } from "./customElement.mjs";
-import { Round } from "./round.mjs";
-import { Pagination } from "./pagination.mjs";
-import * as chartJs from "https://cdn.jsdelivr.net/npm/chart.js@3.6.2/+esm";
-
-for (let r of roundsPy) {
-  let round = new Round(...r);
-  roundsArray.push(round);
-}
-
-let coursesArray = [];
-for (let [id, course] of Object.entries(COURSES)) {
-  coursesArray.push(course);
-}
-
-coursesArray.sort((a, b) => {
-  return a.name.localeCompare(b.name);
-});
-
-let selectCourse = document.getElementById("course");
-
-if (selectCourse) {
-  selectCourse.addEventListener("input", onCourseSelect);
-
-  for (let course of coursesArray) {
-    let courseOption = createElement({
-      type: "option",
-      value: course.id,
-      content: course.name, //`${course.name} - ${course.teebox} (${course.rating} / ${course.slope})`
-    });
-    selectCourse.appendChild(courseOption);
-  }
-}
-
-const pagination = new Pagination(
-  roundsArray,
-  TOTAL_ROUNDS,
-  CURRENT_PAGE,
-  NUM_PAGES
-);
-
-// const COLORS = {
-//   light: {
-//     labelColor: "rgb(33, 37, 41)",
-//     gridColor: "rgba(0, 0, 0, .11)",
-//     tickColor: "rgb(33, 37, 41)",
-//   },
-//   dark: {
-//     labelColor: "rgb(173, 181, 189)",
-//     gridColor: "rgba(255, 255, 255, .11)",
-//     tickColor: "rgb(173, 181, 189)",
-//   },
-// };
-// let theme = document.documentElement.dataset.bsTheme;
-
-// chartJs.Chart.register(...chartJs.registerables);
-
-// let roundsReversed = roundsArray.toReversed();
-// let data = roundsReversed.map((obj) => {
-//   return obj.score;
-// });
-// let labels = roundsReversed.map((obj) => {
-//   let courseName = COURSES[obj.course_id].name;
-//   return [`${obj.score} at ${courseName}`, dateAsString(obj.date)];
-// });
-
-// const ctx = document.getElementById("rounds-graph").getContext("2d");
-// let lineChart = createBarChart(ctx, data, labels);
-
-// let observer = new MutationObserver((mutations) => {
-//   theme = document.documentElement.dataset.bsTheme;
-//   if (lineChart) {
-//     lineChart.destroy();
-//   }
-//   lineChart = createBarChart(ctx, data, labels);
-// });
-
-// observer.observe(document.documentElement, { attributes: true });
-
-function dateAsString(date) {
-  date = new Date(date + "T00:00:00");
-  let options = { month: "long", day: "numeric", year: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-}
-
-function createTeeboxElements(teeboxes) {
-  let teeboxSelect = document.getElementById("teebox");
-  let children = teeboxSelect.children;
-  for (let i = children.length; i > 0; i--) {
-    let child = children[i - 1];
-    child.remove();
-  }
-  teeboxSelect.hidden = false;
-
-  let teeboxesArr = Object.entries(teeboxes);
-
-  if (teeboxesArr.length > 1) {
-    let defaultOption = createElement({
-      type: "option",
-      value: "",
-      content: "Select teebox",
-      hidden: true,
-      disabled: true,
-      selected: true,
-    });
-    teeboxSelect.appendChild(defaultOption);
-  }
-
-  for (let [id, teebox] of teeboxesArr) {
-    let option = createElement({
-      type: "option",
-      value: teebox.id,
-      content: `${teebox.teebox} (${teebox.rating} / ${teebox.slope})`,
-    });
-    teeboxSelect.appendChild(option);
-  }
-}
-
-function onCourseSelect(event) {
-  let courseId = event.target.value;
-  let teeboxes = COURSES[courseId].teeboxes;
-  let courseNotFoundText = document.getElementById("course-not-found-text");
-  courseNotFoundText.hidden = true;
-  createTeeboxElements(teeboxes);
-}
-
-// function createBarChart(ctx, data, labels) {
-//   return new chartJs.Chart(ctx, {
-//     type: "bar",
-//     data: {
-//       labels,
-//       datasets: [
-//         {
-//           id: "handicap",
-//           data,
-//           backgroundColor: "rgb(0, 184, 148)",
-//           borderColor: "rgb(0, 184, 148)",
-//           borderWidth: 2,
-//           color: COLORS[theme].labelColor,
-//         },
-//       ],
-//     },
-//     options: {
-//       plugins: {
-//         legend: {
-//           display: false,
-//           labels: {
-//             color: COLORS[theme].labelColor,
-//           },
-//         },
-//         title: {
-//           display: true,
-//           text: "Most recent rounds",
-//           color: COLORS[theme].labelColor,
-//           font: {
-//             size: 19,
-//             weight: "normal",
-//           },
-//         },
-//       },
-//       responsive: true,
-//       maintainAspectRatio: false,
-//       scales: {
-//         y: {
-//           beginAtZero: true,
-//           labels: {
-//             color: COLORS[theme].labelColor,
-//           },
-//           grid: {
-//             color: COLORS[theme].gridColor,
-//           },
-//           ticks: {
-//             color: COLORS[theme].tickColor,
-//           },
-//         },
-//         x: {
-//           grid: {
-//             color: COLORS[theme].gridColor,
-//           },
-//           ticks: {
-//             color: COLORS[theme].tickColor,
-//             maxRotation: 90,
-//             minRotation: 90,
-//           },
-//         },
-//       },
-//     },
-//   });
-// }
+import { postRequest } from "./fetch.mjs";
 
 class RoundsGridManager {
   constructor() {
     this.roundsGridEl = document.getElementById("roundsGrid");
-    this.roundsGridEl.addEventListener("cellEditingStopped", this);
 
     this.createDataGrid();
 
@@ -199,20 +10,55 @@ class RoundsGridManager {
   }
 
   handleEvent(event) {
+    switch (event.type) {
+      case "cellEditingStopped":
+        this.handleEditRound(event);
+    }
     console.log(event);
+  }
+
+  async handleEditRound(event) {
+    if (event.newValue === event.oldValue) {
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append(event.colDef.field, event.newValue);
+
+    console.log(formData);
+    let respone = await postRequest(EDIT_ROUND_URL + event.data.id, formData);
+    console.log(respone);
+    let jsonResponse = await respone.json();
+
+    if (jsonResponse.rounds) {
+      this.dataGrid.setGridOption("rowData", jsonResponse.rounds);
+    }
   }
 
   createDataGrid() {
     const rowData = [];
-    for (let string of roundsArray) {
-      rowData.push(string);
+    for (let round of ROUNDS) {
+      rowData.push(round);
     }
 
     const columnDefs = [
       {
         field: "course",
         // editable: true,
+        filter: "agTextColumnFilter",
         cellRenderer: (param) => {
+          let course = COURSES[param.data.course_id];
+          let teebox = course.teeboxes[param.data.teebox_id];
+
+          return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
+        },
+        comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
+          let courseA = COURSES[nodeA.data.course_id];
+          let courseB = COURSES[nodeB.data.course_id];
+
+          return courseA.name.localeCompare(courseB.name);
+        },
+        filterValueGetter(param) {
           let course = COURSES[param.data.course_id];
           let teebox = course.teeboxes[param.data.teebox_id];
 
@@ -223,15 +69,23 @@ class RoundsGridManager {
         field: "score",
         headerName: "Score / Par",
         editable: true,
+        filter: "agNumberColumnFilter",
         cellEditor: "agNumberCellEditor",
         cellEditorParams: {
           step: 1,
+        },
+        cellRenderer: (param) => {
+          let course = COURSES[param.data.course_id];
+          let teebox = course.teeboxes[param.data.teebox_id];
+
+          return `${param.data.score} / ${teebox.par} (${param.data.score_diff})`;
         },
       },
       {
         field: "fir",
         headerName: "FIR",
         editable: true,
+        filter: "agNumberColumnFilter",
         cellEditor: "agNumberCellEditor",
         cellEditorParams: {
           step: 1,
@@ -241,6 +95,7 @@ class RoundsGridManager {
         field: "gir",
         headerName: "GIR",
         editable: true,
+        filter: "agNumberColumnFilter",
         cellEditor: "agNumberCellEditor",
         cellEditorParams: {
           step: 1,
@@ -249,6 +104,7 @@ class RoundsGridManager {
       {
         field: "putts",
         editable: true,
+        filter: "agNumberColumnFilter",
         cellEditor: "agNumberCellEditor",
         cellEditorParams: {
           step: 1,
@@ -257,11 +113,14 @@ class RoundsGridManager {
       {
         field: "date",
         editable: true,
+        filter: "agDateColumnFilter",
         cellEditor: "agDateStringCellEditor",
         cellRenderer: (param) => {
           let date = param.data.date;
 
-          return `<sl-format-date  month="long" day="numeric" year="numeric" date="${date}"></sl-format-date>`;
+          return `<sl-format-date  month="long" day="numeric" year="numeric" date="${
+            date + "T00:00:00"
+          }"></sl-format-date>`;
         },
       },
     ];
@@ -271,32 +130,74 @@ class RoundsGridManager {
       rowData,
       autoSizeStrategy: {
         type: "fitGridWidth",
-        defaultMinWidth: 75,
+        defaultMinWidth: 100,
+        defaultMaxWidth: 100,
         columnLimits: [
           {
-            colId: "name",
-            minWidth: 300,
+            colId: "course",
+            minWidth: 350,
+            maxWidth: 350,
+          },
+          {
+            colId: "score",
+            minWidth: 125,
+            maxWidth: 125,
+          },
+          {
+            colId: "date",
+            minWidth: 175,
+            maxWidth: 175,
           },
         ],
       },
       onRowDataUpdated: (event) => {
         let height =
           document.querySelector(".ag-center-cols-container").scrollHeight +
-          document.querySelector(".ag-header-row").scrollHeight;
+          document.querySelector(".ag-header-row").scrollHeight +
+          document.querySelector(".ag-paging-panel").scrollHeight;
 
         if (height < 192) {
           height = 192;
         }
 
-        this.roundsGridEl.style.height = `${height + 3}px`;
+        this.roundsGridEl.style.height = `${height + 4}px`;
       },
-      defaultColDef: {},
+      defaultColDef: {
+        resizable: false,
+      },
       onCellEditingStopped: (event) => this.handleEvent(event),
+      pagination: true,
+      paginationPageSize: 20,
+      paginationPageSizeSelector: false,
+      getRowClass: (param) => {
+        if (param.data.isIncluded) {
+          return "bg-success-subtle";
+        }
+      },
     };
     this.dataGrid = agGrid.createGrid(this.roundsGridEl, gridOptions);
+  }
+
+  setupThemeWatcher() {
+    this.mutationObserver = new MutationObserver((params) =>
+      this.handleThemeChange(params)
+    );
+
+    this.mutationObserver.observe(document.documentElement, {
+      attributes: true,
+    });
+
+    this.handleThemeChange();
+  }
+
+  handleThemeChange() {
+    let theme = document.documentElement.getAttribute("data-bs-theme");
+    this.roundsGridEl.classList.toggle(
+      "ag-theme-quartz-dark",
+      theme === "dark"
+    );
+    this.roundsGridEl.classList.toggle("ag-theme-quartz", theme === "light");
   }
 }
 
 new RoundsGridManager();
-
-console.log(roundsArray);

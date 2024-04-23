@@ -54,3 +54,10 @@ def get_page(id):
 def get_rounds():
     rounds = apiHelpers.get_rounds_list()
     return {"rounds": rounds}
+
+
+@api.route("/get_courses", methods=["GET"])
+@login_required
+def get_courses():
+    courses = apiHelpers.get_courses_dict()
+    return {"courses": courses}

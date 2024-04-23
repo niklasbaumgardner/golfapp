@@ -2,7 +2,7 @@ from flask import url_for
 from flask_mail import Message
 from flask_login import current_user
 from golfapp.models import User, Course, Round, Handicap, H_User, RRound
-from golfapp.extensions import db
+from golfapp import db
 from golfapp.home import queries
 from golfapp import mail
 import math
@@ -229,11 +229,11 @@ def get_included_rounds(rounds):
         num_included = 8
 
     score_diff_indeces = sorted(
-        enumerate(rounds[:20]), key=lambda x: float(x[1].score_diff)
+        enumerate(rounds[:20]), key=lambda x: float(x[1]["score_diff"])
     )[:num_included]
 
     for index in score_diff_indeces:
-        rounds[index[0]] = RRound(rounds[index[0]])
+        rounds[index[0]]["isIncluded"] = True
 
     return rounds
 
@@ -337,6 +337,26 @@ def jsonify_courses(sort=False):
             "name": c.name,
             "teeboxes": teeboxes,
         }
+
+    return courses
+
+
+def courses_as_dict():
+    c_t_joined = queries.get_courses_teeboxes_joined()
+
+    courses = dict()
+    for c, t in c_t_joined:
+        if c.id in courses:
+            courses[c.id]["teeboxes"][t.id] = t.to_dict()
+        else:
+            c_obj = c.to_dict()
+
+            t_obj = dict()
+            t_obj[t.id] = t.to_dict()
+
+            c_obj["teeboxes"] = t_obj
+
+            courses[c.id] = c_obj
 
     return courses
 

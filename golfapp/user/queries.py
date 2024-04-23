@@ -1,11 +1,13 @@
 from golfapp.models import User
-from golfapp.extensions import db
+from golfapp import db
 from golfapp import bcrypt
 
 
 def createUser(email, username, password):
     hash_ = hashPassword(password=password)
-    new_user = User(email=email, username=username, password=hash_, is_publicly_visible=True)
+    new_user = User(
+        email=email, username=username, password=hash_, is_publicly_visible=True
+    )
     db.session.add(new_user)
     db.session.commit()
 

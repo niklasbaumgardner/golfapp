@@ -2,8 +2,8 @@ import { CustomElement } from "./customElement.mjs";
 
 let users = null;
 async function getPageData() {
-  let respone = await fetch(GET_ALL_RANKING_DATA_URL);
-  let data = await respone.json();
+  let response = await fetch(GET_ALL_RANKING_DATA_URL);
+  let data = await response.json();
 
   users = data.users;
 

@@ -1,8 +1,9 @@
 import { CustomElement } from "./customElement.mjs";
 
 async function getPageData() {
-  let respone = await fetch(GET_RANKING_DATA_URL);
-  let data = await respone.json();
+  let response = await fetch(GET_RANKING_DATA_URL);
+  let data = await response.json();
+  console.log(data);
 
   const COURSE_RANKING = new CourseRanking(data.courses, data.ranking_data);
 }

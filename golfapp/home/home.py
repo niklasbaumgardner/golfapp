@@ -2,7 +2,7 @@ from re import T
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, Theme, CourseTeebox
-from golfapp.extensions import db
+from golfapp import db
 from golfapp.home import golf, queries
 from datetime import date
 
@@ -30,21 +30,17 @@ def toggle_user_visibilty():
 @home.route("/", methods=["GET"])
 @login_required
 def index():
-    page = request.args.get("page", 1, type=int)
-
-    rounds, total, page, num_pages = queries.get_rounds(
-        page=page, paginate=True, sort=True
-    )
+    rounds = [r.to_dict() for r in queries.get_rounds(sort=True)]
     handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
     if handicap:
         handicap = golf.stringify_handicap(handicap.handicap)
     else:
         handicap = "No handicap"
 
-    courses = golf.jsonify_courses()
+    courses = golf.courses_as_dict()
     rounds = golf.get_included_rounds(rounds)
-    rounds = golf.jsonify_rounds(rounds)
     user = queries.get_user(current_user.get_id())
+
     return render_template(
         "view_player.html",
         user=user,
@@ -52,23 +48,19 @@ def index():
         courses=courses,
         handicap=handicap,
         is_visible=True,
-        total=total,
-        page=page,
-        num_pages=num_pages,
         is_me=True,
     )
 
 
 @home.route("/view_player/<int:id>", methods=["GET"])
 def view_player(id):
-    page = request.args.get("page", 1, type=int)
 
     if current_user.is_authenticated and current_user.id == id:
-        return redirect(url_for("home.index", page=page))
+        return redirect(url_for("home.index"))
 
-    rounds, total, page, num_pages = queries.get_rounds_for_user_id(
-        user_id=id, page=page, paginate=True, sort=True
-    )
+    rounds = [
+        r.to_dict() for r in queries.get_rounds_for_user_id(user_id=id, sort=True)
+    ]
 
     handicap = Handicap.query.filter_by(user_id=id).first()
     if handicap:
@@ -76,9 +68,8 @@ def view_player(id):
     else:
         handicap = "No handicap"
 
-    courses = golf.jsonify_courses()
+    courses = golf.courses_as_dict()
     rounds = golf.get_included_rounds(rounds)
-    rounds = golf.jsonify_rounds(rounds)
     user = queries.get_user(id)
     return render_template(
         "view_player.html",
@@ -86,9 +77,6 @@ def view_player(id):
         rounds=rounds,
         courses=courses,
         handicap=handicap,
-        total=total,
-        page=page,
-        num_pages=num_pages,
     )
 
 
@@ -350,43 +338,69 @@ def stats():
     )
 
 
-@home.route("/update_round/<int:id>", methods=["POST"])
+@home.route("/edit_round/<int:id>", methods=["POST"])
 @login_required
-def update_round(id):
-    page = request.args.get("page", 1, type=int)
-
+def edit_round(id):
     round = Round.query.filter_by(user_id=current_user.get_id(), id=id).first()
+
     if round:
-        new_score = request.form.get("score", 99, type=float)
+        new_score = request.form.get("score")
         new_gir = request.form.get("gir")
         new_fir = request.form.get("fir")
         new_putts = request.form.get("putts")
         new_date = request.form.get("date")
-
-        if new_score:
-            round.score = new_score
-        if new_date:
-            round.date = new_date
-
-        # make these None instead of ''
-        new_gir = new_gir if new_gir else None
-        new_fir = new_fir if new_fir else None
-        new_putts = new_putts if new_putts else None
-        # these can be None
-        round.gir = new_gir
-        round.fir = new_fir
-        round.putts = new_putts
-
-        teebox = queries.get_teebox(teebox_id=round.teebox_id)
-        new_score_diff = golf.calculate_score_diff(
-            teebox.slope, teebox.rating, round.score
+        print(
+            dict(
+                new_score=new_score,
+                new_gir=new_gir,
+                new_fir=new_fir,
+                new_putts=new_putts,
+                new_date=new_date,
+            )
         )
-        round.score_diff = new_score_diff
 
-        db.session.commit()
-        update_handicap(updated_round=round)
+        update_score_diff = False
+        return_rounds = False
+        should_update_handicap = False
 
-    return redirect(url_for("home.index", page=page))
+        if new_score is not None:
+            round.score = new_score
+            update_score_diff = True
+
+        if new_date is not None:
+            round.date = new_date
+            return_rounds = True
+            should_update_handicap = True
+
+        if new_fir is not None:
+            round.fir = new_fir
+        if new_gir is not None:
+            round.gir = new_gir
+        if new_putts is not None:
+            round.putts = new_putts
+
+        if update_score_diff:
+            teebox = queries.get_teebox(teebox_id=round.teebox_id)
+            new_score_diff = golf.calculate_score_diff(
+                teebox.slope, teebox.rating, round.score
+            )
+            round.score_diff = new_score_diff
+            db.session.commit()
+            should_update_handicap = True
+        else:
+            db.session.commit()
+
+        if should_update_handicap:
+            update_handicap(updated_round=round)
+
+        if return_rounds:
+            return {
+                "rounds": golf.get_included_rounds(
+                    [r.to_dict() for r in queries.get_rounds(sort=True)]
+                )
+            }
+
+    return {"success": True}
 
 
 @home.route("/delete_round/<int:id>", methods=["POST"])

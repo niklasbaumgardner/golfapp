@@ -1,7 +1,8 @@
-from golfapp.extensions import db, login_manager
+from golfapp import db, login_manager
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
+import json
 
 
 @login_manager.user_loader
@@ -34,9 +35,9 @@ class RRound:
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(60), unique=True, nullable=False)
-    email = db.Column(db.String(60), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
 
     def get_reset_token(self):
@@ -58,21 +59,24 @@ class User(db.Model, UserMixin):
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), nullable=False)
+    name = db.Column(db.String, nullable=False)
+
+    def to_dict(self):
+        return dict(id=self.id, name=self.name)
 
     def to_json(self):
-        return dict(id=self.id, name=self.name)
+        return json.dumps(self.to_dict())
 
 
 class CourseTeebox(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     par = db.Column(db.Integer, nullable=False)
-    teebox = db.Column(db.String(60), nullable=False)
+    teebox = db.Column(db.String, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
 
-    def to_json(self):
+    def to_dict(self):
         return dict(
             id=self.id,
             course_id=self.course_id,
@@ -81,6 +85,9 @@ class CourseTeebox(db.Model):
             slope=self.slope,
             rating=self.rating,
         )
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
 
 class Round(db.Model):
@@ -95,7 +102,7 @@ class Round(db.Model):
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.Date, nullable=False)
 
-    def to_json(self):
+    def to_dict(self):
         return dict(
             id=self.id,
             user_id=self.user_id,
@@ -106,8 +113,11 @@ class Round(db.Model):
             gir=self.gir,
             fir=self.fir,
             putts=self.putts,
-            date=self.date,
+            date=self.date.strftime("%Y-%m-%d"),
         )
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
 
 
 class Handicap(db.Model):

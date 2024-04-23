@@ -7,8 +7,7 @@ from golfapp.models import (
     CourseTeebox,
     CourseRanking,
 )
-from golfapp.extensions import db
-from sqlalchemy import extract
+from golfapp import db
 from flask_login import current_user
 
 
@@ -98,6 +97,14 @@ def delete_course(course_id):
     course = get_course(course_id=course_id)
     db.session.delete(course)
     db.session.commit()
+
+
+def get_courses_teeboxes_joined():
+    return (
+        db.session.query(Course, CourseTeebox)
+        .join(CourseTeebox, Course.id == CourseTeebox.course_id)
+        .all()
+    )
 
 
 def create_teebox(course_id, par, teebox, rating, slope):

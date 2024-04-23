@@ -12,13 +12,11 @@ def get_users_list():
 
 
 def get_courses_dict():
-    courses = queries.get_courses()
-    return {c.id: c.to_json() for c in courses}
+    return {c.id: c.to_dict() for c in queries.get_courses()}
 
 
 def get_courses_list():
-    courses = queries.get_courses()
-    return [c.to_json() for c in courses]
+    return [c.to_dict() for c in queries.get_courses()]
 
 
 def get_course_teebox_list():
