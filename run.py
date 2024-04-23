@@ -1,7 +1,5 @@
-from golfapp import create_app
+from golfapp import app
 
-app = create_app()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
-
