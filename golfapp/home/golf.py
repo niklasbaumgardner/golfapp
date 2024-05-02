@@ -94,16 +94,11 @@ def assign_handicap(users, handis, include_all=False, stringify=True):
     for user in users:
         handicap = find_handicap(user.id, handis)
         if handicap or include_all:
-            if handicap:
-                if stringify:
-                    handicap = str(handicap)
-                else:
-                    handicap = handicap.handicap
 
             new_user = H_User(
                 id=user.id,
                 name=user.username,
-                handicap=handicap if handicap else "0",
+                handicap=handicap if handicap else Handicap(handicap=0),
                 is_visible=user.is_publicly_visible,
             )
             lst.append(new_user)
@@ -129,7 +124,7 @@ def calculate_strokes(course, teebox, players):
 def get_strokes(teebox, h_users):
     lst = []
     for user in h_users:
-        num_strokes = strokes(teebox, user.handicap)
+        num_strokes = strokes(teebox, user.handicap.handicap)
         lst.append((user.username, num_strokes))
     return lst
 
@@ -195,17 +190,10 @@ def stringify_handicap(handicap):
 
 
 def sort_handicap(lst):
-    for ele in lst:
-        ele.handicap = (
-            float(ele.handicap)
-            if ele.handicap[0] != "+"
-            else -1 * float(ele.handicap[1:])
-        )
-
-    lst.sort(key=lambda x: x.handicap)
+    lst.sort(key=lambda x: x.handicap.handicap)
 
     for ele in lst:
-        ele.handicap = str(ele)
+        ele.handicap = str(ele.handicap)
 
     return lst
 
