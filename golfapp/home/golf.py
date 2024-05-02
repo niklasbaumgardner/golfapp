@@ -96,7 +96,7 @@ def assign_handicap(users, handis, include_all=False, stringify=True):
         if handicap or include_all:
             if handicap:
                 if stringify:
-                    handicap = stringify_handicap(handicap.handicap)
+                    handicap = str(handicap)
                 else:
                     handicap = handicap.handicap
 
@@ -205,7 +205,7 @@ def sort_handicap(lst):
     lst.sort(key=lambda x: x.handicap)
 
     for ele in lst:
-        ele.handicap = stringify_handicap(ele.handicap)
+        ele.handicap = str(ele)
 
     return lst
 

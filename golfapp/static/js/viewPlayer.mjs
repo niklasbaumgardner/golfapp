@@ -7,17 +7,29 @@ class RoundsGridManager {
     this.createDataGrid();
 
     this.setupThemeWatcher();
+
+    this.deleteRoundsEls = {};
+
+    document.addEventListener("UpdateRounds", this);
   }
 
   handleEvent(event) {
     switch (event.type) {
       case "cellEditingStopped":
         this.handleEditRound(event);
+        break;
+      case "click":
+        this.handleClick(event);
+        break;
+      case "UpdateRounds": {
+        let { handicap, rounds } = event.detail;
+        this.updateHandicap(handicap);
+        this.updateRounds(rounds);
+      }
     }
-    console.log(event);
   }
 
-  async handleEditRound(event) {
+  handleEditRound(event) {
     if (event.newValue === event.oldValue) {
       return;
     }
@@ -25,13 +37,47 @@ class RoundsGridManager {
     let formData = new FormData();
     formData.append(event.colDef.field, event.newValue);
 
-    console.log(formData);
-    let respone = await postRequest(EDIT_ROUND_URL + event.data.id, formData);
-    console.log(respone);
-    let jsonResponse = await respone.json();
+    this.handlePostRequest(
+      postRequest(EDIT_ROUND_URL + event.data.id, formData)
+    );
+  }
 
+  async handlePostRequest(request) {
+    let response = await request;
+    let jsonResponse = await response.json();
+
+    if (jsonResponse.handicap) {
+      this.updateHandicap(jsonResponse.handicap);
+    }
     if (jsonResponse.rounds) {
-      this.dataGrid.setGridOption("rowData", jsonResponse.rounds);
+      this.updateRounds(jsonResponse.rounds);
+    }
+  }
+
+  updateHandicap(handicap) {
+    document.getElementById("handicap").textContent = handicap;
+  }
+
+  updateRounds(rounds) {
+    this.dataGrid.setGridOption("rowData", rounds);
+  }
+
+  handleClick(event) {
+    if (event.target.classList.contains("delete-button")) {
+      let row = event.target.closest(".ag-row");
+      let node = this.dataGrid.getRowNode(row.getAttribute("row-index"));
+      let roundData = node.data;
+
+      let deleteRoundEl = this.deleteRoundsEls[roundData.id];
+      if (!deleteRoundEl) {
+        deleteRoundEl = document.createElement("delete-round");
+        deleteRoundEl.round = roundData;
+        document.body.appendChild(deleteRoundEl);
+
+        this.deleteRoundsEls[roundData.id] = deleteRoundEl;
+      }
+
+      deleteRoundEl.show();
     }
   }
 
@@ -118,12 +164,27 @@ class RoundsGridManager {
         cellRenderer: (param) => {
           let date = param.data.date;
 
-          return `<sl-format-date  month="long" day="numeric" year="numeric" date="${
+          return `<sl-format-date month="long" day="numeric" year="numeric" date="${
             date + "T00:00:00"
           }"></sl-format-date>`;
         },
       },
     ];
+
+    if (IS_ME) {
+      columnDefs.push({
+        field: "actions",
+        cellRenderer: () => {
+          let button = document.createElement("sl-button");
+          button.classList.add("delete-button");
+          button.variant = "danger";
+          button.size = "small";
+          button.textContent = "Delete";
+          button.addEventListener("click", this);
+          return button;
+        },
+      });
+    }
 
     const gridOptions = {
       columnDefs,

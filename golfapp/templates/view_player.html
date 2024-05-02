@@ -23,7 +23,7 @@
 <div class="row mb-5">
     <div class="fw-bold fs-1">
         {% if is_me %}
-            Your handicap is {{ handicap }}
+            Your handicap is <span id="handicap">{{ handicap }}</span>
         {% else %}
             {{ user.username }}'s handicap is {{ handicap }}
         {% endif %}
@@ -69,5 +69,6 @@
 <script src="/static/js/setdate.js" defer></script>
 <script src="/static/js/viewPlayer.mjs" type="module"></script>
 <script src="/static/js/addRoundEl.mjs" type="module"></script>
+<script src="/static/js/deleteRoundEl.mjs" type="module"></script>
 
 {% endblock content %}

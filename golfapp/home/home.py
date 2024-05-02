@@ -33,7 +33,7 @@ def index():
     rounds = [r.to_dict() for r in queries.get_rounds(sort=True)]
     handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
     if handicap:
-        handicap = golf.stringify_handicap(handicap.handicap)
+        handicap = str(handicap)
     else:
         handicap = "No handicap"
 
@@ -64,7 +64,7 @@ def view_player(id):
 
     handicap = Handicap.query.filter_by(user_id=id).first()
     if handicap:
-        handicap = golf.stringify_handicap(handicap.handicap)
+        handicap = str(handicap)
     else:
         handicap = "No handicap"
 
@@ -344,20 +344,11 @@ def edit_round(id):
     round = Round.query.filter_by(user_id=current_user.get_id(), id=id).first()
 
     if round:
-        new_score = request.form.get("score")
+        new_score = request.form.get("score", type=float)
         new_gir = request.form.get("gir")
         new_fir = request.form.get("fir")
         new_putts = request.form.get("putts")
         new_date = request.form.get("date")
-        print(
-            dict(
-                new_score=new_score,
-                new_gir=new_gir,
-                new_fir=new_fir,
-                new_putts=new_putts,
-                new_date=new_date,
-            )
-        )
 
         update_score_diff = False
         return_rounds = False
@@ -395,12 +386,17 @@ def edit_round(id):
 
         if return_rounds:
             return {
+                "handicap": str(
+                    Handicap.query.filter_by(user_id=current_user.get_id()).first()
+                ),
                 "rounds": golf.get_included_rounds(
                     [r.to_dict() for r in queries.get_rounds(sort=True)]
-                )
+                ),
             }
 
-    return {"success": True}
+    return {
+        "handicap": str(Handicap.query.filter_by(user_id=current_user.get_id()).first())
+    }
 
 
 @home.route("/delete_round/<int:id>", methods=["POST"])
@@ -425,10 +421,16 @@ def delete_round(id):
                     new_handicap = Handicap(user_id=current_user.get_id(), handicap=0)
                     db.session.add(new_handicap)
                     db.session.commit()
-                return redirect(url_for("home.index"))
 
             update_handicap()
-    return redirect(url_for("home.index"))
+    return {
+        "handicap": str(
+            Handicap.query.filter_by(user_id=current_user.get_id()).first()
+        ),
+        "rounds": golf.get_included_rounds(
+            [r.to_dict() for r in queries.get_rounds(sort=True)]
+        ),
+    }
 
 
 @home.route("/set_theme", methods=["GET"])

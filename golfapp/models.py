@@ -125,6 +125,15 @@ class Handicap(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     handicap = db.Column(db.Float, nullable=False)
 
+    def __str__(self) -> str:
+        if self.handicap < 0:
+            return f"+{str(self.handicap)[1:]}"
+
+        return f"{self.handicap}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 class Theme(db.Model):
     id = db.Column(db.Integer, primary_key=True)
