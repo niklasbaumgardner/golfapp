@@ -34,7 +34,7 @@ class DeleteRound extends NikElement {
 
     document.dispatchEvent(
       new CustomEvent("UpdateRounds", {
-        detail: { rounds: jsonResponse.rounds },
+        detail: jsonResponse,
       })
     );
 
