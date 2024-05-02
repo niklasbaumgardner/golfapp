@@ -400,7 +400,9 @@ def get_handicap_change_message(old_handicap, new_handicap):
 
 
 def get_random_message(new_round, user_id, old_handicap, new_handicap):
-    included_rounds = get_included_rounds(queries.get_rounds(sort=True, max_rounds=20))
+    included_rounds = get_included_rounds(
+        [r.to_dict() for r in queries.get_rounds(sort=True, max_rounds=20)]
+    )
     course = queries.get_course(new_round.course_id)
 
     index = random.randint(0, 9)
