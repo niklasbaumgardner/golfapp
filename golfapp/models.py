@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 import json
+from sqlalchemy_serializer import SerializerMixin
 
 
 @login_manager.user_loader
@@ -33,12 +34,15 @@ class RRound:
         self.included = True
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, SerializerMixin):
+    serialize_only = ("id", "username", "email", "is_publicly_visible", "handicap")
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
+    handicap = db.relationship("Handicap")
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -57,18 +61,19 @@ class User(db.Model, UserMixin):
         return dict(id=self.id, username=self.username)
 
 
-class Course(db.Model):
+class Course(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    teeboxes = db.relationship("CourseTeebox")
 
-    def to_dict(self):
-        return dict(id=self.id, name=self.name)
+    # def to_dict(self):
+    #     return dict(id=self.id, name=self.name)
 
-    def to_json(self):
-        return json.dumps(self.to_dict())
+    # def to_json(self):
+    #     return json.dumps(self.to_dict())
 
 
-class CourseTeebox(db.Model):
+class CourseTeebox(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     par = db.Column(db.Integer, nullable=False)
@@ -76,21 +81,21 @@ class CourseTeebox(db.Model):
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
 
-    def to_dict(self):
-        return dict(
-            id=self.id,
-            course_id=self.course_id,
-            teebox=self.teebox,
-            par=self.par,
-            slope=self.slope,
-            rating=self.rating,
-        )
+    # def to_dict(self):
+    #     return dict(
+    #         id=self.id,
+    #         course_id=self.course_id,
+    #         teebox=self.teebox,
+    #         par=self.par,
+    #         slope=self.slope,
+    #         rating=self.rating,
+    #     )
 
-    def to_json(self):
-        return json.dumps(self.to_dict())
+    # def to_json(self):
+    #     return json.dumps(self.to_dict())
 
 
-class Round(db.Model):
+class Round(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
@@ -102,34 +107,39 @@ class Round(db.Model):
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.Date, nullable=False)
 
-    def to_dict(self):
-        return dict(
-            id=self.id,
-            user_id=self.user_id,
-            course_id=self.course_id,
-            teebox_id=self.teebox_id,
-            score=self.score,
-            score_diff=self.score_diff,
-            gir=self.gir,
-            fir=self.fir,
-            putts=self.putts,
-            date=self.date.strftime("%Y-%m-%d"),
-        )
+    # def to_dict(self):
+    #     return dict(
+    #         id=self.id,
+    #         user_id=self.user_id,
+    #         course_id=self.course_id,
+    #         teebox_id=self.teebox_id,
+    #         score=self.score,
+    #         score_diff=self.score_diff,
+    #         gir=self.gir,
+    #         fir=self.fir,
+    #         putts=self.putts,
+    #         date=self.date.strftime("%Y-%m-%d"),
+    #     )
 
-    def to_json(self):
-        return json.dumps(self.to_dict())
+    # def to_json(self):
+    #     return json.dumps(self.to_dict())
 
 
-class Handicap(db.Model):
+class Handicap(db.Model, SerializerMixin):
+    serialize_only = ("id", "user_id", "handicap", "handicap_str")
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     handicap = db.Column(db.Float, nullable=False)
 
-    def __str__(self) -> str:
+    def handicap_str(self):
         if self.handicap < 0:
             return f"+{str(self.handicap)[1:]}"
 
         return f"{self.handicap}"
+
+    def __str__(self) -> str:
+        return self.handicap_str()
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -162,16 +172,20 @@ class Subscriber(db.Model):
         )
 
 
-class CourseRanking(db.Model):
+class CourseRanking(db.Model, SerializerMixin):
+    serialize_only = ("id", "user", "course", "rating")
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     rating = db.Column(db.Float, nullable=True)
+    user = db.relationship("User")
+    course = db.relationship("Course")
 
-    def to_json(self):
-        return dict(
-            id=self.id,
-            user_id=self.user_id,
-            course_id=self.course_id,
-            rating=self.rating,
-        )
+    # def to_json(self):
+    #     return dict(
+    #         id=self.id,
+    #         user_id=self.user_id,
+    #         course_id=self.course_id,
+    #         rating=self.rating,
+    #     )

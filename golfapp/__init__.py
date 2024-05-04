@@ -36,9 +36,19 @@ from golfapp.user.auth import auth as auth_blueprint
 from golfapp.home.home import home as home_blueprint
 from golfapp.home.api import api as api_blueprint
 
+
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(home_blueprint)
 app.register_blueprint(api_blueprint)
+
+# new routes
+from golfapp.routes.courseranking import courseranking_bp
+from golfapp.routes.viewplayer import viewplayer_bp
+from golfapp.routes.viewplayers import viewplayers_bp
+
+app.register_blueprint(courseranking_bp)
+app.register_blueprint(viewplayer_bp)
+app.register_blueprint(viewplayers_bp)
 
 with app.app_context():
     db.create_all()

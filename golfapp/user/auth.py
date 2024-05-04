@@ -12,7 +12,7 @@ auth = Blueprint("auth", __name__)
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("home.index"))
+        return redirect(url_for("viewplayer_bp.index"))
 
     email = request.args.get("email")
     if email:
@@ -32,13 +32,13 @@ def login():
             next = request.args.get("next").replace("/", "", 1)
             if next:
                 try:
-                    return redirect(url_for(f"home.{next}"))
+                    return redirect(url_for(f"viewplayer_bp.{next}"))
                 except:
                     try:
                         return redirect(url_for(f"auth.{next}"))
                     except:
                         pass
-            return redirect(url_for("home.index"))
+            return redirect(url_for("viewplayer_bp.index"))
 
         elif user:
             flash("Password was incorrect. Try again", "alert-primary")
@@ -168,6 +168,7 @@ def utility_processor():
             if theme:
                 return theme.color
         return ""
+
     return dict(theme=get_theme())
 
 

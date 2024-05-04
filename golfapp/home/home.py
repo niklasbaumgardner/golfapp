@@ -1,10 +1,10 @@
-from re import T
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.models import User, Course, Round, Handicap, Theme, CourseTeebox
 from golfapp import db
 from golfapp.home import golf, queries
 from datetime import date
+import time
 
 from golfapp.user.auth import login
 
@@ -25,104 +25,6 @@ def toggle_user_visibilty():
     user.is_publicly_visible = is_visible
     db.session.commit()
     return {"success": True}
-
-
-@home.route("/", methods=["GET"])
-@login_required
-def index():
-    rounds = [r.to_dict() for r in queries.get_rounds(sort=True)]
-    handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
-    if handicap:
-        handicap = str(handicap)
-    else:
-        handicap = "No handicap"
-
-    courses = golf.courses_as_dict()
-    rounds = golf.get_included_rounds(rounds)
-    user = queries.get_user(current_user.get_id())
-
-    return render_template(
-        "view_player.html",
-        user=user,
-        rounds=rounds,
-        courses=courses,
-        handicap=handicap,
-        is_visible=True,
-        is_me=True,
-    )
-
-
-@home.route("/view_player/<int:id>", methods=["GET"])
-def view_player(id):
-
-    if current_user.is_authenticated and current_user.id == id:
-        return redirect(url_for("home.index"))
-
-    rounds = [
-        r.to_dict() for r in queries.get_rounds_for_user_id(user_id=id, sort=True)
-    ]
-
-    handicap = Handicap.query.filter_by(user_id=id).first()
-    if handicap:
-        handicap = str(handicap)
-    else:
-        handicap = "No handicap"
-
-    courses = golf.courses_as_dict()
-    rounds = golf.get_included_rounds(rounds)
-    user = queries.get_user(id)
-    return render_template(
-        "view_player.html",
-        user=user,
-        rounds=rounds,
-        courses=courses,
-        handicap=handicap,
-    )
-
-
-@home.route("/view_players", methods=["GET"])
-def view_players():
-    users = User.query.filter_by(is_publicly_visible=True).all()
-    handis = Handicap.query.all()
-    h_users = golf.assign_handicap(users, handis)
-    return render_template("viewplayers.html", users=h_users)
-
-
-@home.route("/course_ranking", defaults={"user_id": None}, methods=["GET"])
-@home.route("/course_ranking/<int:user_id>", methods=["GET", "POST"])
-def course_ranking(user_id):
-    if not user_id and not current_user.is_authenticated:
-        return redirect(url_for("auth.login"))
-
-    if request.method == "POST":
-        if user_id == current_user.id:
-            course_id = request.form.get("course")
-            rating = request.form.get("rating")
-
-            course_ranking = queries.get_course_ranking_by_course_and_user(
-                course_id=course_id, user_id=current_user.id
-            )
-            if course_ranking:
-                queries.update_course_ranking(
-                    course_ranking=course_ranking, rating=rating
-                )
-            else:
-                queries.create_course_ranking(course_id, rating)
-            return redirect(url_for("home.course_ranking"))
-
-    if not user_id and current_user.is_authenticated:
-        user_id = current_user.id
-
-    is_me = current_user.is_authenticated and user_id == current_user.id
-    user = queries.get_user(user_id=user_id)
-    return render_template(
-        "courseranking.html", user_id=user_id, username=user.username, is_me=is_me
-    )
-
-
-@home.route("/course_rankings", methods={"GET"})
-def course_rankings():
-    return render_template("courserankings.html")
 
 
 @home.route("/hijack", methods=["GET", "POST"])

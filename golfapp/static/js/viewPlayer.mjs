@@ -81,6 +81,10 @@ class RoundsGridManager {
     }
   }
 
+  getTeeboxForCourse(teeboxId, course) {
+    return course.teeboxes.find((t) => t.id === teeboxId);
+  }
+
   createDataGrid() {
     const rowData = [];
     for (let round of ROUNDS) {
@@ -94,7 +98,7 @@ class RoundsGridManager {
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = COURSES[param.data.course_id];
-          let teebox = course.teeboxes[param.data.teebox_id];
+          let teebox = this.getTeeboxForCourse(param.data.teebox_id, course); //course.teeboxes[param.data.teebox_id];
 
           return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
         },
@@ -106,7 +110,7 @@ class RoundsGridManager {
         },
         filterValueGetter(param) {
           let course = COURSES[param.data.course_id];
-          let teebox = course.teeboxes[param.data.teebox_id];
+          let teebox = this.getTeeboxForCourse(param.data.teebox_id, course); //course.teeboxes[param.data.teebox_id];
 
           return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
         },
@@ -122,7 +126,7 @@ class RoundsGridManager {
         },
         cellRenderer: (param) => {
           let course = COURSES[param.data.course_id];
-          let teebox = course.teeboxes[param.data.teebox_id];
+          let teebox = this.getTeeboxForCourse(param.data.teebox_id, course); //course.teeboxes[param.data.teebox_id];
 
           return `${param.data.score} / ${teebox.par} (${param.data.score_diff})`;
         },

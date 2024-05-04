@@ -10,7 +10,7 @@
     const GET_PAGE_URL = "{{ url_for('api.get_page', id=user.id) }}";
     const EDIT_ROUND_URL = "{{ url_for('home.edit_round', id=0) }}".slice(0, -1);
     const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
-    const VIEW_PLAYER_URL = "{{ url_for('home.view_player', id=0) }}".slice(0, -1);
+    const VIEW_PLAYER_URL = "{{ url_for('viewplayer_bp.view_player', id=0) }}".slice(0, -1);
     const ADD_ROUND_URL = "{{ url_for('home.add_round_submit') }}";
     const ADD_COURSE_URL = "{{ url_for('home.add_course') }}";
     const GET_COURSES_URL = "{{ url_for('api.get_courses') }}"
@@ -32,9 +32,9 @@
         <div class="col">
             {% if is_me %}
                 <a href="{{ url_for('home.stats') }}">View more stats</a><br/>
-                <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View my course ranking</a>
+                <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View my course ranking</a>
             {% else %}
-                <a href="{{ url_for('home.course_ranking', user_id=user.id) }}">View course ranking</a>
+                <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View course ranking</a>
             {% endif %}
         </div>
         {% if is_me %}
@@ -44,7 +44,7 @@
         {% endif %}
     </div>
     <!-- <div class="m-2">
-        Show your handicap on the <a href="{{ url_for('home.view_players') }}">View Players</a> page?
+        Show your handicap on the <a href="{{ url_for('viewplayers_bp.view_players') }}">View Players</a> page?
         <div class="form-check form-switch ms-3" style="display:inline-block;">
             <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
             <label class="form-check-label" for="showHandicapToggle"></label>

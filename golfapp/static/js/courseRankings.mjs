@@ -1,19 +1,7 @@
 import { CustomElement } from "./customElement.mjs";
 
-let users = null;
-async function getPageData() {
-  let response = await fetch(GET_ALL_RANKING_DATA_URL);
-  let data = await response.json();
-
-  users = data.users;
-
-  rankCourses(data.courses, data.course_rankings);
-}
-
-getPageData();
-
-function rankCourses(courses, courseRankings) {
-  let courseData = getAverageCourseRating(courseRankings, courses);
+function rankCourses(courseRankings) {
+  let courseData = getAverageCourseRating(courseRankings);
   courseData.sort((a, b) => b.averageRating - a.averageRating);
 
   let anchor = document.querySelector("tbody");
@@ -48,20 +36,19 @@ function rankCourses(courses, courseRankings) {
   }
 }
 
-function getAverageCourseRating(courseRankings, courses) {
+function getAverageCourseRating(courseRankings) {
   let courseData = {};
-  for (let [id, courseRanking] of Object.entries(courseRankings)) {
-    if (courseData[courseRanking.course_id]) {
-      courseData[courseRanking.course_id].array.push(courseRanking);
+  for (let courseRanking of courseRankings) {
+    if (courseData[courseRanking.course.id]) {
+      courseData[courseRanking.course.id].array.push(courseRanking);
     } else {
-      courseData[courseRanking.course_id] = { id: courseRanking.course_id };
-      courseData[courseRanking.course_id].array = [courseRanking];
+      courseData[courseRanking.course.id] = { ...courseRanking.course };
+      courseData[courseRanking.course.id].array = [courseRanking];
     }
   }
 
   for (let [id, obj] of Object.entries(courseData)) {
     obj.averageRating = averageRating(obj.array);
-    obj.name = courses[id].name;
   }
 
   return Object.values(courseData);
@@ -100,8 +87,8 @@ class TableRow extends CustomElement {
     this.ratingsArray.sort((a, b) => b.rating - a.rating);
     let content = "";
     for (let [i, obj] of this.ratingsArray.entries()) {
-      let username = users[obj.user_id].username;
-      let url = COURSE_RANKING_USER_URL.replace("0", obj.user_id);
+      let { username } = obj.user;
+      let url = COURSE_RANKING_USER_URL.replace("0", obj.user.id);
       let ratingSpan = `<a class="rating-by-user" href="${url}" title="Rating from ${username}">${obj.rating} by ${username}</a>`;
       if (i !== this.ratingsArray.length - 1) {
         ratingSpan += '<span class="rating-by-user">,  </span>';
@@ -123,3 +110,5 @@ class TableRow extends CustomElement {
     </template>`;
   }
 }
+
+rankCourses(COURSE_RANKINGS_ARRAY);

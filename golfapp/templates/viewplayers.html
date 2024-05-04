@@ -33,7 +33,7 @@
                 </thead>
                 <tbody>
                     {% for user in users %}
-                        <tr onclick="goToURL(`{{ url_for('home.view_player', id=user.id) }}`)">
+                        <tr onclick="goToURL(`{{ url_for('viewplayer_bp.view_player', id=user.id) }}`)">
                             <td class="name">{{ user.username }}</td>
                             <td class="handicap">{{ user.handicap }}</td>
                         </tr>

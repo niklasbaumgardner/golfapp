@@ -1,15 +1,5 @@
 import { CustomElement } from "./customElement.mjs";
 
-async function getPageData() {
-  let response = await fetch(GET_RANKING_DATA_URL);
-  let data = await response.json();
-  console.log(data);
-
-  const COURSE_RANKING = new CourseRanking(data.courses, data.ranking_data);
-}
-
-getPageData();
-
 class CourseRanking {
   constructor(courses, courseRankingArr) {
     this.courses = courses;
@@ -39,35 +29,17 @@ class CourseRanking {
       return 0;
     });
 
-    let ranking = document.querySelector("tbody");
+    let anchor = document.querySelector("tbody");
 
     let rank = 1;
     for (let [i, r] of this.courseRankingArr.entries()) {
       if (i === 0) {
-        new CourseRank(
-          r.course_id,
-          rank,
-          this.coursesMap[r.course_id],
-          r.rating,
-          ranking
-        );
+        new CourseRank(rank, r, anchor);
       } else if (r.rating === this.courseRankingArr.at(i - 1).rating) {
-        new CourseRank(
-          r.course_id,
-          rank,
-          this.coursesMap[r.course_id],
-          r.rating,
-          ranking
-        );
+        new CourseRank(rank, r, anchor);
       } else {
         rank = i + 1;
-        new CourseRank(
-          r.course_id,
-          rank,
-          this.coursesMap[r.course_id],
-          r.rating,
-          ranking
-        );
+        new CourseRank(rank, r, anchor);
       }
     }
   }
@@ -79,7 +51,7 @@ class CourseHandler {
     this.courseRankingArr = courseRankingArr;
 
     this.courses = this.courses.filter((c) => {
-      return !this.courseRankingArr.find((rank) => rank.course_id === c.id);
+      return !this.courseRankingArr.find((cr) => cr.course.id === c.id);
     });
 
     this.selectCoursesEl = document.getElementById("course");
@@ -98,13 +70,11 @@ class CourseHandler {
 }
 
 class CourseRank extends CustomElement {
-  constructor(course_id, rank, name, rating, anchor) {
+  constructor(rank, courseRating, anchor) {
     super();
 
-    this.course_id = course_id;
     this.rank = rank;
-    this.name = name;
-    this.rating = rating;
+    this.courseRating = courseRating;
 
     this.addToAnchor(anchor);
 
@@ -114,11 +84,15 @@ class CourseRank extends CustomElement {
   }
 
   querySelector(query) {
-    return super.querySelector(`.course${this.course_id} ${query}`);
+    return super.querySelector(
+      `.course${this.courseRating.course.id} ${query}`
+    );
   }
 
   querySelectorAll(query) {
-    return super.querySelectorAll(`.course${this.course_id} ${query}`);
+    return super.querySelectorAll(
+      `.course${this.courseRating.course.id} ${query}`
+    );
   }
 
   handleEvent(event) {
@@ -192,15 +166,15 @@ class CourseRank extends CustomElement {
     if (IS_ME) {
       return `
         <td class="edit">${this.rank}</td>
-        <td class="edit">${this.name}</td>
+        <td class="edit">${this.courseRating.course.name}</td>
         <td class="edit">
-          <form id="courseEdit${this.course_id}" action="${COURSE_RANKING_EDIT}" method="POST">
-            <input value="${this.course_id}" name="course" hidden>
-            <input value="${this.rating}" class="form-control" type="number" step="0.01" name="rating" placeholder="Rating" max="10" required>
+          <form id="courseEdit${this.courseRating.course.id}" action="${COURSE_RANKING_EDIT}" method="POST">
+            <input value="${this.courseRating.course.id}" name="course" hidden>
+            <input value="${this.courseRating.rating}" class="form-control" type="number" step="0.01" name="rating" placeholder="Rating" max="10" required>
           </form>
         </td>
         <td class="edit">
-          <button id="update-button" class="btn btn-primary" type="submit" form="courseEdit${this.course_id}">Update</button>
+          <button id="update-button" class="btn btn-primary" type="submit" form="courseEdit${this.courseRating.course.id}">Update</button>
           <button id="cancel-button" class="btn btn-outline-secondary">Cancel</button>
         </td>`;
     }
@@ -209,10 +183,10 @@ class CourseRank extends CustomElement {
 
   get markup() {
     return `<template>
-      <tr class="course${this.course_id}">
+      <tr class="course${this.courseRating.course.id}">
         <td class="not-edit">${this.rank}</td>
-        <td class="not-edit">${this.name}</td>
-        <td class="not-edit">${this.rating}</td>
+        <td class="not-edit">${this.courseRating.course.name}</td>
+        <td class="not-edit">${this.courseRating.rating}</td>
         ${this.editButtomTemplate()}
         ${this.editableRowTemplate()}
       </tr>
@@ -236,3 +210,6 @@ class CourseOption extends CustomElement {
     </template>`;
   }
 }
+
+const COURSE_RANKING = new CourseRanking(COURSES, COURSE_RANKINGS_ARRAY);
+console.log(COURSE_RANKING);
