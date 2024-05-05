@@ -42,11 +42,15 @@ app.register_blueprint(home_blueprint)
 app.register_blueprint(api_blueprint)
 
 # new routes
+from golfapp.routes.auth import auth_bp
 from golfapp.routes.courseranking import courseranking_bp
+from golfapp.routes.strokes import strokes_bp
 from golfapp.routes.viewplayer import viewplayer_bp
 from golfapp.routes.viewplayers import viewplayers_bp
 
+app.register_blueprint(auth_bp)
 app.register_blueprint(courseranking_bp)
+app.register_blueprint(strokes_bp)
 app.register_blueprint(viewplayer_bp)
 app.register_blueprint(viewplayers_bp)
 

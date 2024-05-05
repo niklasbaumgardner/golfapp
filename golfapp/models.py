@@ -42,7 +42,7 @@ class User(db.Model, UserMixin, SerializerMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
-    handicap = db.relationship("Handicap")
+    handicap = db.relationship("Handicap", uselist=False)
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -80,6 +80,8 @@ class CourseTeebox(db.Model, SerializerMixin):
     teebox = db.Column(db.String, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
+
+    teeboxes = db.relationship("Course", uselist=False)
 
     # def to_dict(self):
     #     return dict(

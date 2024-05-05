@@ -62,27 +62,6 @@ def hijack():
         return render_template("hijack.html", users=h_users)
 
 
-@home.route("/calculate_strokes", methods=["GET", "POST"])
-def calculate_strokes():
-    if request.method == "POST":
-        course = request.form.get("course")
-        teebox = request.form.get("teebox")
-        players = request.form.getlist("players")
-        # print(course, players)
-        players = [int(player) for player in players]
-        # print(course, players)
-        strokes, course_name = golf.calculate_strokes(course, teebox, players)
-        strokes.sort(key=lambda x: x[1])
-        return render_template("strokes.html", strokes=strokes, course=course_name)
-
-    courses = golf.jsonify_courses()
-    users = User.query.all()
-    handis = Handicap.query.all()
-    h_users = golf.assign_handicap(users, handis)
-
-    return render_template("strokes.html", users=h_users, courses=courses)
-
-
 @home.route("/add_round", methods=["GET"])
 @login_required
 def add_round():

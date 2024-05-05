@@ -35,10 +35,10 @@
                     </table>
                 </div>
                 <div>
-                    <a href="{{ url_for('home.calculate_strokes') }}">Calculate strokes again</a>
+                    <a href="{{ url_for('strokes_bp.calculate_strokes') }}">Calculate strokes again</a>
                 </div>
             {% else %}
-                <form action="{{ url_for('home.calculate_strokes') }}" method="POST">
+                <form action="{{ url_for('strokes_bp.calculate_strokes') }}" method="POST">
                     <div class="row">
                         <div class="col-sm mb-4">
                             <fieldset class="border p-4">

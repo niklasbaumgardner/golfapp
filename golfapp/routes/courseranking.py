@@ -34,7 +34,7 @@ def course_ranking(user_id):
         user_id = current_user.id
 
     is_me = current_user.is_authenticated and user_id == current_user.id
-    user = user_queries.get_user(user_id=user_id)
+    user = user_queries.get_user_by_id(user_id=user_id)
     course_rankings = [
         cr.to_dict()
         for cr in courseranking_queries.get_course_rankings_for_user_id(user_id=user_id)
