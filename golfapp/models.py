@@ -81,7 +81,7 @@ class CourseTeebox(db.Model, SerializerMixin):
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
 
-    teeboxes = db.relationship("Course", uselist=False)
+    # course = db.relationship("Course", uselist=False)
 
     # def to_dict(self):
     #     return dict(

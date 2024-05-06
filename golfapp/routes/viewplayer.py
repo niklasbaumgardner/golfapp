@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_required
 from golfapp.queries import (
     course_queries,
@@ -34,6 +34,32 @@ def index():
         is_visible=True,
         is_me=True,
     )
+
+
+@viewplayer_bp.route("/add_round_submit", methods=["POST"])
+@login_required
+def add_round_submit():
+    course_id = request.form["course"]
+    teebox_id = request.form.get("teebox")
+    score = request.form["score"]
+    gir = request.form.get("gir")
+    fir = request.form.get("fir")
+    putts = request.form.get("putts")
+    date_ = request.form.get("date")
+
+    date_ = handicap_helpers.get_date_from_string(date_)
+
+    gir = gir if gir else None
+    fir = fir if fir else None
+    putts = putts if putts else None
+
+    old_handicap, new_handicap = update_handicap()
+
+    golf.send_subscribers_message(
+        current_user.get_id(), new_round, old_handicap, new_handicap
+    )
+
+    return redirect(url_for("home.index"))
 
 
 @viewplayer_bp.route("/view_player/<int:id>", methods=["GET"])

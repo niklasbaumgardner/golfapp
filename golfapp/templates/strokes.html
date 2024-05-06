@@ -47,7 +47,7 @@
                                     <div class="form-check" id="players">
                                         <input class="form-check-input" type="checkbox" name="players" value="{{ user.id }}" id="user{{ user.id }}">
                                         <label class="form-check-label" for="user{{ user.id }}">
-                                            {{ user.username }} - {% if user.is_visible %}{{ user.handicap }}{% else %} hidden {% endif %}
+                                            {{ user.username }} - {{ user.handicap.handicap_str }}
                                         </label>
                                     </div>
                                 {% endfor %}

@@ -3,6 +3,23 @@ from golfapp import db
 from flask_login import current_user
 
 
+def create_round(course_id, teebox_id, score, fir, gir, putts, date):
+    round = Round(
+        user_id=current_user.get_id(),
+        course_id=course_id,
+        teebox_id=teebox_id,
+        score=score,
+        fir=fir,
+        gir=gir,
+        putts=putts,
+        date=date,
+    )
+    db.session.add(round)
+    db.session.commit()
+
+    return round
+
+
 def get_rounds(page=1, paginate=False, sort=False, reverse_sort=False, max_rounds=None):
     return get_rounds_for_user_id(
         user_id=current_user.get_id(),

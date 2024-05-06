@@ -35,60 +35,6 @@ BAD_SARCASTIC_MESSAGES = [
 ]
 
 
-def calculate_handicap(rounds, reverse=False):
-    count = len(rounds)
-    score_diffs = get_score_diffs(rounds, reverse)
-
-    if count <= 3:
-        handicap = score_diffs[0] - 2
-    elif count == 4:
-        handicap = score_diffs[0] - 1
-    elif count == 5:
-        handicap = score_diffs[0]
-    elif count == 6:
-        handicap = (sum(score_diffs[:2]) / 2) - 1
-    elif 7 <= count <= 8:
-        handicap = sum(score_diffs[:2]) / 2
-    elif 9 <= count <= 11:
-        handicap = sum(score_diffs[:3]) / 3
-    elif 12 <= count <= 14:
-        handicap = sum(score_diffs[:4]) / 4
-    elif 15 <= count <= 16:
-        handicap = sum(score_diffs[:5]) / 5
-    elif 17 <= count <= 18:
-        handicap = sum(score_diffs[:6]) / 6
-    elif count == 19:
-        handicap = sum(score_diffs[:7]) / 7
-    elif count >= 20:
-        handicap = sum(score_diffs[:8]) / 8
-
-    return round(handicap, 2)
-
-
-def get_score_diffs(rounds, reverse=False):
-    teeboxes = {}
-    lst = []
-    for rnd in rounds:
-        teebox = teeboxes.get(rnd.teebox_id)
-        if not teebox:
-            teebox = queries.get_teebox(rnd.teebox_id)
-            teeboxes[rnd.teebox_id] = teebox
-        new_score_diff = calculate_score_diff(teebox.slope, teebox.rating, rnd.score)
-        if rnd.score_diff != new_score_diff:
-            rnd.score_diff = new_score_diff
-            db.session.commit()
-        # print(course.name, score_diff)
-        lst.append(new_score_diff)
-    lst.sort()
-    if reverse:
-        lst.reverse()
-    return lst
-
-
-def calculate_score_diff(slope, rating, score):
-    return round((113 / slope) * (score - rating - 1), 1)
-
-
 def assign_handicap(users, handis, include_all=False, stringify=True):
     lst = []
     for user in users:

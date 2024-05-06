@@ -62,55 +62,6 @@ def hijack():
         return render_template("hijack.html", users=h_users)
 
 
-@home.route("/add_round", methods=["GET"])
-@login_required
-def add_round():
-    courses = queries.get_courses(sort=True)
-    return render_template("addround.html", courses=courses)
-
-
-@home.route("/add_round_submit", methods=["POST"])
-@login_required
-def add_round_submit():
-    course_id = request.form["course"]
-    teebox_id = request.form.get("teebox")
-    score = request.form["score"]
-    gir = request.form.get("gir")
-    fir = request.form.get("fir")
-    # fir = round(float(fir[0]) / float(fir[1]), 2)
-    putts = request.form.get("putts")
-    date_ = request.form.get("date")
-    # print(date_)
-    date_ = get_date_from_string(date_)
-
-    gir = gir if gir else None
-    fir = fir if fir else None
-    putts = putts if putts else None
-
-    # print(course_id, score, gir, fir, putts, date_)
-
-    new_round = Round(
-        user_id=current_user.get_id(),
-        course_id=course_id,
-        teebox_id=teebox_id,
-        score=score,
-        gir=gir,
-        fir=fir,
-        putts=putts,
-        date=date_,
-    )
-    db.session.add(new_round)
-    db.session.commit()
-
-    old_handicap, new_handicap = update_handicap()
-
-    golf.send_subscribers_message(
-        current_user.get_id(), new_round, old_handicap, new_handicap
-    )
-
-    return redirect(url_for("home.index"))
-
-
 @home.route("/add_course", methods=["GET", "POST"])
 @login_required
 def add_course():
@@ -519,35 +470,3 @@ def utility_processor():
 @home.context_processor
 def utility_processor():
     return dict(str=str)
-
-
-def update_handicap(updated_round=None):
-    rounds = queries.get_rounds(sort=True, max_rounds=20)
-
-    if updated_round and updated_round not in rounds:
-        return
-
-    handicap = golf.calculate_handicap(rounds)
-    user_handicap = Handicap.query.filter_by(user_id=current_user.get_id()).first()
-
-    old_handicap = None
-
-    if user_handicap:
-        old_handicap = user_handicap.handicap
-        user_handicap.handicap = handicap
-        db.session.commit()
-    else:
-        new_handicap = Handicap(user_id=current_user.get_id(), handicap=handicap)
-        db.session.add(new_handicap)
-        db.session.commit()
-
-    return old_handicap, handicap
-
-
-def get_date_from_string(str_date):
-    if not str_date:
-        return None
-
-    year, month, day = str_date.strip().split("-")
-
-    return date(int(year), int(month), int(day))

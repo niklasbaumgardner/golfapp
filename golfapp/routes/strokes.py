@@ -10,19 +10,17 @@ strokes_bp = Blueprint("strokes_bp", __name__)
 @strokes_bp.route("/calculate_strokes", methods=["GET", "POST"])
 def calculate_strokes():
     if request.method == "POST":
-        course_id = request.form.get("course")
-        teebox_id = request.form.get("teebox")
+        course_id = request.form.get("course", type=int)
+        teebox_id = request.form.get("teebox", type=int)
         players = request.form.getlist("players")
-        # print(course, players)
         players = [int(player) for player in players]
-        # print(course, players)
         strokes, course_name = handicap_helpers.calculate_strokes(
             course_id, teebox_id, players
         )
         strokes.sort(key=lambda x: x[1])
         return render_template("strokes.html", strokes=strokes, course=course_name)
 
-    courses = [c.to_dict() for c in course_queries.get_courses()]
+    courses = [c.to_dict() for c in course_queries.get_courses(sort=True)]
     users = [u.to_dict() for u in user_queries.get_visible_users()]
     users = [u for u in users if u["handicap"] is not None]
     users.sort(key=lambda u: u["handicap"]["handicap"])

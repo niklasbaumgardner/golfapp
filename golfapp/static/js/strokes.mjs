@@ -1,20 +1,11 @@
 import { createElement } from "./customElement.mjs";
 
-let coursesArray = [];
-for (let [id, course] of Object.entries(COURSES)) {
-  coursesArray.push(course);
-}
-
-coursesArray.sort((a, b) => {
-  return a.name.localeCompare(b.name);
-});
-
 let selectCourse = document.getElementById("course");
 
 if (selectCourse) {
   selectCourse.addEventListener("input", onCourseSelect);
 
-  for (let course of coursesArray) {
+  for (let course of COURSES) {
     let courseOption = createElement({
       type: "option",
       value: course.id,
@@ -59,6 +50,6 @@ function createTeeboxElements(teeboxes) {
 
 function onCourseSelect(event) {
   let courseId = event.target.value;
-  let teeboxes = COURSES[courseId].teeboxes;
+  let teeboxes = COURSES.find((c) => c.id == courseId).teeboxes;
   createTeeboxElements(teeboxes);
 }
