@@ -2,36 +2,12 @@ from golfapp import db, login_manager
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
-import json
 from sqlalchemy_serializer import SerializerMixin
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
-class H_User:
-    def __init__(self, id, name, handicap, is_visible):
-        self.id = id
-        self.username = name
-        self.handicap = handicap
-        self.is_visible = is_visible
-
-
-class RRound:
-    def __init__(self, round):
-        self.id = round.id
-        self.user_id = round.user_id
-        self.course_id = round.course_id
-        self.teebox_id = round.teebox_id
-        self.score = round.score
-        self.score_diff = round.score_diff
-        self.gir = round.gir
-        self.fir = round.fir
-        self.putts = round.putts
-        self.date = round.date
-        self.included = True
 
 
 class User(db.Model, UserMixin, SerializerMixin):
@@ -66,12 +42,6 @@ class Course(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     teeboxes = db.relationship("CourseTeebox")
 
-    # def to_dict(self):
-    #     return dict(id=self.id, name=self.name)
-
-    # def to_json(self):
-    #     return json.dumps(self.to_dict())
-
 
 class CourseTeebox(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -80,21 +50,6 @@ class CourseTeebox(db.Model, SerializerMixin):
     teebox = db.Column(db.String, nullable=False)
     rating = db.Column(db.Float, nullable=False)
     slope = db.Column(db.Float, nullable=False)
-
-    # course = db.relationship("Course", uselist=False)
-
-    # def to_dict(self):
-    #     return dict(
-    #         id=self.id,
-    #         course_id=self.course_id,
-    #         teebox=self.teebox,
-    #         par=self.par,
-    #         slope=self.slope,
-    #         rating=self.rating,
-    #     )
-
-    # def to_json(self):
-    #     return json.dumps(self.to_dict())
 
 
 class Round(db.Model, SerializerMixin):
@@ -108,23 +63,6 @@ class Round(db.Model, SerializerMixin):
     fir = db.Column(db.Float, nullable=True)
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.Date, nullable=False)
-
-    # def to_dict(self):
-    #     return dict(
-    #         id=self.id,
-    #         user_id=self.user_id,
-    #         course_id=self.course_id,
-    #         teebox_id=self.teebox_id,
-    #         score=self.score,
-    #         score_diff=self.score_diff,
-    #         gir=self.gir,
-    #         fir=self.fir,
-    #         putts=self.putts,
-    #         date=self.date.strftime("%Y-%m-%d"),
-    #     )
-
-    # def to_json(self):
-    #     return json.dumps(self.to_dict())
 
 
 class Handicap(db.Model, SerializerMixin):
@@ -159,9 +97,6 @@ class Subscription(db.Model, SerializerMixin):
 
     subscribers = db.relationship("Subscriber")
 
-    # def to_json(self):
-    #     return dict(id=self.id, subscribed_to=self.subscribed_to)
-
 
 class Subscriber(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -169,11 +104,6 @@ class Subscriber(db.Model, SerializerMixin):
         db.Integer, db.ForeignKey("subscription.id"), nullable=False
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-
-    # def to_json(self):
-    #     return dict(
-    #         id=self.id, subscription_id=self.subscribtion_id, user_id=self.user_id
-    #     )
 
 
 class CourseRanking(db.Model, SerializerMixin):
@@ -185,11 +115,3 @@ class CourseRanking(db.Model, SerializerMixin):
     rating = db.Column(db.Float, nullable=True)
     user = db.relationship("User")
     course = db.relationship("Course")
-
-    # def to_json(self):
-    #     return dict(
-    #         id=self.id,
-    #         user_id=self.user_id,
-    #         course_id=self.course_id,
-    #         rating=self.rating,
-    #     )

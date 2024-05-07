@@ -99,6 +99,14 @@ def get_round_by_id(round_id):
     return Round.query.filter_by(user_id=current_user.id, id=round_id).first()
 
 
+def get_rounds_by_course_id(course_id):
+    return Round.query.filter_by(course_id=course_id).all()
+
+
+def get_rounds_by_teebox_id(teebox_id):
+    return Round.query.filter_by(teebox_id=teebox_id).all()
+
+
 def delete_round(round_id):
     round = get_round_by_id(round_id=round_id)
 

@@ -35,6 +35,10 @@ def get_all_course_rankings():
     return CourseRanking.query.all()
 
 
+def get_course_rankings_by_course_id(course_id):
+    return CourseRanking.query.filter_by(course_id=course_id).all()
+
+
 def update_course_ranking(rating, course_ranking=None, course_ranking_id=None):
     if not course_ranking and not course_ranking_id:
         return

@@ -57,36 +57,49 @@ def edit_course(c_id):
     return redirect(url_for("admin_bp.edit_courses"))
 
 
-# @admin_bp.route("/dedup_course")
+@admin_bp.post("/dedup_course")
+@login_required
+def dedup_course():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    duplicate_course_id = request.form.get("duplicate")
+    keep_course_id = request.form.get("keep")
+
+    course_queries.deduplicate_course(
+        duplicate_course_id=duplicate_course_id, keep_course_id=keep_course_id
+    )
+
+    return redirect(url_for("admin_bp.edit_courses"))
 
 
-# @admin_bp.route("/delete_course/<int:c_id>", methods=["DELETE"])
-# @login_required
-# def delete_course(c_id):
-#     if not is_admin():
-#         return redirect(url_for("home.index"))
+@admin_bp.route("/delete_course/<int:c_id>", methods=["DELETE"])
+@login_required
+def delete_course(c_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
 
-#     rounds = queries.get_rounds_for_course_id(course_id=c_id)
-#     if len(rounds) > 0:
-#         return {"success": False, "info": f"{len(rounds)} rounds have this course"}
+    #     rounds = queries.get_rounds_for_course_id(course_id=c_id)
+    #     if len(rounds) > 0:
+    #         return {"success": False, "info": f"{len(rounds)} rounds have this course"}
 
-#     teeboxes_rounds_count = 0
-#     teeboxes = queries.get_teeboxes_for_course(course_id=c_id)
-#     for t in teeboxes:
-#         teeboxes_rounds_count += len(queries.get_rounds_by_teebox_id(teebox_id=t.id))
+    #     teeboxes_rounds_count = 0
+    #     teeboxes = queries.get_teeboxes_for_course(course_id=c_id)
+    #     for t in teeboxes:
+    #         teeboxes_rounds_count += len(queries.get_rounds_by_teebox_id(teebox_id=t.id))
 
-#     if teeboxes_rounds_count > 0:
-#         return {
-#             "success": False,
-#             "info": f"{len(rounds)} rounds have a teebox from this course",
-#         }
+    #     if teeboxes_rounds_count > 0:
+    #         return {
+    #             "success": False,
+    #             "info": f"{len(rounds)} rounds have a teebox from this course",
+    #         }
 
-#     for t in teeboxes:
-#         queries.delete_teebox(teebox_id=t.id)
+    #     for t in teeboxes:
+    #         queries.delete_teebox(teebox_id=t.id)
 
-#     queries.delete_course(course_id=c_id)
+    #     queries.delete_course(course_id=c_id)
 
-#     return {"success": True}
+    return {"success": True}
 
 
 @admin_bp.route("/edit_teebox/<int:t_id>", methods=["POST"])
@@ -111,19 +124,19 @@ def edit_teebox(t_id):
     return redirect(url_for("admin_bp.edit_courses"))
 
 
-# @admin_bp.route("/delete_teebox/<int:t_id>", methods=["DELETE"])
-# @login_required
-# def delete_teebox(t_id):
-#     if not is_admin():
-#         return redirect(url_for("home.index"))
+@admin_bp.route("/delete_teebox/<int:t_id>", methods=["DELETE"])
+@login_required
+def delete_teebox(t_id):
+    if not is_admin():
+        return redirect(url_for("home.index"))
 
-#     rounds = queries.get_rounds_by_teebox_id(teebox_id=t_id)
-#     if len(rounds) > 0:
-#         return {"success": False, "info": f"{len(rounds)} rounds have this teebox"}
+    #     rounds = queries.get_rounds_by_teebox_id(teebox_id=t_id)
+    #     if len(rounds) > 0:
+    #         return {"success": False, "info": f"{len(rounds)} rounds have this teebox"}
 
-#     queries.delete_teebox(teebox_id=t_id)
+    #     queries.delete_teebox(teebox_id=t_id)
 
-#     return {"success": True}
+    return {"success": True}
 
 
 @admin_bp.route("/subscribers", methods=["GET"])
