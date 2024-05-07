@@ -27,7 +27,7 @@
 </head>
 
 <script>
-    const THEME_URL = "{{ url_for('home.set_theme') }}";
+    const THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
     const THEME = "{{ theme }}";
 </script>
 
@@ -72,17 +72,17 @@
                             </a>
                             <ul class="dropdown-menu">
                                 {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
-                                    <li><a class="dropdown-item" href="{{ url_for('home.hijack') }}">Hijack Handicap</a></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('home.edit_courses') }}">Edit Courses</a></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('home.subscribers') }}">Subscribers</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.hijack') }}">Hijack Handicap</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.edit_courses') }}">Edit Courses</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.subscribers') }}">Subscribers</a></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profile</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('profile_bp.profile') }}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth.login') }}">Login</a>
+                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth_bp.login') }}">Login</a>
                         </li>
                     {% endif %}
                 </ul>

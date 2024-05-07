@@ -6,7 +6,7 @@
 {% block content %}
 
 <script>
-  const GET_ROUNDS_URL = "{{ url_for('api.get_rounds') }}";
+  const GET_ROUNDS_URL = "{{ url_for('stats_bp.get_rounds') }}";
   const LINE_GRAPH_DATA = {{ line_graph_data|tojson }};
 </script>
 <script src="/static/js/nouislider.js"></script>

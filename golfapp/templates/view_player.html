@@ -7,14 +7,11 @@
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 <script>
-    const GET_PAGE_URL = "{{ url_for('api.get_page', id=user.id) }}";
-    const EDIT_ROUND_URL = "{{ url_for('home.edit_round', id=0) }}".slice(0, -1);
-    const DELETE_ROUND_URL = "{{ url_for('home.delete_round', id=0) }}".slice(0, -1);
+    const EDIT_ROUND_URL = "{{ url_for('viewplayer_bp.edit_round', id=0) }}".slice(0, -1);
+    const DELETE_ROUND_URL = "{{ url_for('viewplayer_bp.delete_round', id=0) }}".slice(0, -1);
     const VIEW_PLAYER_URL = "{{ url_for('viewplayer_bp.view_player', id=0) }}".slice(0, -1);
-    const ADD_ROUND_URL = "{{ url_for('home.add_round_submit') }}";
-    const ADD_COURSE_URL = "{{ url_for('home.add_course') }}";
-    const GET_COURSES_URL = "{{ url_for('api.get_courses') }}"
-    const TOGGLE_VISIBILITY_URL = "{{ url_for('home.toggle_user_visibilty') }}";
+    const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
+    const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
     const COURSES = {{ courses|tojson }};
     const IS_ME = "{{ is_me }}" === "True";
     const ROUNDS = {{ rounds|tojson }};
@@ -31,7 +28,7 @@
     <div class="row">
         <div class="col">
             {% if is_me %}
-                <a href="{{ url_for('home.stats') }}">View more stats</a><br/>
+                <a href="{{ url_for('stats_bp.stats') }}">View more stats</a><br/>
                 <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View my course ranking</a>
             {% else %}
                 <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View course ranking</a>

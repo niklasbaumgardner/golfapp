@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="card-body px-5 pb-5">
-                    <form action="{{ url_for('auth.login', next=request.args.get('next', '')) }}" method="POST">
+                    <form action="{{ url_for('auth_bp.login', next=request.args.get('next', '')) }}" method="POST">
                         <div class="mb-4">
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="email">Email</label>
@@ -54,11 +54,11 @@
 
                             <button class="btn btn-primary w-100 mb-2" type="submit">Login</button>
 
-                            <p class="small"><a href="{{ url_for('auth.password_request') }}">Forgot password?</a></p>
+                            <p class="small"><a href="{{ url_for('auth_bp.password_request') }}">Forgot password?</a></p>
                         </div>
                     </form>
 
-                    <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+                    <p class="mb-0">Don't have an account? <a href="{{ url_for('auth_bp.signup') }}">Sign Up</a></p>
                 </div>
             </div>
         </div>

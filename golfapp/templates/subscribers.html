@@ -5,8 +5,9 @@
 
 {% block content %}
 <script>
-    const GET_SUBSCRIPTION_DATA_URL = "{{ url_for('home.get_subscription_data') }}";
-    const CREATE_SUBSCRIBER_URL = "{{ url_for('home.create_subscriber', subscription_id=0) }}";
+    const CREATE_SUBSCRIBER_URL = "{{ url_for('admin_bp.create_subscriber', subscription_id=0) }}";
+    const USERS = {{ users|tojson }};
+    const SUBSCRIBERS = {{ subs|tojson }};
 </script>
 
 <div class="container-fluid">
@@ -29,7 +30,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <form action="{{ url_for('home.create_subscription') }}" method="POST">
+                        <form action="{{ url_for('admin_bp.create_subscription') }}" method="POST">
                         <td>
                             <label for="user_id">Add a subscription</label>
                             <select name="user_id" id="user_id">
@@ -47,6 +48,6 @@
     </div>
 </div>
 
-<script src="/static/js/subscription.js"></script>
+<script src="/static/js/subscription.mjs" type="module"></script>
 
 {% endblock content %}

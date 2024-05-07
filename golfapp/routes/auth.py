@@ -11,7 +11,7 @@ auth_bp = Blueprint("auth_bp", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("index_bp.index"))
+        return redirect(url_for("viewplayer_bp.index"))
 
     email = request.args.get("email")
     if email:
@@ -42,7 +42,7 @@ def login():
                     return redirect(get_url_for_route(next, args))
                 except:
                     pass
-            return redirect(url_for("index_bp.index"))
+            return redirect(url_for("viewplayer_bp.index"))
 
         elif user:
             flash("Password was incorrect. Try again", "danger")

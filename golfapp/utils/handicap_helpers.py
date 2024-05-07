@@ -38,13 +38,8 @@ def get_included_rounds(rounds):
 
 def calculate_strokes(course_id, teebox_id, players):
     course = course_queries.get_course_by_id(course_id=course_id)
-    print(course.teeboxes, teebox_id)
     teebox = [t for t in course.teeboxes if t.id == teebox_id][0]
     players = [user_queries.get_user_by_id(user_id=id) for id in players]
-    print(course, course.teeboxes, players, players[0].handicap)
-    # handis = [Handicap.query.filter_by(user_id=player.id).first() for player in players]
-
-    # h_users = assign_handicap(players, handis, stringify=False)
 
     return (
         get_strokes(teebox, players),
@@ -77,10 +72,6 @@ def get_score_diffs(rounds, reverse=False):
             teebox = course_queries.get_teebox_by_id(rnd.teebox_id)
             teeboxes[rnd.teebox_id] = teebox
         new_score_diff = calculate_score_diff(teebox.slope, teebox.rating, rnd.score)
-        # if rnd.score_diff != new_score_diff:
-        #     rnd.score_diff = new_score_diff
-        #     db.session.commit()
-        # print(course.name, score_diff)
         lst.append(new_score_diff)
     lst.sort()
     if reverse:

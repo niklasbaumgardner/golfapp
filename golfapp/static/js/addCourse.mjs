@@ -1,24 +1,10 @@
 import { NikElement, html } from "./customElement.mjs";
 
-let allCoursesLower;
-async function getPageData() {
-  let respone = await fetch(GET_COURSE_TEEBOX_DATA);
-  let data = await respone.json();
-
-  console.log(data);
-
-  let coursesData = data.course_teebox_data;
-  allCoursesLower = Array.from(coursesData, (obj) =>
-    obj.course.name.toLowerCase()
-  );
-
-  addEventListenerToInput();
-  addCoursesToPage(coursesData);
-}
-getPageData();
+addEventListenerToInput();
+addCoursesToPage(COURSES);
 
 function check_existing_courses(event) {
-  let name = event.target.value.toLowerCase();
+  let name = event.target.value;
   let matchingDiv = document.querySelector("#matching-courses-div");
   matchingDiv.hidden = true;
   if (name.length < 3) {
@@ -27,7 +13,7 @@ function check_existing_courses(event) {
 
   let matches = [];
 
-  for (let course of allCoursesLower) {
+  for (let course of COURSES) {
     if (course.includes(name)) {
       console.log(course, name);
       matches.push(course);
@@ -57,7 +43,7 @@ function addEventListenerToInput() {
 
 function addCoursesToPage(coursesData) {
   coursesData.sort((a, b) => {
-    return a.course.name.localeCompare(b.course.name);
+    return a.name.localeCompare(b.name);
   });
 
   let anchor = document.getElementById("existing-courses");
@@ -85,7 +71,7 @@ class ListElement extends NikElement {
 
   render() {
     return html`<span
-      >${this.courseData.course.name} (${this.getTeeboxesTemplate()})</span
+      >${this.courseData.name} (${this.getTeeboxesTemplate()})</span
     >`;
   }
 }

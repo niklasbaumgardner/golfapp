@@ -29,11 +29,11 @@
                 <tbody>
                     {% for user in users %}
                         <tr>
-                            <form action="{{ url_for('home.hijack') }}" method="POST">
+                            <form action="{{ url_for('admin_bp.hijack') }}" method="POST">
                                 <input type="text" name="user_id" value="{{ user.id }}" hidden>
                                 <td class="name">{{ user.username }}</td>
                                 <td class="handicap">
-                                    <input class="form-control w-80p" type="number" name="handicap" step=".01" value="{{ user.handicap }}">
+                                    <input class="form-control w-80p" type="number" name="handicap" step=".01" value="{{ user.handicap.handicap }}">
                                 </td>
                                 <td class="hijack">
                                     <input class="btn btn-primary" type="submit" value="Hijack">

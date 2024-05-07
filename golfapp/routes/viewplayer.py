@@ -6,7 +6,7 @@ from golfapp.queries import (
     round_queries,
     user_queries,
 )
-from golfapp.utils import handicap_helpers
+from golfapp.utils import handicap_helpers, send_email, stats
 
 
 viewplayer_bp = Blueprint("viewplayer_bp", __name__)
@@ -45,27 +45,82 @@ def add_round_submit():
     gir = request.form.get("gir")
     fir = request.form.get("fir")
     putts = request.form.get("putts")
-    date_ = request.form.get("date")
+    date = request.form.get("date")
 
-    date_ = handicap_helpers.get_date_from_string(date_)
+    date = handicap_helpers.get_date_from_string(date)
 
     gir = gir if gir else None
     fir = fir if fir else None
     putts = putts if putts else None
 
-    old_handicap, new_handicap = update_handicap()
+    new_round = round_queries.create_round(
+        course_id=course_id,
+        teebox_id=teebox_id,
+        score=score,
+        fir=fir,
+        gir=gir,
+        putts=putts,
+        date=date,
+    )
 
-    golf.send_subscribers_message(
+    old_handicap, new_handicap = handicap_helpers.update_handicap()
+
+    send_email.send_subscribers_message(
         current_user.get_id(), new_round, old_handicap, new_handicap
     )
 
-    return redirect(url_for("home.index"))
+    return redirect(url_for("viewplayer_bp.index"))
+
+
+@viewplayer_bp.route("/edit_round/<int:id>", methods=["POST"])
+@login_required
+def edit_round(id):
+    new_score = request.form.get("score", type=float)
+    new_gir = request.form.get("gir")
+    new_fir = request.form.get("fir")
+    new_putts = request.form.get("putts")
+    new_date = request.form.get("date")
+
+    should_update_handicap, round = round_queries.update_round(
+        round_id=id,
+        score=new_score,
+        fir=new_fir,
+        gir=new_gir,
+        putts=new_putts,
+        date=new_date,
+    )
+
+    if should_update_handicap:
+        handicap_helpers.update_handicap(updated_round=round)
+
+    return {
+        "handicap": current_user.handicap.handicap_str,
+        "rounds": handicap_helpers.get_included_rounds(
+            [r.to_dict() for r in round_queries.get_rounds(sort=True)]
+        ),
+    }
+
+
+@viewplayer_bp.route("/delete_round/<int:id>", methods=["POST"])
+@login_required
+def delete_round(id):
+    should_update_handicap = round_queries.delete_round(round_id=id)
+
+    if should_update_handicap:
+        handicap_helpers.update_handicap()
+
+    return {
+        "handicap": current_user.handicap.handicap_str,
+        "rounds": handicap_helpers.get_included_rounds(
+            [r.to_dict() for r in round_queries.get_rounds(sort=True)]
+        ),
+    }
 
 
 @viewplayer_bp.route("/view_player/<int:id>", methods=["GET"])
 def view_player(id):
     if current_user.is_authenticated and current_user.id == id:
-        return redirect(url_for("home.index"))
+        return redirect(url_for("viewplayer_bp.index"))
 
     rounds = [
         r.to_dict() for r in round_queries.get_rounds_for_user_id(user_id=id, sort=True)

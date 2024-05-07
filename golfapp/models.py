@@ -153,25 +153,27 @@ class Theme(db.Model):
     color = db.Column(db.String, nullable=False)
 
 
-class Subscription(db.Model):
+class Subscription(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     subscribed_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    def to_json(self):
-        return dict(id=self.id, subscribed_to=self.subscribed_to)
+    subscribers = db.relationship("Subscriber")
+
+    # def to_json(self):
+    #     return dict(id=self.id, subscribed_to=self.subscribed_to)
 
 
-class Subscriber(db.Model):
+class Subscriber(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     subscribtion_id = db.Column(
         db.Integer, db.ForeignKey("subscription.id"), nullable=False
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    def to_json(self):
-        return dict(
-            id=self.id, subscription_id=self.subscribtion_id, user_id=self.user_id
-        )
+    # def to_json(self):
+    #     return dict(
+    #         id=self.id, subscription_id=self.subscribtion_id, user_id=self.user_id
+    #     )
 
 
 class CourseRanking(db.Model, SerializerMixin):

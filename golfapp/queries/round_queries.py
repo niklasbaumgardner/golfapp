@@ -1,6 +1,8 @@
 from golfapp.models import Round
 from golfapp import db
 from flask_login import current_user
+from golfapp.queries import course_queries
+from golfapp.utils import handicap_helpers
 
 
 def create_round(course_id, teebox_id, score, fir, gir, putts, date):
@@ -18,6 +20,39 @@ def create_round(course_id, teebox_id, score, fir, gir, putts, date):
     db.session.commit()
 
     return round
+
+
+def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None):
+    round = get_round_by_id(round_id=round_id)
+
+    if not round:
+        return False, None
+
+    should_update_handicap = False
+
+    if score is not None:
+        should_update_handicap = True
+        round.score = score
+
+        teebox = course_queries.get_teebox_by_id(teebox_id=round.teebox_id)
+        new_score_diff = handicap_helpers.calculate_score_diff(
+            teebox.slope, teebox.rating, round.score
+        )
+        round.score_diff = new_score_diff
+
+    if fir is not None:
+        round.fir = fir
+    if gir is not None:
+        round.gir = gir
+    if putts is not None:
+        round.putts = putts
+    if date is not None:
+        should_update_handicap = True
+        round.date = date
+
+    db.session.commit()
+
+    return should_update_handicap, round
 
 
 def get_rounds(page=1, paginate=False, sort=False, reverse_sort=False, max_rounds=None):
@@ -58,3 +93,19 @@ def get_rounds_for_user_id(
         )
 
     return rounds.all()
+
+
+def get_round_by_id(round_id):
+    return Round.query.filter_by(user_id=current_user.id, id=round_id).first()
+
+
+def delete_round(round_id):
+    round = get_round_by_id(round_id=round_id)
+
+    if not round:
+        return False
+
+    db.session.delete(round)
+    db.session.commit()
+
+    return True

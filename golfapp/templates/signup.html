@@ -5,8 +5,8 @@
 
 {% block content %}
     <script>
-        const USERNAME_UNIQUE_URL = "{{ url_for('auth.username_unique') }}";
-        const EMAIL_UNIQUE_URL = "{{ url_for('auth.email_unique') }}";
+        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
     </script>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -36,7 +36,7 @@
                 </div>
                 <div class="card-body px-5 pb-5">
 
-                <form action="{{ url_for('auth.signup') }}" method="POST">
+                <form action="{{ url_for('auth_bp.signup') }}" method="POST">
                     <div class="mb-4">
                         <div class="form-outline mb-4">
                             <label class="form-label" for="email">Email</label>

@@ -21,8 +21,7 @@ def calculate_strokes():
         return render_template("strokes.html", strokes=strokes, course=course_name)
 
     courses = [c.to_dict() for c in course_queries.get_courses(sort=True)]
-    users = [u.to_dict() for u in user_queries.get_visible_users()]
-    users = [u for u in users if u["handicap"] is not None]
+    users = [u.to_dict() for u in user_queries.get_users_with_handicap()]
     users.sort(key=lambda u: u["handicap"]["handicap"])
 
     return render_template("strokes.html", users=users, courses=courses)

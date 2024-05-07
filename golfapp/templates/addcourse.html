@@ -7,13 +7,13 @@
 
 {% block content %}
 <script>
-    const GET_COURSE_TEEBOX_DATA = "{{ url_for('api.get_course_and_teebox_data') }}";
+    const COURSES = {{ courses|tojson }};
 </script>
 
     <div class="card">
         <div class="card-body p-5">
             <p class="card-title fs-2 mb-3">Add Course</p>
-            <form action="{{ url_for('home.add_course') }}" method="POST">
+            <form action="{{ url_for('addcourse_bp.add_course') }}" method="POST">
                 <div class="row">
                     <div class="col-sm mb-4">
                         <div id="matching-courses-div" class="text-danger" hidden>

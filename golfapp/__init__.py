@@ -32,27 +32,31 @@ login_manager.login_view = "auth.login"
 login_manager.login_message_category = "alert-primary"
 mail.init_app(app)
 
-from golfapp.user.auth import auth as auth_blueprint
-from golfapp.home.home import home as home_blueprint
-from golfapp.home.api import api as api_blueprint
-
-
-app.register_blueprint(auth_blueprint)
-app.register_blueprint(home_blueprint)
-app.register_blueprint(api_blueprint)
 
 # new routes
+from golfapp.routes.addcourse import addcourse_bp
+from golfapp.routes.admin import admin_bp
 from golfapp.routes.auth import auth_bp
 from golfapp.routes.courseranking import courseranking_bp
+from golfapp.routes.profile import profile_bp
 from golfapp.routes.strokes import strokes_bp
+from golfapp.routes.stats import stats_bp
+from golfapp.routes.theme import theme_bp
 from golfapp.routes.viewplayer import viewplayer_bp
 from golfapp.routes.viewplayers import viewplayers_bp
+from golfapp.utils.context_processor import context_processor_bp
 
+app.register_blueprint(addcourse_bp)
+app.register_blueprint(admin_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(courseranking_bp)
+app.register_blueprint(profile_bp)
 app.register_blueprint(strokes_bp)
+app.register_blueprint(stats_bp)
+app.register_blueprint(theme_bp)
 app.register_blueprint(viewplayer_bp)
 app.register_blueprint(viewplayers_bp)
+app.register_blueprint(context_processor_bp)
 
 with app.app_context():
     db.create_all()

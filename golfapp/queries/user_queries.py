@@ -1,4 +1,4 @@
-from golfapp.models import User
+from golfapp.models import Handicap, User
 from golfapp import bcrypt, db
 
 
@@ -19,6 +19,10 @@ def get_user_by_email(email):
 
 def get_visible_users():
     return User.query.filter_by(is_publicly_visible=True).all()
+
+
+def get_users_with_handicap():
+    return User.query.where(Handicap.query.filter_by(user_id=User.id).exists()).all()
 
 
 def get_users():
