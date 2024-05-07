@@ -97,13 +97,14 @@ Please thank ChatGPT for the wonderful message.
 
 
 def send_subscribers_message(user_id, new_round, old_handicap, new_handicap):
-    subscribers = subscriber_queries.get_subscribers_for_user_id(user_id=user_id)
+    subscribers = subscriber_queries.get_subscribers_for_user(user_id=user_id)
 
     if not subscribers:
         return
 
     subscribers_emails = [
-        user_queries.get_user(subscriber.user_id).email for subscriber in subscribers
+        user_queries.get_user_by_id(subscriber.user_id).email
+        for subscriber in subscribers
     ]
 
     msg = Message(

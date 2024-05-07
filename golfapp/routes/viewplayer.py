@@ -94,7 +94,7 @@ def edit_round(id):
         handicap_helpers.update_handicap(updated_round=round)
 
     return {
-        "handicap": current_user.handicap.handicap_str,
+        "handicap": current_user.handicap.handicap_str(),
         "rounds": handicap_helpers.get_included_rounds(
             [r.to_dict() for r in round_queries.get_rounds(sort=True)]
         ),
@@ -110,7 +110,7 @@ def delete_round(id):
         handicap_helpers.update_handicap()
 
     return {
-        "handicap": current_user.handicap.handicap_str,
+        "handicap": current_user.handicap.handicap_str(),
         "rounds": handicap_helpers.get_included_rounds(
             [r.to_dict() for r in round_queries.get_rounds(sort=True)]
         ),

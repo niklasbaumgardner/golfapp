@@ -20,3 +20,8 @@ def get_subscription_for_user(user_id):
 
 def get_subscribers_by_subscription_id(subscription_id):
     return Subscriber.query.filter_by(subscribtion_id=subscription_id).all()
+
+
+def get_subscribers_for_user(user_id):
+    subscription = get_subscription_for_user(user_id=user_id)
+    return get_subscribers_by_subscription_id(subscription_id=subscription.id)

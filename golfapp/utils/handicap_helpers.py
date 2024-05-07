@@ -63,6 +63,11 @@ def calculate_score_diff(slope, rating, score):
     return round((113 / slope) * (score - rating - 1), 1)
 
 
+def get_score_diff(teebox_id, score):
+    teebox = course_queries.get_teebox_by_id(teebox_id=teebox_id)
+    return calculate_score_diff(teebox.slope, teebox.rating, score)
+
+
 def get_score_diffs(rounds, reverse=False):
     teeboxes = {}
     lst = []
