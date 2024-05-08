@@ -30,6 +30,10 @@ class RoundsGridManager {
   }
 
   handleEditRound(event) {
+    if (!IS_ME) {
+      return;
+    }
+
     if (event.newValue === event.oldValue) {
       return;
     }
@@ -120,7 +124,7 @@ class RoundsGridManager {
         headerName: "Score / Par",
         editable: true,
         filter: "agNumberColumnFilter",
-        cellEditor: "agNumberCellEditor",
+        cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
           step: 1,
         },
@@ -136,7 +140,7 @@ class RoundsGridManager {
         headerName: "FIR",
         editable: true,
         filter: "agNumberColumnFilter",
-        cellEditor: "agNumberCellEditor",
+        cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
           step: 1,
         },
@@ -146,7 +150,7 @@ class RoundsGridManager {
         headerName: "GIR",
         editable: true,
         filter: "agNumberColumnFilter",
-        cellEditor: "agNumberCellEditor",
+        cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
           step: 1,
         },
@@ -155,7 +159,7 @@ class RoundsGridManager {
         field: "putts",
         editable: true,
         filter: "agNumberColumnFilter",
-        cellEditor: "agNumberCellEditor",
+        cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
           step: 1,
         },
@@ -164,7 +168,7 @@ class RoundsGridManager {
         field: "date",
         editable: true,
         filter: "agDateColumnFilter",
-        cellEditor: "agDateStringCellEditor",
+        cellEditor: IS_ME ? "agDateStringCellEditor" : false,
         cellRenderer: (param) => {
           let date = param.data.date;
 
