@@ -29,8 +29,8 @@ def get_users():
     return User.query.filter_by().all()
 
 
-def update_user(id, username, email):
-    user = get_user_by_id(id=id)
+def update_user(user_id, username, email):
+    user = get_user_by_id(user_id=user_id)
 
     username = username if is_username_unique(username=username) else None
     email = email if is_email_unique(email=email) else None
