@@ -112,7 +112,7 @@ class RoundsGridManager {
 
           return courseA.name.localeCompare(courseB.name);
         },
-        filterValueGetter(param) {
+        filterValueGetter: (param) => {
           let course = COURSES[param.data.course_id];
           let teebox = this.getTeeboxForCourse(param.data.teebox_id, course); //course.teeboxes[param.data.teebox_id];
 
