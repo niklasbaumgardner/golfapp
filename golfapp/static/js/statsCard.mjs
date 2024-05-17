@@ -97,18 +97,14 @@ class StatsCard extends NikElement {
       },
     });
 
-    this.handleSliderDraggingDone.bind(this);
-    this.sliderEl.noUiSlider.on("set", this.handleSliderDraggingDone);
+    this.sliderEl.noUiSlider.on(
+      "set",
+      (values, handle, unencoded, tap, positions, noUiSlider) =>
+        this.handleSliderDraggingDone(unencoded)
+    );
   }
 
-  handleSliderDraggingDone(
-    values,
-    handle,
-    unencoded,
-    tap,
-    positions,
-    noUiSlider
-  ) {
+  handleSliderDraggingDone(unencoded) {
     let [start, end] = unencoded;
     this.calculateStats(start - 1, end - 1);
   }
