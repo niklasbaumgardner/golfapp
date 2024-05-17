@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_required
-from golfapp.queries import course_queries, round_queries
+from golfapp.queries import course_queries, round_queries, user_queries
 from golfapp.utils import stats as handicap_stats
 
 
@@ -63,9 +63,11 @@ def stats():
     # TODO: return handicap, anticap, average of last 20
     # also a list a [[dates], [handicap for respective date]] to show a graph of handicap over time
     # stats["handicap_rounds"] = handicap_rounds
-    dates, handicaps = handicap_stats.get_handicap_graph_list()
-    anticap = handicap_stats.get_anitcap()
-    averagecap = handicap_stats.get_averagecap()
+    dates, handicaps = handicap_stats.get_handicap_graph_list_for_user(
+        user_id=current_user.id
+    )
+    anticap = handicap_stats.get_anitcap_for_user(user_id=current_user.id)
+    averagecap = handicap_stats.get_averagecap_for_user(user_id=current_user.id)
 
     return render_template(
         "stats.html",
@@ -74,6 +76,24 @@ def stats():
         anticap=anticap,
         averagecap=averagecap,
     )
+
+
+@stats_bp.get("/get_stats_data/<int:id>")
+def get_stats_data(id):
+    rounds = [r.to_dict() for r in round_queries.get_rounds_for_user_id(user_id=id)]
+
+    dates, handicaps = handicap_stats.get_handicap_graph_list_for_user(user_id=id)
+    anticap = handicap_stats.get_anitcap_for_user(user_id=id)
+    averagecap = handicap_stats.get_averagecap_for_user(user_id=id)
+
+    user = user_queries.get_user_by_id(user_id=id)
+    return {
+        "rounds": rounds,
+        "chart_data": {"dates": dates, "handicaps": handicaps},
+        "anticap": anticap,
+        "averagecap": averagecap,
+        "user": user.to_dict(),
+    }
 
 
 @stats_bp.route("/get_rounds", methods=["GET"])

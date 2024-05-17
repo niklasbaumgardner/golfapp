@@ -15,7 +15,11 @@
     const COURSES = {{ courses|tojson }};
     const IS_ME = "{{ is_me }}" === "True";
     const ROUNDS = {{ rounds|tojson }};
+
+    const STATS_URL = "{{ url_for('stats_bp.get_stats_data', id=user.id) }}"
 </script>
+<script src="/static/js/nouislider.js"></script>
+<link href="/static/css/nouislider.min.css" rel="stylesheet">
 
 <div class="row mb-5">
     <div class="fw-bold fs-1">
@@ -28,7 +32,6 @@
     <div class="row">
         <div class="col">
             {% if is_me %}
-                <a href="{{ url_for('stats_bp.stats') }}">View more stats</a><br/>
                 <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View my course ranking</a>
             {% else %}
                 <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View course ranking</a>
@@ -52,6 +55,8 @@
     </div> -->
 </div>
 
+<stats-card class="mb-5"></stats-card>
+
 <div class="d-flex justify-content-center">
     <div id="roundsGrid" style="height: 800px;width: {% if is_me %}1051px{% else %}952px{% endif %};" class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"></div>
 </div>
@@ -67,5 +72,6 @@
 <script src="/static/js/viewPlayer.mjs" type="module"></script>
 <script src="/static/js/addRoundEl.mjs" type="module"></script>
 <script src="/static/js/deleteRoundEl.mjs" type="module"></script>
+<script src="/static/js/statsCard.mjs" type="module"></script>
 
 {% endblock content %}

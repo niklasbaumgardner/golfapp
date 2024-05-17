@@ -24,8 +24,8 @@ def get_next_smallest_date_index(rounds, target_date):
     return len(rounds) - 1
 
 
-def get_handicap_graph_list():
-    rounds = round_queries.get_rounds(sort=True)
+def get_handicap_graph_list_for_user(user_id):
+    rounds = round_queries.get_rounds_for_user_id(user_id=user_id, sort=True)
     rounds.reverse()
 
     first_date = rounds[0].date
@@ -48,15 +48,19 @@ def get_handicap_graph_list():
     return [d.strftime("%m/%d/%Y") for d in dates], handicaps
 
 
-def get_anitcap():
-    rounds = round_queries.get_rounds(sort=True, max_rounds=20)
+def get_anitcap_for_user(user_id):
+    rounds = round_queries.get_rounds_for_user_id(
+        user_id=user_id, sort=True, max_rounds=20
+    )
     anticap = handicap_helpers.calculate_handicap(rounds=rounds, reverse=True)
 
     return anticap
 
 
-def get_averagecap():
-    rounds = round_queries.get_rounds(sort=True, max_rounds=20)
+def get_averagecap_for_user(user_id):
+    rounds = round_queries.get_rounds_for_user_id(
+        user_id=user_id, sort=True, max_rounds=20
+    )
     score_diffs = handicap_helpers.get_score_diffs(rounds=rounds)
     averagecap = round(sum(score_diffs) / len(score_diffs), 2)
 
