@@ -39,12 +39,12 @@ def index():
 @viewplayer_bp.route("/add_round_submit", methods=["POST"])
 @login_required
 def add_round_submit():
-    course_id = request.form["course"]
+    course_id = request.form.get("course")
     teebox_id = request.form.get("teebox")
-    score = request.form["score"]
-    gir = request.form.get("gir")
-    fir = request.form.get("fir")
-    putts = request.form.get("putts")
+    score = request.form.get("score", type=int)
+    gir = request.form.get("gir", type=int)
+    fir = request.form.get("fir", type=int)
+    putts = request.form.get("putts", type=int)
     date = request.form.get("date")
 
     date = handicap_helpers.get_date_from_string(date)
