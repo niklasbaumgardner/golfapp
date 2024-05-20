@@ -76,12 +76,12 @@ class StatsCard extends NikElement {
   initSlider() {
     let start = this.data.rounds.length > 20 ? this.data.rounds.length - 20 : 0;
     let end = this.data.rounds.length;
-    this.calculateStats(start, end - 1);
+    this.calculateStats(start, end);
 
     let numTicks = Math.round(window.innerWidth / 50);
 
     noUiSlider.create(this.sliderEl, {
-      start: [start, end],
+      start: [start + 1, end],
       step: 1,
       margin: 1,
       connect: true,
@@ -106,11 +106,12 @@ class StatsCard extends NikElement {
 
   handleSliderDraggingDone(unencoded) {
     let [start, end] = unencoded;
-    this.calculateStats(start - 1, end - 1);
+
+    this.calculateStats(start - 1, end);
   }
 
   calculateStats(start, end) {
-    let tempRounds = this.data.rounds.slice(start, end + 1);
+    let tempRounds = this.data.rounds.slice(start, end);
 
     let avgRoundArr = [];
     let fir = [];
@@ -159,7 +160,6 @@ class StatsCard extends NikElement {
     this.lineChart = this.createLineChart(ctx);
 
     let observer = new MutationObserver((mutations) => {
-      let theme = document.documentElement.dataset.bsTheme;
       if (this.lineChart) {
         this.lineChart.destroy();
       }
