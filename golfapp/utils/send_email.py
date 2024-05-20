@@ -51,11 +51,11 @@ If you did not make this request then please ignore this email and no changes wi
 
 
 def get_handicap_change_message(old_handicap, new_handicap):
-    def handicap_str(self):
-        if self.handicap < 0:
-            return f"+{str(self.handicap)[1:]}"
+    def handicap_str(handicap):
+        if handicap < 0:
+            return f"+{str(handicap)[1:]}"
 
-        return f"{self.handicap}"
+        return f"{handicap}"
 
     if not old_handicap:
         return f"handicap is now {handicap_str(new_handicap)}"
@@ -70,8 +70,8 @@ def get_handicap_change_message(old_handicap, new_handicap):
 def get_random_message(new_round, user_id, old_handicap, new_handicap):
     def is_round_in_included(round, included_rounds):
         for rnd in included_rounds:
-            if rnd.id == round["id"]:
-                return round["isIncluded"]
+            if rnd["id"] == round.id:
+                return rnd["isIncluded"]
 
         return False
 
@@ -86,7 +86,7 @@ def get_random_message(new_round, user_id, old_handicap, new_handicap):
 {current_user.username} shot {new_round.score} at {course.name}.
 Their {get_handicap_change_message(old_handicap, new_handicap)}.
 
-View the rest of their rounds at {url_for('home.view_player', id=user_id, _external=True)}
+View the rest of their rounds at {url_for('viewplayer_bp.view_player', id=user_id, _external=True)}
 
 { GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
 
