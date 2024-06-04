@@ -71,7 +71,7 @@ def get_random_message(new_round, user_id, old_handicap, new_handicap):
     def is_round_in_included(round, included_rounds):
         for rnd in included_rounds:
             if rnd["id"] == round.id:
-                return rnd["isIncluded"]
+                return "isIncluded" in rnd
 
         return False
 
