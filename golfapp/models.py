@@ -40,6 +40,8 @@ class User(db.Model, UserMixin, SerializerMixin):
 class Course(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    address = db.Column(db.String, nullable=True)
+
     teeboxes = db.relationship("CourseTeebox")
 
 
