@@ -61,6 +61,10 @@ def get_teebox_by_id(teebox_id):
     return CourseTeebox.query.filter_by(id=teebox_id).first()
 
 
+def get_teeboxes_by_course_id(course_id):
+    return CourseTeebox.query.filter_by(course_id=course_id).all()
+
+
 def update_course(course_id, name=None):
     if name is None:
         return

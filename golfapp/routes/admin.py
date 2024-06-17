@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_required
 from golfapp.queries import (
     course_queries,
+    courseranking_queries,
     handicap_queries,
+    round_queries,
     subscriber_queries,
     user_queries,
 )
@@ -79,25 +81,36 @@ def delete_course(c_id):
     if not is_admin():
         return redirect(url_for("home.index"))
 
-    #     rounds = queries.get_rounds_for_course_id(course_id=c_id)
-    #     if len(rounds) > 0:
-    #         return {"success": False, "info": f"{len(rounds)} rounds have this course"}
+    rounds = round_queries.get_rounds_by_course_id(course_id=c_id)
+    if len(rounds) > 0:
+        return {"success": False, "info": f"{len(rounds)} rounds have this course"}
 
-    #     teeboxes_rounds_count = 0
-    #     teeboxes = queries.get_teeboxes_for_course(course_id=c_id)
-    #     for t in teeboxes:
-    #         teeboxes_rounds_count += len(queries.get_rounds_by_teebox_id(teebox_id=t.id))
+    teeboxes_rounds_count = 0
+    teeboxes = course_queries.get_teeboxes_by_course_id(course_id=c_id)
+    for t in teeboxes:
+        teeboxes_rounds_count += len(
+            round_queries.get_rounds_by_teebox_id(teebox_id=t.id)
+        )
 
-    #     if teeboxes_rounds_count > 0:
-    #         return {
-    #             "success": False,
-    #             "info": f"{len(rounds)} rounds have a teebox from this course",
-    #         }
+    if teeboxes_rounds_count > 0:
+        return {
+            "success": False,
+            "info": f"{len(rounds)} rounds have a teebox from this course",
+        }
 
-    #     for t in teeboxes:
-    #         queries.delete_teebox(teebox_id=t.id)
+    course_rankings = courseranking_queries.get_course_rankings_by_course_id(
+        course_id=c_id
+    )
+    if len(course_rankings) > 0:
+        return {
+            "success": False,
+            "info": f"{len(course_rankings)} course rankings have this course",
+        }
 
-    #     queries.delete_course(course_id=c_id)
+    for t in teeboxes:
+        course_queries.delete_teebox(teebox_id=t.id)
+
+    course_queries.delete_course(course_id=c_id)
 
     return {"success": True}
 
