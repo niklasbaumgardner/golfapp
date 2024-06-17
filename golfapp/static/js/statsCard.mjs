@@ -37,27 +37,31 @@ const COLORS = {
 
 class StatsCard extends NikElement {
   static properties = {
-    data: {
-      type: Object,
-    },
+    data: { type: Object },
+    averageRound: { type: Number },
+    numStatsRounds: { type: Number },
+    firAverage: { type: Number },
+    firPercent: { type: Number },
+    girAverage: { type: Number },
+    girPercent: { type: Number },
+    puttsPerHole: { type: Number },
+    puttsPerRound: { type: Number },
+
+    coursesPlayed: { type: Number },
+    statesPlayed: { type: Number },
+    lowestRound: { type: Number },
   };
 
   static get queries() {
     return {
       sliderEl: "#slider",
-      avgRoundEl: "#avg-round",
-      firEl: "#fir",
-      firPercentEl: "#fir-percent",
-      girEl: "#gir",
-      girPercentEl: "#gir-percent",
-      puttsEl: "#putts",
-      puttsPerHoleEl: "#putts-hole",
       chartEl: "#handicap-graph",
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this.usingSlider = false;
 
     this.init();
   }
@@ -69,88 +73,41 @@ class StatsCard extends NikElement {
 
     await this.updateComplete;
 
-    this.initSlider();
+    this.calculateStats();
+    this.calculateCourseStats();
     this.initChart();
   }
 
-  initSlider() {
-    let start = this.data.rounds.length > 20 ? this.data.rounds.length - 20 : 0;
-    let end = this.data.rounds.length;
-    this.calculateStats(start, end);
-
-    let numTicks = Math.round(window.innerWidth / 50);
-
-    noUiSlider.create(this.sliderEl, {
-      start: [start + 1, end],
-      step: 1,
-      margin: 1,
-      connect: true,
-      range: { min: 1, max: end },
-      tooltips: true,
-      pips: {
-        mode: "count",
-        values: numTicks,
-        density: 100 / numTicks,
-        filter: () => {
-          return 1;
-        },
-      },
-    });
-
-    this.sliderEl.noUiSlider.on(
-      "set",
-      (values, handle, unencoded, tap, positions, noUiSlider) =>
-        this.handleSliderDraggingDone(unencoded)
-    );
-  }
-
-  handleSliderDraggingDone(unencoded) {
-    let [start, end] = unencoded;
-
-    this.calculateStats(start - 1, end);
-  }
-
-  calculateStats(start, end) {
-    let tempRounds = this.data.rounds.slice(start, end);
+  calculateStats() {
+    let last20Rounds = this.data.rounds.slice(-20);
 
     let avgRoundArr = [];
     let fir = [];
     let gir = [];
     let putts = [];
-    for (let round of tempRounds) {
+    for (let round of last20Rounds) {
       avgRoundArr.push(round.score);
       fir.push(round.fir);
       gir.push(round.gir);
       putts.push(round.putts);
     }
 
-    let avgRound = average(avgRoundArr);
-    let avgFir = average(fir);
-    let avgGir = average(gir);
-    let avgPutts = average(putts);
+    let avgRoundObj = average(avgRoundArr);
+    let avgFirObj = average(fir);
+    let avgGirObj = average(gir);
+    let avgPuttsObj = average(putts);
 
-    this.avgRoundEl.textContent = avgRound.average;
-    this.avgRoundEl.parentElement.parentElement.querySelector(
-      ".num-rounds"
-    ).textContent = avgRound.numRounds;
+    this.averageRound = avgRoundObj.average;
+    this.numStatsRounds = avgRoundObj.numRounds;
 
-    this.firPercentEl.textContent = round((100 * avgFir.average) / 14, 2);
-    this.firEl.textContent = avgFir.average;
-    this.firEl.parentElement.parentElement.querySelector(
-      ".num-rounds"
-    ).textContent = avgFir.numRounds;
+    this.firAverage = avgFirObj.average;
+    this.firPercent = round((100 * avgFirObj.average) / 14, 2);
 
-    this.girPercentEl.textContent = round((100 * avgGir.average) / 18, 2);
-    this.girEl.textContent = avgGir.average;
-    this.girEl.parentElement.parentElement.querySelector(
-      ".num-rounds"
-    ).textContent = avgGir.numRounds;
+    this.girAverage = avgGirObj.average;
+    this.girPercent = round((100 * avgGirObj.average) / 18, 2);
 
-    this.puttsPerHoleEl.textContent = round(avgPutts.average / 18, 2);
-    this.puttsEl.textContent = avgPutts.average;
-    this.puttsEl.parentElement.parentElement.querySelector(
-      ".num-rounds"
-    ).textContent = avgPutts.numRounds;
+    this.puttsPerHole = round(avgPuttsObj.average / 18, 2);
+    this.puttsPerRound = avgPuttsObj.average;
   }
 
   initChart() {
@@ -189,6 +146,11 @@ class StatsCard extends NikElement {
       },
       options: {
         plugins: {
+          title: {
+            display: true,
+            text: "Handicap Over Time",
+            color: COLORS[theme].labelColor,
+          },
           legend: {
             labels: {
               color: COLORS[theme].labelColor,
@@ -223,114 +185,144 @@ class StatsCard extends NikElement {
     });
   }
 
+  calculateCourseStats() {
+    let coursesSet = new Set();
+    let statesSet = new Set();
+    let lowestRound = 9999;
+
+    for (let r of this.data.rounds) {
+      coursesSet.add(r.course_id);
+      let c = COURSES[r.course_id];
+      statesSet.add(c.address_dict.StateName);
+
+      if (r.score < lowestRound) {
+        lowestRound = r.score;
+      }
+    }
+
+    this.coursesPlayed = coursesSet.size;
+    this.statesPlayed = statesSet.size;
+    this.lowestRound = lowestRound;
+  }
+
   handicapTemplate() {
     return html`<sl-card class="w-100 mb-3"
       ><div class="row gy-3">
-        <div class="col-12 col-lg-4">
-          <div class="row fs-2">
-            <div class="text-start">
-              Your handicap is ${this.data?.user.handicap.handicap_str}
-            </div>
-          </div>
-          <div class="row">
-            <div class="text-start">
-              Your handicap is the best 8 of the last 20 rounds
-            </div>
-          </div>
+        <div class="col-12 col-lg-4 text-start">
+          <h3>Your handicap is ${this.data?.user.handicap.handicap_str}</h3>
+          <p>Your handicap is the best 8 of the last 20 rounds</p>
         </div>
-        <div class="col-12 col-lg-4">
-          <div class="row fs-2">
-            <div class="text-center">
-              Your averagecap is ${this.data?.averagecap}
-            </div>
-          </div>
-          <div class="row">
-            <div class="text-center">
-              Your averagecap is the average of the last 20 rounds
-            </div>
-          </div>
+        <div class="col-12 col-lg-4 text-center">
+          <h3>Your averagecap is ${this.data?.averagecap}</h3>
+          <p>Your averagecap is the average of the last 20 rounds</p>
         </div>
-        <div class="col-12 col-lg-4">
-          <div class="row fs-2">
-            <div class="text-end">Your anticap is ${this.data?.anticap}</div>
-          </div>
-          <div class="row">
-            <div class="text-end">
-              Your anticap is the worst 8 of the last 20 rounds
-            </div>
-          </div>
+        <div class="col-12 col-lg-4 text-end">
+          <h3>Your anticap is ${this.data?.anticap}</h3>
+          <p>Your anticap is the worst 8 of the last 20 rounds</p>
         </div>
       </div></sl-card
     >`;
   }
 
-  sliderStatsTemplate() {
+  statsTemplate() {
+    return html`<sl-card class="w-100 mb-3">
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>Average round</h6>
+            <h4 id="avg-round">${this.averageRound}</h4>
+            <small
+              >last
+              <span class="num-rounds">${this.numStatsRounds}</span>
+              rounds</small
+            >
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>FIR</h6>
+            <div class="d-flex">
+              <span class="w-50">
+                <h4><span id="fir-percent">${this.firPercent}%</span>%</h4>
+              </span>
+              <span class="w-50 inline-stat">
+                <h4 id="fir">${this.firAverage}</h4>
+                <small> / round</small>
+              </span>
+            </div>
+            <small
+              >last
+              <span class="num-rounds">${this.averageRound}</span> rounds</small
+            >
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>GIR</h6>
+            <div class="d-flex">
+              <span class="w-50">
+                <h4><span id="gir-percent">${this.girPercent}%</span>%</h4>
+              </span>
+              <span class="w-50 inline-stat">
+                <h4 id="gir">${this.girAverage}</h4>
+                <small> / round</small>
+              </span>
+            </div>
+            <small
+              >last
+              <span class="num-rounds">${this.averageRound}</span> rounds</small
+            >
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>Putts</h6>
+            <div class="d-flex">
+              <span class="w-50 inline-stat">
+                <h4 id="putts-hole">${this.puttsPerHole}</h4>
+                <small> / hole</small>
+              </span>
+              <span class="w-50 inline-stat">
+                <h4 id="putts">${this.puttsPerRound}</h4>
+                <small> / round</small>
+              </span>
+            </div>
+            <small
+              >last
+              <span class="num-rounds">${this.averageRound}</span> rounds</small
+            >
+          </sl-card>
+        </div>
+      </div></sl-card
+    >`;
+  }
+
+  coursesStatsTemplate() {
     return html`<sl-card class="w-100 mb-3"
-      ><div class="d-flex flex-column gy-3">
-        <span class="fs-3 mb-4">Select a range of rounds:</span>
-        <div id="slider"></div>
-        <div class="row mt-5 pt-5">
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Average round</h5>
-                <p class="card-text"><span id="avg-round"></span></p>
-                <p class="card-text">
-                  <small class="text-body-secondary"
-                    >out of <span class="num-rounds"></span> rounds</small
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Fairways in regulation</h5>
-                <p class="card-text">
-                  <span id="fir"></span> fairways per round
-                </p>
-                <p class="card-text">
-                  <span id="fir-percent"></span>% of fairways
-                </p>
-                <p class="card-text">
-                  <small class="text-body-secondary"
-                    >out of <span class="num-rounds"></span> rounds</small
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Greens in regulation</h5>
-                <p class="card-text"><span id="gir"></span> greens per round</p>
-                <p class="card-text">
-                  <span id="gir-percent"></span>% of greens
-                </p>
-                <p class="card-text">
-                  <small class="text-body-secondary"
-                    >out of <span class="num-rounds"></span> rounds</small
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Average putts</h5>
-                <p class="card-text"><span id="putts"></span> per round</p>
-                <p class="card-text"><span id="putts-hole"></span> per hole</p>
-                <p class="card-text">
-                  <small class="text-body-secondary"
-                    >out of <span class="num-rounds"></span> rounds</small
-                  >
-                </p>
-              </div>
-            </div>
-          </div>
+      ><div class="row g-3">
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>Lowest round</h6>
+            <h4 id="lowest-round">${this.lowestRound}</h4>
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>Rounds played</h6>
+            <h4 id="rounds-played">${this.data.rounds.length}</h4>
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>Courses played</h6>
+            <h4 id="courses-played">${this.coursesPlayed}</h4>
+          </sl-card>
+        </div>
+        <div class="col-12 col-md-6 col-xxl-3">
+          <sl-card class="w-100">
+            <h6>States played in</h6>
+            <h4 id="states-played">${this.statesPlayed}</h4>
+          </sl-card>
         </div>
       </div></sl-card
     >`;
@@ -349,8 +341,7 @@ class StatsCard extends NikElement {
       </div>`;
     }
 
-    return html`${this.handicapTemplate()}${this.sliderStatsTemplate()}
-    ${this.chartTemplate()}`;
+    return html`${this.handicapTemplate()}${this.statsTemplate()}${this.coursesStatsTemplate()}${this.chartTemplate()}`;
   }
 
   render() {

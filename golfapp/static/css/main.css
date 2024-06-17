@@ -188,3 +188,9 @@ tr.round > td:not(:nth-child(2), :nth-child(3)) {
     transform: rotate(360deg);
   }
 }
+
+.inline-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
