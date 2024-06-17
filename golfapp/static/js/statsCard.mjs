@@ -252,7 +252,8 @@ class StatsCard extends NikElement {
             </div>
             <small
               >last
-              <span class="num-rounds">${this.averageRound}</span> rounds</small
+              <span class="num-rounds">${this.numStatsRounds}</span>
+              rounds</small
             >
           </sl-card>
         </div>
@@ -270,7 +271,8 @@ class StatsCard extends NikElement {
             </div>
             <small
               >last
-              <span class="num-rounds">${this.averageRound}</span> rounds</small
+              <span class="num-rounds">${this.numStatsRounds}</span>
+              rounds</small
             >
           </sl-card>
         </div>
@@ -289,7 +291,8 @@ class StatsCard extends NikElement {
             </div>
             <small
               >last
-              <span class="num-rounds">${this.averageRound}</span> rounds</small
+              <span class="num-rounds">${this.numStatsRounds}</span>
+              rounds</small
             >
           </sl-card>
         </div>
