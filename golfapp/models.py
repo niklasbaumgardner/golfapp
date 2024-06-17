@@ -3,6 +3,8 @@ from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
 import os
 from sqlalchemy_serializer import SerializerMixin
+import usaddress
+import json
 
 
 @login_manager.user_loader
@@ -38,11 +40,21 @@ class User(db.Model, UserMixin, SerializerMixin):
 
 
 class Course(db.Model, SerializerMixin):
+    serialize_only = ("id", "name", "address", "address_dict", "teeboxes")
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=True)
 
     teeboxes = db.relationship("CourseTeebox")
+
+    @property
+    def address_dict(self):
+        if self.address:
+            parsed = usaddress.parse(self.address)
+            return {name: val for val, name in parsed}
+
+        return {}
 
 
 class CourseTeebox(db.Model, SerializerMixin):

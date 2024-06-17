@@ -6,7 +6,7 @@ from golfapp.queries import (
     round_queries,
     user_queries,
 )
-from golfapp.utils import handicap_helpers, send_email, stats
+from golfapp.utils import handicap_helpers, send_email
 
 
 viewplayer_bp = Blueprint("viewplayer_bp", __name__)
