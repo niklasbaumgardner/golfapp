@@ -50,6 +50,12 @@ If you did not make this request then please ignore this email and no changes wi
     mail.send(msg)
 
 
+def send_new_course_email(course):
+    msg = Message("New Course Added", recipients=["niklasbaumgardner@gmail.com"])
+    msg.body = f"A new course has been added. {course.to_dict()}"
+    mail.send(msg)
+
+
 def get_handicap_change_message(old_handicap, new_handicap):
     def handicap_str(handicap):
         if handicap < 0:

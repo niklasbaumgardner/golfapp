@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
 from golfapp.queries import course_queries
+from golfapp.utils import send_email
 
 
 addcourse_bp = Blueprint("addcourse_bp", __name__)
@@ -16,9 +17,11 @@ def add_course():
         rating = request.form.get("rating")
         slope = request.form.get("slope")
 
-        course_queries.add_course(
+        course = course_queries.add_course(
             name=name, teebox=teebox, par=par, rating=rating, slope=slope
         )
+
+        send_email.send_new_course_email(course=course)
 
         return redirect(url_for("addcourse_bp.add_course"))
 

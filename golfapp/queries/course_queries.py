@@ -41,6 +41,8 @@ def add_course(name, teebox, par, rating, slope):
         course_id=course.id, teebox=teebox, par=par, slope=slope, rating=rating
     )
 
+    return course
+
 
 def get_courses(sort=False):
     courses = Course.query
