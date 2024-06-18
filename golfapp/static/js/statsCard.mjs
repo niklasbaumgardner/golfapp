@@ -243,7 +243,7 @@ class StatsCard extends NikElement {
             <h6>FIR</h6>
             <div class="d-flex">
               <span class="w-50">
-                <h4><span id="fir-percent">${this.firPercent}%</span>%</h4>
+                <h4>${this.firPercent}%</h4>
               </span>
               <span class="w-50 inline-stat">
                 <h4 id="fir">${this.firAverage}</h4>
@@ -262,7 +262,7 @@ class StatsCard extends NikElement {
             <h6>GIR</h6>
             <div class="d-flex">
               <span class="w-50">
-                <h4><span id="gir-percent">${this.girPercent}%</span>%</h4>
+                <h4>${this.girPercent}%</h4>
               </span>
               <span class="w-50 inline-stat">
                 <h4 id="gir">${this.girAverage}</h4>
