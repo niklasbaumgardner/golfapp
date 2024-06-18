@@ -49,10 +49,6 @@ def add_round_submit():
 
     date = handicap_helpers.get_date_from_string(date)
 
-    gir = gir if gir else None
-    fir = fir if fir else None
-    putts = putts if putts else None
-
     new_round = round_queries.create_round(
         course_id=course_id,
         teebox_id=teebox_id,
