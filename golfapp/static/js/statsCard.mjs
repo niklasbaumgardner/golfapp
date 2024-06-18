@@ -188,15 +188,26 @@ class StatsCard extends NikElement {
   calculateCourseStats() {
     let coursesSet = new Set();
     let statesSet = new Set();
-    let lowestRound = 9999;
+    let lowestRound = { score: 9999, toPar: 9999, scoreDiff: 9999 };
 
     for (let r of this.data.rounds) {
       coursesSet.add(r.course_id);
       let c = COURSES[r.course_id];
       statesSet.add(c.address_dict.StateName);
 
-      if (r.score < lowestRound) {
-        lowestRound = r.score;
+      let t = c.teeboxes.find((t) => t.id === r.teebox_id);
+      let toPar = r.score - t.par;
+      if (
+        toPar < lowestRound.toPar ||
+        (toPar === lowestRound.toPar && r.scoreDiff < lowestRound.scoreDiff)
+      ) {
+        lowestRound = {
+          score: r.score,
+          toPar,
+          scoreDiff: r.scoreDiff,
+          course: c,
+          teebox: t,
+        };
       }
     }
 
@@ -306,7 +317,11 @@ class StatsCard extends NikElement {
         <div class="col-12 col-md-6 col-xxl-3">
           <sl-card class="w-100">
             <h6>Lowest round</h6>
-            <h4 id="lowest-round">${this.lowestRound}</h4>
+            <span class="w-50 inline-stat">
+              <h4 id="lowest-round">${this.lowestRound?.score}</h4>
+              <small> / ${this.lowestRound?.teebox.par}</small>
+            </span>
+            <span>at ${this.lowestRound?.course.name}</span>
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
