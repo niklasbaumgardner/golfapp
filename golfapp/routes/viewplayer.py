@@ -49,10 +49,13 @@ def add_round_submit():
 
     date = handicap_helpers.get_date_from_string(date)
 
+    score_diff = handicap_helpers.get_score_diff(teebox_id=teebox_id, score=score)
+
     new_round = round_queries.create_round(
         course_id=course_id,
         teebox_id=teebox_id,
         score=score,
+        score_diff=score_diff,
         fir=fir,
         gir=gir,
         putts=putts,
@@ -71,15 +74,27 @@ def add_round_submit():
 @viewplayer_bp.route("/edit_round/<int:id>", methods=["POST"])
 @login_required
 def edit_round(id):
-    new_score = request.form.get("score", type=float)
-    new_gir = request.form.get("gir")
-    new_fir = request.form.get("fir")
-    new_putts = request.form.get("putts")
+    new_score = request.form.get("score", type=int)
+    new_gir = request.form.get("gir", type=int)
+    new_fir = request.form.get("fir", type=int)
+    new_putts = request.form.get("putts", type=int)
     new_date = request.form.get("date")
+    score_diff = None
 
-    should_update_handicap, round = round_queries.update_round(
+    should_update_handicap = False
+    if new_score is not None:
+        should_update_handicap = True
+
+        score_diff = handicap_helpers.get_score_diff(
+            teebox_id=round.teebox_id, score=new_score
+        )
+    if new_date is not None:
+        should_update_handicap = True
+
+    round = round_queries.update_round(
         round_id=id,
         score=new_score,
+        score_diff=score_diff,
         fir=new_fir,
         gir=new_gir,
         putts=new_putts,
