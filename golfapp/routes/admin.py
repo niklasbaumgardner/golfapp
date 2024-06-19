@@ -95,7 +95,7 @@ def delete_course(c_id):
     if teeboxes_rounds_count > 0:
         return {
             "success": False,
-            "info": f"{len(rounds)} rounds have a teebox from this course",
+            "info": f"{teeboxes_rounds_count} rounds have a teebox from this course",
         }
 
     course_rankings = courseranking_queries.get_course_rankings_by_course_id(
@@ -143,11 +143,14 @@ def delete_teebox(t_id):
     if not is_admin():
         return redirect(url_for("home.index"))
 
-    #     rounds = queries.get_rounds_by_teebox_id(teebox_id=t_id)
-    #     if len(rounds) > 0:
-    #         return {"success": False, "info": f"{len(rounds)} rounds have this teebox"}
+    teeboxes_rounds = round_queries.get_rounds_by_teebox_id(teebox_id=t_id)
+    if len(teeboxes_rounds) > 0:
+        return {
+            "success": False,
+            "info": f"{len(teeboxes_rounds)} rounds have a teebox from this course",
+        }
 
-    #     queries.delete_teebox(teebox_id=t_id)
+    course_queries.delete_teebox(teebox_id=t_id)
 
     return {"success": True}
 
