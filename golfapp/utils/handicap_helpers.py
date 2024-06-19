@@ -60,7 +60,7 @@ def strokes(teebox, handi):
 
 
 def calculate_score_diff(slope, rating, score):
-    return round((113 / slope) * (score - rating - 1), 1)
+    return round((113 / slope) * (score - rating), 1)
 
 
 def get_score_diff(teebox_id, score):

@@ -100,6 +100,10 @@ def get_rounds_by_teebox_id(teebox_id):
     return Round.query.filter_by(teebox_id=teebox_id).all()
 
 
+def get_all_rounds():
+    return Round.query.all()
+
+
 def delete_round(round_id):
     round = get_round_by_id(round_id=round_id)
 

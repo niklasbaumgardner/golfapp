@@ -8,6 +8,8 @@ from golfapp.queries import (
     subscriber_queries,
     user_queries,
 )
+from golfapp.utils import handicap_helpers
+from golfapp import db
 
 
 admin_bp = Blueprint("admin_bp", __name__)
@@ -198,3 +200,53 @@ def create_subscriber(subscription_id):
     )
 
     return redirect(url_for("admin_bp.subscribers"))
+
+
+@admin_bp.get("/get_all_handicaps")
+@login_required
+def get_all_handicaps():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    users = user_queries.get_users_with_handicap()
+    for u in users:
+        rounds = round_queries.get_rounds_for_user_id(
+            user_id=u.id, sort=True, max_rounds=20
+        )
+        hc = handicap_helpers.calculate_handicap(rounds=rounds)
+
+        print(f"{u.username:<20} {hc}")
+
+
+@admin_bp.get("/update_all_handicaps")
+@login_required
+def update_all_handicaps():
+    if not is_admin():
+        return redirect(url_for("home.index"))
+
+    teeboxes = {}
+
+    all_rounds = round_queries.get_all_rounds()
+    for r in all_rounds:
+        teebox = teeboxes.get(r.teebox_id)
+        if not teebox:
+            teebox = course_queries.get_teebox_by_id(r.teebox_id)
+            teeboxes[r.teebox_id] = teebox
+
+        sd = handicap_helpers.calculate_score_diff(teebox.slope, teebox.rating, r.score)
+
+        r.score_diff = sd
+
+    users = user_queries.get_users_with_handicap()
+    for u in users:
+        rounds = round_queries.get_rounds_for_user_id(
+            user_id=u.id, sort=True, max_rounds=20
+        )
+        hc = handicap_helpers.calculate_handicap(rounds=rounds)
+
+        rounds = round_queries.get_rounds(sort=True, max_rounds=20)
+
+        handicap_queries.create_or_update_handicap(user_id=u.id, handicap_diff=hc)
+
+        print(f"{u.username:<20} {hc}")
+    db.session.commit()
