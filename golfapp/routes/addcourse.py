@@ -13,9 +13,12 @@ def add_course():
     if request.method == "POST":
         name = request.form.get("name")
         teebox = request.form.get("teebox")
-        par = request.form.get("par")
-        rating = request.form.get("rating")
-        slope = request.form.get("slope")
+        par = request.form.get("par", type=int)
+        rating = request.form.get("rating", type=float)
+        slope = request.form.get("slope", type=float)
+
+        name = name.strip()
+        teebox = teebox.strip()
 
         course = course_queries.add_course(
             name=name, teebox=teebox, par=par, rating=rating, slope=slope
