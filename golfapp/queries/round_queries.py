@@ -1,6 +1,7 @@
 from golfapp.models import Round
 from golfapp import db
 from flask_login import current_user
+from golfapp.utils import handicap_helpers
 
 
 def create_round(course_id, teebox_id, score, score_diff, fir, gir, putts, date):
@@ -22,18 +23,25 @@ def create_round(course_id, teebox_id, score, score_diff, fir, gir, putts, date)
     return round
 
 
-def update_round(
-    round_id, score=None, score_diff=None, fir=None, gir=None, putts=None, date=None
-):
+def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None):
     round = get_round_by_id(round_id=round_id)
 
     if not round:
         return None
 
+    should_update_handicap = False
+
     if score is not None:
         round.score = score
-    if score_diff is not None:
+
+        score_diff = handicap_helpers.get_score_diff(
+            teebox_id=round.teebox_id, score=score
+        )
+
         round.score_diff = score_diff
+
+        should_update_handicap = True
+
     if fir is not None:
         round.fir = fir
     if gir is not None:
@@ -42,10 +50,11 @@ def update_round(
         round.putts = putts
     if date is not None:
         round.date = date
+        should_update_handicap = True
 
     db.session.commit()
 
-    return round
+    return should_update_handicap, round
 
 
 def get_rounds(page=1, paginate=False, sort=False, reverse_sort=False, max_rounds=None):

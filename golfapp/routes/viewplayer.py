@@ -79,22 +79,10 @@ def edit_round(id):
     new_fir = request.form.get("fir", type=int)
     new_putts = request.form.get("putts", type=int)
     new_date = request.form.get("date")
-    score_diff = None
 
-    should_update_handicap = False
-    if new_score is not None:
-        should_update_handicap = True
-
-        score_diff = handicap_helpers.get_score_diff(
-            teebox_id=round.teebox_id, score=new_score
-        )
-    if new_date is not None:
-        should_update_handicap = True
-
-    round = round_queries.update_round(
+    should_update_handicap, round = round_queries.update_round(
         round_id=id,
         score=new_score,
-        score_diff=score_diff,
         fir=new_fir,
         gir=new_gir,
         putts=new_putts,
