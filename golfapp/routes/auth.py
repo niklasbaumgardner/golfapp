@@ -22,8 +22,8 @@ def login():
             token = args.replace("?token=", "")
             return url_for("sharebudget_bp.accept_budget", token=token)
 
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = request.form.get("email").strip()
+    password = request.form.get("password").strip()
     remember = request.form.get("remember")
 
     if email and password:
@@ -56,10 +56,10 @@ def login():
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        email = request.form.get("email")
-        username = request.form.get("username")
-        password1 = request.form.get("password1")
-        password2 = request.form.get("password2")
+        email = request.form.get("email").strip()
+        username = request.form.get("username").strip()
+        password1 = request.form.get("password1").strip()
+        password2 = request.form.get("password2").strip()
 
         if not user_queries.is_email_unique(email):
             flash("Email already exists. Please log in", "primary")
@@ -91,7 +91,7 @@ def password_request():
         return redirect(url_for("auth_bp.password_reset", token=token))
 
     if request.method == "POST":
-        email = request.form.get("email")
+        email = request.form.get("email").strip()
         user = user_queries.get_user_by_email(email=email)
         send_reset_email(user)
         flash(
@@ -115,8 +115,8 @@ def password_reset():
             else:
                 return redirect(url_for("auth_bp.password_request"))
 
-        password1 = request.form.get("password1")
-        password2 = request.form.get("password2")
+        password1 = request.form.get("password1").strip()
+        password2 = request.form.get("password2").strip()
 
         if password1 != password2:
             flash("Passwords are not equal. Please try again", "warning")
@@ -141,13 +141,13 @@ def logout():
 
 @auth_bp.route("/username_unique", methods=["GET"])
 def username_unique():
-    username = request.args.get("username")
+    username = request.args.get("username").strip()
 
     return {"isUnique": user_queries.is_username_unique(username)}
 
 
 @auth_bp.route("/email_unique", methods=["GET"])
 def email_unique():
-    email = request.args.get("email")
+    email = request.args.get("email").strip()
 
     return {"isUnique": user_queries.is_email_unique(email)}
