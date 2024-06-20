@@ -194,3 +194,7 @@ tr.round > td:not(:nth-child(2), :nth-child(3)) {
   align-items: center;
   gap: 0.3rem;
 }
+
+a {
+  color: var(--sl-color-primary-700);
+}

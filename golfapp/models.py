@@ -1,3 +1,4 @@
+from flask import url_for
 from golfapp import db, login_manager
 from flask_login import UserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -13,7 +14,14 @@ def load_user(user_id):
 
 
 class User(db.Model, UserMixin, SerializerMixin):
-    serialize_only = ("id", "username", "email", "is_publicly_visible", "handicap")
+    serialize_only = (
+        "id",
+        "username",
+        "email",
+        "is_publicly_visible",
+        "handicap",
+        "url",
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -21,6 +29,9 @@ class User(db.Model, UserMixin, SerializerMixin):
     password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
     handicap = db.relationship("Handicap", uselist=False)
+
+    def url(self):
+        return url_for("viewplayer_bp.view_player", id=self.id)
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
