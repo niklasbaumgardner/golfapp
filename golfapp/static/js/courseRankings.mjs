@@ -1,114 +1,141 @@
-import { CustomElement } from "./customElement.mjs";
+class RankingsGridManager {
+  constructor() {
+    this.rankingsGridEl = document.getElementById("rankingsGrid");
 
-function rankCourses(courseRankings) {
-  let courseData = getAverageCourseRating(courseRankings);
-  courseData.sort((a, b) => b.averageRating - a.averageRating);
+    this.parseData();
 
-  let anchor = document.querySelector("tbody");
+    this.createDataGrid();
 
-  let rank = 1;
-  for (let [i, rankData] of courseData.entries()) {
-    let tableRow;
-    if (i === 0) {
-      tableRow = new TableRow(
-        rank,
-        rankData.name,
-        rankData.averageRating,
-        rankData.array
-      );
-    } else if (rankData.averageRating === courseData.at(i - 1).averageRating) {
-      tableRow = new TableRow(
-        rank,
-        rankData.name,
-        rankData.averageRating,
-        rankData.array
-      );
-    } else {
-      rank = i + 1;
-      tableRow = new TableRow(
-        rank,
-        rankData.name,
-        rankData.averageRating,
-        rankData.array
-      );
-    }
-    tableRow.addToAnchor(anchor);
-  }
-}
-
-function getAverageCourseRating(courseRankings) {
-  let courseData = {};
-  for (let courseRanking of courseRankings) {
-    if (courseData[courseRanking.course.id]) {
-      courseData[courseRanking.course.id].array.push(courseRanking);
-    } else {
-      courseData[courseRanking.course.id] = { ...courseRanking.course };
-      courseData[courseRanking.course.id].array = [courseRanking];
-    }
+    this.setupThemeWatcher();
   }
 
-  for (let [id, obj] of Object.entries(courseData)) {
-    obj.averageRating = averageRating(obj.array);
-  }
+  rankCourses(courseRankings) {
+    let courseData = this.getAverageCourseRating(courseRankings);
+    courseData.sort((a, b) => b.averageRating - a.averageRating);
 
-  return Object.values(courseData);
-}
-
-function getWeight(number) {
-  return Math.min(95 + number, 100) / 100;
-}
-
-function averageRating(array) {
-  let averageRating =
-    array.reduce(
-      (acumulator, currentValue) => acumulator + currentValue.rating,
-      0
-    ) / array.length;
-
-  let weight = getWeight(array.length);
-  return averageRating * weight;
-}
-
-class TableRow extends CustomElement {
-  constructor(rank, name, averageRating, ratingsArray) {
-    super();
-
-    this.rank = rank;
-    this.name = name;
-    this.averageRating = averageRating;
-    this.ratingsArray = ratingsArray;
-  }
-
-  get averageRatingRounded() {
-    return Math.round(this.averageRating * 100) / 100;
-  }
-
-  allRatingsTemplate() {
-    this.ratingsArray.sort((a, b) => b.rating - a.rating);
-    let content = "";
-    for (let [i, obj] of this.ratingsArray.entries()) {
-      let { username } = obj.user;
-      let url = COURSE_RANKING_USER_URL.replace("0", obj.user.id);
-      let ratingSpan = `<a class="rating-by-user" href="${url}" title="Rating from ${username}">${obj.rating} by ${username}</a>`;
-      if (i !== this.ratingsArray.length - 1) {
-        ratingSpan += '<span class="rating-by-user">,  </span>';
+    let rank = 1;
+    for (let [i, rankData] of courseData.entries()) {
+      if (i === 0) {
+      } else if (
+        rankData.averageRating === courseData.at(i - 1).averageRating
+      ) {
+      } else {
+        rank = i + 1;
       }
-      content += ratingSpan;
+      rankData.rank = rank;
     }
 
-    return content.slice(0, content.length - 2);
+    return courseData;
   }
 
-  get markup() {
-    return `<template>
-      <tr>
-        <td class="not-edit">${this.rank}</td>
-        <td class="not-edit">${this.name}</td>
-        <td class="not-edit">${this.averageRatingRounded}</td>
-        <td>${this.allRatingsTemplate()}</td>
-      </tr>
-    </template>`;
+  getAverageCourseRating(courseRankings) {
+    let courseData = {};
+    for (let courseRanking of courseRankings) {
+      if (courseData[courseRanking.course.id]) {
+        courseData[courseRanking.course.id].array.push(courseRanking);
+      } else {
+        courseData[courseRanking.course.id] = { ...courseRanking.course };
+        courseData[courseRanking.course.id].array = [courseRanking];
+      }
+    }
+
+    for (let [_, obj] of Object.entries(courseData)) {
+      obj.averageRating = this.averageRating(obj.array);
+    }
+
+    return Object.values(courseData);
+  }
+
+  getWeight(number) {
+    return Math.min(95 + number, 100) / 100;
+  }
+
+  averageRating(array) {
+    let averageRating =
+      array.reduce(
+        (acumulator, currentValue) => acumulator + currentValue.rating,
+        0
+      ) / array.length;
+
+    let weight = this.getWeight(array.length);
+    return Math.round((averageRating * weight + Number.EPSILON) * 100) / 100;
+  }
+
+  parseData() {
+    this.rankings = this.rankCourses(COURSE_RANKINGS_ARRAY);
+  }
+
+  createDataGrid() {
+    const rowData = this.rankings;
+
+    const columnDefs = [
+      {
+        field: "rank",
+      },
+      {
+        field: "name",
+        headerName: "Course",
+      },
+      {
+        field: "averageRating",
+      },
+      {
+        field: "array",
+        headerName: "All Ratings",
+        cellRenderer: (param) => {
+          let rankings = param.data.array.map(
+            (x) =>
+              `<a class="rating-by-user" href="/course_ranking/${x.user.id}" title="Rating from ${x.user.username}">${x.rating} by ${x.user.username}</a>`
+          );
+
+          return rankings.join('<span class="rating-by-user">, </span>');
+        },
+      },
+    ];
+
+    const gridOptions = {
+      columnDefs,
+      rowData,
+      autoSizeStrategy: {
+        type: "fitCellContents",
+        skipHeader: false,
+      },
+      onRowDataUpdated: (event) => {
+        let height =
+          document.querySelector(".ag-center-cols-container").scrollHeight +
+          document.querySelector(".ag-header-row").scrollHeight +
+          document.querySelector(".ag-paging-panel").scrollHeight;
+
+        if (height < 192) {
+          height = 192;
+        }
+
+        this.rankingsGridEl.style.height = `${height + 3}px`;
+      },
+    };
+    this.dataGrid = agGrid.createGrid(this.rankingsGridEl, gridOptions);
+  }
+
+  setupThemeWatcher() {
+    this.mutationObserver = new MutationObserver((params) =>
+      this.handleThemeChange(params)
+    );
+
+    this.mutationObserver.observe(document.documentElement, {
+      attributes: true,
+    });
+
+    this.handleThemeChange();
+  }
+
+  handleThemeChange() {
+    let theme = document.documentElement.getAttribute("data-bs-theme");
+    this.rankingsGridEl.classList.toggle(
+      "ag-theme-quartz-dark",
+      theme === "dark"
+    );
+    this.rankingsGridEl.classList.toggle("ag-theme-quartz", theme === "light");
   }
 }
 
-rankCourses(COURSE_RANKINGS_ARRAY);
+new RankingsGridManager();
