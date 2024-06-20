@@ -1,76 +1,70 @@
 "use strict";
 
 async function sendUsernameRequest(username) {
-  let response = await fetch(USERNAME_UNIQUE_URL + "?" + new URLSearchParams({
-    username,
-  }));
-  response = await response.json();
-  return response;
+  return getRequest(USERNAME_UNIQUE_URL, { username });
 }
 
 async function sendEmailRequest(email) {
-  let response = await fetch(EMAIL_UNIQUE_URL + "?" + new URLSearchParams({
-    email,
-  }));
-  response = await response.json();
-  return response;
+  return getRequest(EMAIL_UNIQUE_URL, { email });
 }
 
 function enableSubmitButton() {
-  let ele = document.querySelector('button[type="submit"]')
-  console.log(ele);
+  let ele = document.getElementById("submitButton");
   ele.disabled = false;
 }
 
 function disableSubmitButton() {
-  let ele = document.querySelector('button[type="submit"]')
-  console.log(ele);
+  let ele = document.getElementById("submitButton");
   ele.disabled = true;
 }
 
 let usernameInput = document.getElementById("username");
-usernameInput.addEventListener("input", async event => {
+usernameInput.addEventListener("input", async (event) => {
   let orginalValue = event.target.getAttribute("original-value");
   let newValue = event.target.value;
-  let invalidMessage = event.target.nextElementSibling;
 
   if (orginalValue === newValue) {
     // don't need to send request
-    invalidMessage.classList.remove("display-block");
+    usernameInput.setAttribute("help-text", "");
     disableSubmitButton();
   } else {
     let result = await sendUsernameRequest(newValue);
     console.log("username is unique", result.isUnique);
 
     if (result.isUnique) {
-      invalidMessage.classList.remove("display-block");
+      usernameInput.setAttribute("help-text", "");
       enableSubmitButton();
     } else {
-      invalidMessage.classList.add("display-block");
+      usernameInput.setAttribute(
+        "help-text",
+        "Username taken. Please choose a different username."
+      );
       disableSubmitButton();
     }
   }
 });
 
 let emailInput = document.getElementById("email");
-emailInput.addEventListener("input", async event => {
+emailInput.addEventListener("input", async (event) => {
   let orginalValue = event.target.getAttribute("original-value");
   let newValue = event.target.value;
-  let invalidMessage = event.target.nextElementSibling;
 
   if (orginalValue === newValue) {
     // don't need to send request
-    invalidMessage.classList.remove("display-block");
+    emailInput.setAttribute("help-text", "");
     disableSubmitButton();
   } else {
     let result = await sendEmailRequest(event.target.value);
     console.log("email is unique", result.isUnique);
 
     if (result.isUnique) {
-      invalidMessage.classList.remove("display-block");
+      emailInput.setAttribute("help-text", "");
       enableSubmitButton();
     } else {
-      invalidMessage.classList.add("display-block");
+      emailInput.setAttribute(
+        "help-text",
+        "Email taken. Please choose a different email."
+      );
       disableSubmitButton();
     }
   }

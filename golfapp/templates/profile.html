@@ -10,41 +10,23 @@
         const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
     </script>
 
-    <div class="row justify-content-center align-items-center">
+    <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div class="card">
-                <div class="card-header px-3">
-                    <div class="fs-4">
-                        Account details
-                    </div>
+            <sl-card>
+                <div class="fs-4" slot="header">
+                    Account Details
                 </div>
-
-                <div class="card-body px-5 pb-5">
+                <div class="mb-2">
                     <form action="{{ url_for('profile_bp.profile') }}" method="POST" autocomplete="off">
-                        <div class="mb-4">
-                            <div class="form-outline mb-4">
-                                <label class="form-label" for="email">Username</label>
-                                <input class="form-control" type="text" id="username" name="username" value="{{ username }}" original-value="{{ username }}" required/>
-                                <div class="invalid-feedback">
-                                    Username taken. Please choose a different username.
-                                </div>
-                            </div>
-
-                            <div class="form-outline mb-4">
-                                <label class="form-label" for="email">Email</label>
-                                <input type="email" id="email" name="email" class="form-control" value="{{ email }}" original-value="{{ email }}" required/>
-                                <div class="invalid-feedback">
-                                    Email taken. Please choose a different email.
-                                </div>
-                            </div>
-
-                            <button class="btn btn-primary w-100 mb-2" type="submit" disabled="true">Update</button>
-
+                        <div class="nb-row">
+                            <sl-input value="{{ username }}" original-value="{{ username }}" label="Username" id="username" name="username" required></sl-input>
+                            <sl-input value="{{ email }}" original-value="{{ email }}" type="email" label="Email" id="email" name="email" required></sl-input>
+                            <sl-button id="submitButton" class="w-100" variant="primary" type="submit" disabled>Update</sl-button>
                             <p class="small"><a href="{{ url_for('auth_bp.password_request') }}">Reset password</a></p>
                         </div>
                     </form>
                 </div>
-            </div>
+            </sl-card>
         </div>
     </div>
 

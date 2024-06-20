@@ -15,6 +15,7 @@ def login():
 
     email = request.args.get("email")
     if email:
+        email = email.strip()
         return render_template("login.html", email=email)
 
     def get_url_for_route(route, args):
@@ -22,11 +23,13 @@ def login():
             token = args.replace("?token=", "")
             return url_for("sharebudget_bp.accept_budget", token=token)
 
-    email = request.form.get("email").strip()
-    password = request.form.get("password").strip()
+    email = request.form.get("email")
+    password = request.form.get("password")
     remember = request.form.get("remember")
 
     if email and password:
+        email = email.strip()
+        password = password.strip()
         user = user_queries.get_user_by_email(email=email)
 
         if user and bcrypt.check_password_hash(user.password, password):
@@ -86,7 +89,7 @@ def signup():
 @auth_bp.route("/password_request", methods=["GET", "POST"])
 def password_request():
     if current_user.is_authenticated:
-        user = user_queries.get_user_by_id(id=current_user.id)
+        user = user_queries.get_user_by_id(user_id=current_user.id)
         token = user.get_reset_token()
         return redirect(url_for("auth_bp.password_reset", token=token))
 
@@ -124,10 +127,10 @@ def password_reset():
 
         user_queries.update_user_password(user.id, password=password1)
         flash(
-            "Your password has been updated! You are now able to log in",
+            "Your password has been updated!",
             "success",
         )
-        return redirect(url_for("auth_bp.login"))
+        return redirect(url_for("viewplayer_bp.index"))
 
     return render_template("password_reset.html")
 

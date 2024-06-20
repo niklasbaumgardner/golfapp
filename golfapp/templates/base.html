@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>{% block title %}{% endblock title %}</title>
+    <script src="/static/js/fetch.js"></script>
     <script src="/static/js/theme.js" defer></script>
     <!-- <script src="/static/js/createElement.js"></script> -->
 </head>
@@ -93,7 +94,19 @@
         </div>
     </nav>
 
-    <div class="container py-5 h-100">
+    <div class="container py-5 mb-5 h-100">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            <div id="alerts" class="container d-flex justify-content-center">
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <sl-alert variant="primary" duration="5000" open closable>
+                            {{ message }}
+                        </sl-alert>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endwith %}
+
         {% block content %}{% endblock content %}
     </div>
 

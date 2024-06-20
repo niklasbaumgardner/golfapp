@@ -133,7 +133,7 @@ def view_player(id):
 
     courses = {c.id: c.to_dict() for c in course_queries.get_courses()}
     rounds = handicap_helpers.get_included_rounds(rounds)
-    user = user_queries.get_user_by_id(id)
+    user = user_queries.get_user_by_id(user_id=id)
     return render_template(
         "view_player.html",
         user=user,

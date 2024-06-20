@@ -1,0 +1,43 @@
+.nb-input {
+  color: var(--sl-input-color);
+  background-color: var(--sl-input-background-color);
+  border: solid var(--sl-input-border-width) var(--sl-input-border-color);
+  border-radius: var(--sl-input-border-radius-medium);
+
+  font-family: var(--sl-input-font-family);
+  font-weight: var(--sl-input-font-weight);
+  font-size: var(--sl-input-font-size-medium);
+  letter-spacing: var(--sl-input-letter-spacing);
+  vertical-align: middle;
+  cursor: text;
+
+  padding: 0 var(--sl-input-spacing-medium);
+
+  width: 100%;
+  height: var(--sl-input-height-medium);
+
+  transition: var(--sl-transition-fast) color, var(--sl-transition-fast) border,
+    var(--sl-transition-fast) box-shadow,
+    var(--sl-transition-fast) background-color;
+}
+
+.nb-input:hover {
+  color: var(--sl-input-color-hover);
+}
+
+.nb-input:focus-visible {
+  outline: none;
+  color: var(--sl-input-color-focus);
+  background-color: var(--sl-input-background-color-focus);
+  border-color: var(--sl-input-border-color-focus);
+  box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+}
+
+.nb-input::placeholder {
+  color: var(--sl-input-placeholder-color);
+  user-select: none;
+}
+
+.nb-input:autofill {
+  background: rgba(255, 249, 145, 0.25);
+}

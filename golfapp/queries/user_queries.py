@@ -48,7 +48,7 @@ def update_user_password(id, password):
     if not password or not id:
         return
 
-    user = get_user_by_id(id=id)
+    user = get_user_by_id(user_id=id)
     hash_ = hash_password(password=password)
     user.password = hash_
 

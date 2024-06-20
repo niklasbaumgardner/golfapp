@@ -1,16 +1,39 @@
-.alert-absolute {
+#alerts {
   position: absolute;
-  z-index: 1;
-  max-width: 500px;
-  margin: -50px -0.25rem 0 -0.25rem;
+  top: 60px;
+  z-index: 99999;
 }
 
 .display-block {
   display: block !important;
 }
 
+a {
+  color: var(--sl-color-primary-700);
+}
+
+body {
+  background-color: var(--sl-color-neutral-0);
+}
+
 stats-card {
   display: block;
+}
+
+.nb-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.nb-row-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+sl-card {
+  width: 100%;
 }
 
 .w-80p {
@@ -193,8 +216,4 @@ tr.round > td:not(:nth-child(2), :nth-child(3)) {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-}
-
-a {
-  color: var(--sl-color-primary-700);
 }
