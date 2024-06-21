@@ -1,78 +1,183 @@
 import { NikElement, html } from "./customElement.mjs";
 
-addEventListenerToInput();
-addCoursesToPage(COURSES);
-
-function check_existing_courses(event) {
-  let name = event.target.value;
-  let matchingDiv = document.querySelector("#matching-courses-div");
-  matchingDiv.hidden = true;
-  if (name.length < 3) {
-    return;
-  }
-
-  let matches = [];
-
-  for (let course of COURSES) {
-    if (course.includes(name)) {
-      console.log(course, name);
-      matches.push(course);
-    }
-  }
-  let listDiv = document.querySelector("#matching-courses-list");
-  listDiv.innerHTML = "";
-
-  if (matches < 1) {
-    return;
-  }
-
-  matchingDiv.hidden = false;
-
-  for (let match of matches) {
-    let span = document.createElement("span");
-    span.innerText = " - " + match;
-    listDiv.appendChild(span);
-  }
+function match(name, courses) {
+  const regex = new RegExp(".*" + name + ".*", "i");
+  return courses.filter((course) => regex.test(course.replace(" ", "")));
 }
 
-function addEventListenerToInput() {
-  document
-    .getElementById("course_name")
-    .addEventListener("input", check_existing_courses);
-}
-
-function addCoursesToPage(coursesData) {
-  coursesData.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
-
-  let anchor = document.getElementById("existing-courses");
-
-  for (let obj of coursesData) {
-    let listEl = document.createElement("list-element");
-    listEl.courseData = obj;
-    listEl.classList.add("list-group-item", "list-group-item-light");
-    anchor.appendChild(listEl);
+class AddCourseEl extends NikElement {
+  static get queries() {
+    return {
+      courseSelectEl: "#course",
+      courseInputEl: "#courseInput",
+      teeboxInputEl: "#teebox",
+    };
   }
-}
 
-class ListElement extends NikElement {
   static properties = {
-    courseData: { type: Object },
+    existingTeeboxes: { type: Array },
+    similarCourses: { type: Array },
   };
 
-  getTeeboxesTemplate() {
-    let teeboxes = "";
-    for (let teebox of this.courseData.teeboxes) {
-      teeboxes += `${teebox.teebox}: ${teebox.par} - ${teebox.rating}/${teebox.slope}, `;
+  get currentCourse() {
+    return COURSES.find((c) => c.id == this.courseSelectEl.value);
+  }
+
+  get currentTeeboxNames() {
+    return this.existingTeeboxes?.map((t) => t.teebox);
+  }
+
+  updateTeeboxes() {
+    this.existingTeeboxes = this.currentCourse?.teeboxes.sort(
+      (a, b) => b.rating - a.rating
+    );
+  }
+
+  checkCourseName() {
+    if (this.courseInputEl.value.length < 2) {
+      this.similarCourses = [];
     }
-    return teeboxes.slice(0, teeboxes.length - 2);
+
+    if (this.courseInputEl.value.length < 3) {
+      return;
+    }
+
+    this.similarCourses = match(this.courseInputEl.value, COURSE_NAMES);
+  }
+
+  coursesOptionTemplate() {
+    return COURSES.map(
+      (c) => html`<sl-option value="${c.id}">${c.name}</sl-option>`
+    );
+  }
+
+  existingTeeboxesTemplate() {
+    return this.existingTeeboxes?.map(
+      (t) => html`<li>${t.teebox} (${t.rating} / ${t.slope})</li>`
+    );
+  }
+
+  existingCoursesTemplate() {
+    return this.similarCourses?.map((c) => html`<li>${c}</li>`);
+  }
+
+  addTeeboxTemplate() {
+    return html`<sl-tab-panel name="addteebox" style="overflow: clip;">
+      <form action="${ADD_TEEBOX_URL}" method="POST">
+        <div class="d-flex flex-column" style="gap:var(--sl-spacing-small);">
+          <sl-select
+            class="w-100"
+            id="course"
+            name="course"
+            label="Select a course"
+            @sl-input=${this.updateTeeboxes}
+            hoist
+            required
+            >${this.coursesOptionTemplate()}</sl-select
+          >
+          <ul>
+            ${this.existingTeeboxesTemplate()}
+          </ul>
+          <sl-input
+            id="teebox"
+            name="teebox"
+            label="Teebox name"
+            required
+          ></sl-input>
+          <div class="row">
+            <sl-input
+              name="par"
+              label="Par"
+              class="col-4"
+              type="number"
+              step="1"
+              required
+            ></sl-input>
+            <sl-input
+              name="rating"
+              label="Rating"
+              class="col-4"
+              type="number"
+              step=".1"
+              required
+            ></sl-input>
+            <sl-input
+              name="slope"
+              label="Slope"
+              class="col-4"
+              type="number"
+              step="1"
+              required
+            ></sl-input>
+          </div>
+          <sl-button type="submit" class="w-100" variant="success"
+            >Add teebox</sl-button
+          >
+        </div>
+      </form>
+    </sl-tab-panel>`;
+  }
+
+  addCourseTemplate() {
+    return html`<sl-tab-panel name="addcourse" style="overflow: clip;">
+      <form action="${ADD_COURSE_URL}" method="POST">
+        <div class="d-flex flex-column" style="gap:var(--sl-spacing-small);">
+          <sl-input
+            id="courseInput"
+            name="name"
+            label="Course name"
+            @sl-input=${this.checkCourseName}
+            required
+          ></sl-input>
+          <ul>
+            ${this.existingCoursesTemplate()}
+          </ul>
+          <sl-input name="teebox" label="Teebox name" required></sl-input>
+          <div class="row">
+            <sl-input
+              name="par"
+              label="Par"
+              class="col-4"
+              type="number"
+              step="1"
+              required
+            ></sl-input>
+            <sl-input
+              name="rating"
+              label="Rating"
+              class="col-4"
+              type="number"
+              step=".1"
+              required
+            ></sl-input>
+            <sl-input
+              name="slope"
+              label="Slope"
+              class="col-4"
+              type="number"
+              step="1"
+              required
+            ></sl-input>
+          </div>
+          <sl-button type="submit" class="w-100" variant="success"
+            >Add course</sl-button
+          >
+        </div>
+      </form>
+    </sl-tab-panel>`;
   }
 
   render() {
-    return html`<span
-      >${this.courseData.name} (${this.getTeeboxesTemplate()})</span
-    >`;
+    return html`<sl-card>
+      <h2>Add a course or teebox</h2>
+      <sl-divider class="w-100"></sl-divider>
+      <sl-tab-group>
+        <sl-tab slot="nav" panel="addteebox">Add Teebox</sl-tab>
+        <sl-tab slot="nav" panel="addcourse">Add Course</sl-tab>
+
+        ${this.addTeeboxTemplate()}
+        ${this.addCourseTemplate()}
+    </sl-card>`;
   }
 }
-customElements.define("list-element", ListElement);
+customElements.define("add-course-el", AddCourseEl);

@@ -112,6 +112,7 @@ class AddRound extends NikElement {
             name="course"
             label="Select a course"
             @sl-input=${this.handleCourseSelect}
+            hoist
             required
             >${this.coursesOptionTemplate()}</sl-select
           >
@@ -119,6 +120,7 @@ class AddRound extends NikElement {
             id="teebox"
             name="teebox"
             label="Select a teebox"
+            hoist
             disabled
             required
             >${this.teeboxOptionsTemplate()}</sl-select

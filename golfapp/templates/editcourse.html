@@ -41,14 +41,14 @@
       <form action="{{ url_for('admin_bp.dedup_course') }}" method="POST">
         <div class="row mb-3">
           <div class="col">
-            <sl-select label="Duplicate course" name="duplicate">
+            <sl-select label="Duplicate course" name="duplicate" hoist>
               {% for course in courses %}
                 <sl-option value="{{ course.id }}">{{ course.name }}</sl-option>
               {% endfor %}
             </sl-select>
           </div>
           <div class="col">
-            <sl-select label="Keep this course" name="keep">
+            <sl-select label="Keep this course" name="keep" hoist>
               {% for course in courses %}
                 <sl-option value="{{ course.id }}">{{ course.name }}</sl-option>
               {% endfor %}

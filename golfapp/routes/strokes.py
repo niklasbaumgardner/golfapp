@@ -20,7 +20,7 @@ def calculate_strokes():
         strokes.sort(key=lambda x: x[1])
         return render_template("strokes.html", strokes=strokes, course=course_name)
 
-    courses = [c.to_dict() for c in course_queries.get_courses(sort=True)]
+    courses = [c.to_dict() for c in course_queries.get_courses()]
     users = [u.to_dict() for u in user_queries.get_users_with_handicap()]
     users.sort(key=lambda u: u["handicap"]["handicap"])
 
