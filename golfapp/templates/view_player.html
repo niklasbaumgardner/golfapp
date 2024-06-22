@@ -13,6 +13,9 @@
     const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
     const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
     const COURSES = {{ courses|tojson }};
+    COURSES.sort((a, b) => {
+        return a.name.localeCompare(b.name);
+    });
     const IS_ME = "{{ is_me }}" === "True";
     const ROUNDS = {{ rounds|tojson }};
 
