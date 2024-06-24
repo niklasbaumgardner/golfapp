@@ -41,6 +41,7 @@ def index():
 def add_round_submit():
     course_id = request.form.get("course")
     teebox_id = request.form.get("teebox")
+    nine_hole_round = request.form.get("nineHoleRound") == "True"
     score = request.form.get("score", type=int)
     gir = request.form.get("gir", type=int)
     fir = request.form.get("fir", type=int)
@@ -49,13 +50,16 @@ def add_round_submit():
 
     date = handicap_helpers.get_date_from_string(date)
 
-    score_diff = handicap_helpers.get_score_diff(teebox_id=teebox_id, score=score)
+    score_diff = handicap_helpers.get_score_diff(
+        teebox_id=teebox_id, score=score, nine_hole_round=nine_hole_round
+    )
 
     new_round = round_queries.create_round(
         course_id=course_id,
         teebox_id=teebox_id,
         score=score,
         score_diff=score_diff,
+        nine_hole_round=nine_hole_round,
         fir=fir,
         gir=gir,
         putts=putts,

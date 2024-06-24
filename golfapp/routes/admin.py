@@ -233,7 +233,12 @@ def update_all_handicaps():
             teebox = course_queries.get_teebox_by_id(r.teebox_id)
             teeboxes[r.teebox_id] = teebox
 
-        sd = handicap_helpers.calculate_score_diff(teebox.slope, teebox.rating, r.score)
+        sd = handicap_helpers.calculate_score_diff(
+            slope=teebox.slope,
+            rating=teebox.rating,
+            score=r.score,
+            nine_hole_round=r.nine_hole_round,
+        )
 
         r.score_diff = sd
 

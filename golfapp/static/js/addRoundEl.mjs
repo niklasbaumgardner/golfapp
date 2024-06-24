@@ -131,6 +131,21 @@ class AddRound extends NikElement {
           </small>
         </div>
         <div class="row">
+          <sl-radio-group
+            label="Round type"
+            name="nineHoleRound"
+            value="False"
+            required
+          >
+            <sl-radio-button value="False" variant="success"
+              >18 hole round</sl-radio-button
+            >
+            <sl-radio-button value="True" variant="success"
+              >9 hole round</sl-radio-button
+            >
+          </sl-radio-group>
+        </div>
+        <div class="row">
           <sl-input
             id="score"
             name="score"

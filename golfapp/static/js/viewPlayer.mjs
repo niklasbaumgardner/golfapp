@@ -132,7 +132,9 @@ class RoundsGridManager {
           let course = COURSES[param.data.course_id];
           let teebox = this.getTeeboxForCourse(param.data.teebox_id, course); //course.teeboxes[param.data.teebox_id];
 
-          return `${param.data.score} / ${teebox.par} (${param.data.score_diff})`;
+          return `${param.data.score} / ${
+            param.data.nine_hole_round ? teebox.par / 2 : teebox.par
+          } (${param.data.score_diff})`;
         },
       },
       {

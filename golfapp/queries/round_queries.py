@@ -4,7 +4,9 @@ from flask_login import current_user
 from golfapp.utils import handicap_helpers
 
 
-def create_round(course_id, teebox_id, score, score_diff, fir, gir, putts, date):
+def create_round(
+    course_id, teebox_id, score, score_diff, nine_hole_round, fir, gir, putts, date
+):
 
     round = Round(
         user_id=current_user.get_id(),
@@ -12,6 +14,7 @@ def create_round(course_id, teebox_id, score, score_diff, fir, gir, putts, date)
         teebox_id=teebox_id,
         score=score,
         score_diff=score_diff,
+        nine_hole_round=nine_hole_round,
         fir=fir,
         gir=gir,
         putts=putts,
@@ -35,7 +38,9 @@ def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None
         round.score = score
 
         score_diff = handicap_helpers.get_score_diff(
-            teebox_id=round.teebox_id, score=score
+            teebox_id=round.teebox_id,
+            score=score,
+            nine_hole_round=round.nine_hole_round,
         )
 
         round.score_diff = score_diff

@@ -88,6 +88,7 @@ class Round(db.Model, SerializerMixin):
     fir = db.Column(db.Float, nullable=True)
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.Date, nullable=False)
+    nine_hole_round = db.Column(db.Boolean, nullable=True)
 
 
 class Handicap(db.Model, SerializerMixin):

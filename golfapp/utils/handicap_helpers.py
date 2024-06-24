@@ -59,13 +59,20 @@ def strokes(teebox, handi):
     return int(round(handi * (teebox.slope / 113) + (teebox.rating - teebox.par)))
 
 
-def calculate_score_diff(slope, rating, score):
+def calculate_score_diff(slope, rating, score, nine_hole_round=False):
+    if nine_hole_round:
+        score *= 2
     return round((113 / slope) * (score - rating), 1)
 
 
-def get_score_diff(teebox_id, score):
+def get_score_diff(teebox_id, score, nine_hole_round=False):
     teebox = course_queries.get_teebox_by_id(teebox_id=teebox_id)
-    return calculate_score_diff(teebox.slope, teebox.rating, score)
+    return calculate_score_diff(
+        slope=teebox.slope,
+        rating=teebox.rating,
+        score=score,
+        nine_hole_round=nine_hole_round,
+    )
 
 
 def get_score_diffs(rounds, reverse=False):
@@ -76,7 +83,12 @@ def get_score_diffs(rounds, reverse=False):
         if not teebox:
             teebox = course_queries.get_teebox_by_id(rnd.teebox_id)
             teeboxes[rnd.teebox_id] = teebox
-        new_score_diff = calculate_score_diff(teebox.slope, teebox.rating, rnd.score)
+        new_score_diff = calculate_score_diff(
+            slope=teebox.slope,
+            rating=teebox.rating,
+            score=rnd.score,
+            nine_hole_round=rnd.nine_hole_round,
+        )
         lst.append(new_score_diff)
     lst.sort()
     if reverse:
