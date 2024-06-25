@@ -12,6 +12,10 @@
             COURSES.sort((a, b) => {
                 return a.name.localeCompare(b.name);
             });
+
+            for (let c of COURSES) {
+                c.teeboxes.sort((a, b) => b.rating - a.rating)
+            }
         </script>
     {% endif %}
 
