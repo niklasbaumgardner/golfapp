@@ -49,7 +49,7 @@ class StatsCard extends NikElement {
 
     coursesPlayed: { type: Number },
     statesPlayed: { type: Number },
-    lowestRound: { type: Number },
+    lowestRound: { type: Object },
   };
 
   static get queries() {
@@ -194,6 +194,10 @@ class StatsCard extends NikElement {
       coursesSet.add(r.course_id);
       let c = COURSES[r.course_id];
       statesSet.add(c.address_dict.StateName);
+
+      if (r.nine_hole_round) {
+        continue;
+      }
 
       let t = c.teeboxes.find((t) => t.id === r.teebox_id);
       let toPar = r.score - t.par;
