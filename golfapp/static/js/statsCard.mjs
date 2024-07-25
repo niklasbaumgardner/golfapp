@@ -193,7 +193,9 @@ class StatsCard extends NikElement {
     for (let r of this.data.rounds) {
       coursesSet.add(r.course_id);
       let c = COURSES[r.course_id];
-      statesSet.add(c.address_dict.StateName);
+      if (c.address) {
+        statesSet.add(c.address_dict.StateName);
+      }
 
       if (r.nine_hole_round) {
         continue;
