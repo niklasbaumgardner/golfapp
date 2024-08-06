@@ -8,86 +8,11 @@
 {% block content %}
     {% if courses %}
         <script>
-            const COURSES = {{ courses|tojson }};
-            COURSES.sort((a, b) => {
-                return a.name.localeCompare(b.name);
-            });
-
-            for (let c of COURSES) {
-                c.teeboxes.sort((a, b) => b.rating - a.rating)
-            }
+            const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
         </script>
     {% endif %}
 
-    <div class="card">
-        <div class="card-body p-5">
-            <p class="card-title fs-2 mb-3">Strokes</p>
-            {% if strokes %}
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Number of strokes for {{ course }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in strokes %}
-                                <tr>
-                                    <td>{{ user[0] }}</td>
-                                    <td>{{ user[1] }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <a href="{{ url_for('strokes_bp.calculate_strokes') }}">Calculate strokes again</a>
-                </div>
-            {% else %}
-                <form action="{{ url_for('strokes_bp.calculate_strokes') }}" method="POST">
-                    <div class="row">
-                        <div class="col-sm mb-4">
-                            <fieldset class="border p-4">
-                                <label class="form-label" for="players">Select players:</label>
-                                {% for user in users %}
-                                    <div class="form-check" id="players">
-                                        <input class="form-check-input" type="checkbox" name="players" value="{{ user.id }}" id="user{{ user.id }}">
-                                        <label class="form-check-label" for="user{{ user.id }}">
-                                            {{ user.username }} - {{ user.handicap.handicap_str }}
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            </fieldset>
+    <strokes-card courses='{{ courses|tojson }}' players='{{ users|tojson }}'></strokes-card>
 
-                        </div>
-                        <div class="col-sm">
-                            <div class="row gy-2">
-                                <div class="col-12">
-                                    <label class="form-label" for="course">Choose a course:</label>
-                                    <select name="course" id="course" class="form-select">
-                                        <option value="" selected disabled hidden>Select course</option>
-                                    </select>
-                                </div>
-                                <div class="col-12">
-                                    <select name="teebox" id="teebox" class="form-select" hidden></select>
-                                </div>
-                                <div class="col-12">
-                                    <span>Don't see the course you're looking for?</span>
-                                    <a href="{{ url_for('addcourse_bp.add_course') }}">Add a course here</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm mt-5">
-                            <input class="btn btn-primary" type="submit" value="Calculate strokes">
-                        </div>
-                    </div>
-                </form>
-            {% endif %}
-        </div>
-    </div>
-
-    <script src="/static/js/strokes.mjs" type="module"></script>
+    <script src="/static/js/strokesCard.mjs" type="module"></script>
 {% endblock content %}
