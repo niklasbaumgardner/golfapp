@@ -5,7 +5,7 @@ class StrokesCard extends NikElement {
   constructor() {
     super();
 
-    this.buttonEnabled = false;
+    this.nextButtonEnabled = false;
   }
 
   connectedCallback() {
@@ -30,8 +30,9 @@ class StrokesCard extends NikElement {
     courses: { type: Object },
     teeboxes: { type: Array },
     players: { type: Object },
-    buttonEnabled: { type: Boolean },
-    calculated: { type: Boolean },
+    nextButtonEnabled: { type: Boolean },
+    strokes: { type: Array },
+    state: { type: String },
   };
 
   static get queries() {
@@ -51,49 +52,30 @@ class StrokesCard extends NikElement {
     return this.selectedCheckboxes.map((c) => this.players[c.value]);
   }
 
-  maybeEnabledButton() {
-    this.buttonEnabled =
-      this.selectedCheckboxes.length &&
-      this.courseSelectEl.value &&
-      this.teeboxSelectEl.value;
+  maybeEnabledNextButton() {
+    this.nextButtonEnabled =
+      !!this.selectedCheckboxes.length && !!this.courseSelectEl.value;
   }
 
-  async handleCourseSelect(event) {
-    this.teeboxSelectEl.value = "";
-
-    this.teeboxes = Object.values(
-      this.courses[this.courseSelectEl.value].teeboxes
-    );
-
-    await this.updateComplete;
-    await this.teeboxSelectEl.updateComplete;
-
-    if (this.teeboxes.length === 1) {
-      this.teeboxSelectEl.value = `${this.teeboxes[0].id}`;
-    }
-
-    this.maybeEnabledButton();
-
-    this.teeboxSelectEl.disabled = this.teeboxes.length === 0;
-  }
-
-  calculateStrokes(handicap, par, rating, slope) {
+  calculateStrokesForPlayer(handicap, par, rating, slope) {
     return Math.round(handicap * (slope / 113) + (rating - par));
   }
 
-  handleCalculateStrokes() {
+  calculateStrokes(teebox = null) {
     let strokes = [];
-    let { par, rating, slope } = this.courses[
-      this.courseSelectEl.value
-    ].teeboxes.find((t) => t.id == this.teeboxSelectEl.value);
+    let { par, rating, slope } = teebox ?? this.teeboxes[0];
     for (let player of this.selectedPlayers) {
-      let numStrokes = this.calculateStrokes(
+      let numStrokes = this.calculateStrokesForPlayer(
         player.handicap.handicap,
         par,
         rating,
         slope
       );
-      strokes.push({ username: player.username, strokes: numStrokes });
+      strokes.push({
+        id: player.id,
+        username: player.username,
+        strokes: numStrokes,
+      });
     }
 
     strokes.sort((a, b) => a.strokes - b.strokes);
@@ -103,7 +85,6 @@ class StrokesCard extends NikElement {
     }
     console.log(strokes);
     this.strokes = strokes;
-    this.calculated = true;
   }
 
   playersStrokesTemplate() {
@@ -133,14 +114,6 @@ class StrokesCard extends NikElement {
   }
 
   teeboxOptionsTemplate() {
-    if (!this.courseSelectEl?.value) {
-      return null;
-    }
-
-    this.teeboxes.sort((a, b) => {
-      return b.slope - a.slope;
-    });
-
     return this.teeboxes.map(
       (t) =>
         html`<sl-option value="${t.id}"
@@ -154,7 +127,82 @@ class StrokesCard extends NikElement {
     this.calculated = false;
   }
 
+  teeboxSelectionTemplate() {
+    return html`<div class="row">
+      ${this.selectedPlayers
+        .flatMap((p) => [
+          html`<div class="col-12">
+            <div class="d-flex justify-content-evenly">
+              <h4>${p.username}</h4>
+              <sl-select
+                label="Select a teebox"
+                hoist
+                required
+                value="${this.teeboxes[0].id}"
+                >${this.teeboxOptionsTemplate()}</sl-select
+              >
+            </div>
+            <div class="d-flex">${p.username} (${p.handicap.handicap_str})</div>
+          </div>`,
+          html`<div><sl-divider></sl-divider></div>`,
+        ])
+        .slice(0, -1)}
+    </div>`;
+  }
+
+  handleNextButtonClick() {
+    this.teeboxes = Object.values(
+      this.courses[this.courseSelectEl.value].teeboxes
+    );
+
+    this.teeboxes.sort((a, b) => {
+      return b.slope - a.slope;
+    });
+
+    this.state = "TEEBOX_SELECTION";
+
+    this.calculateStrokes();
+  }
+
   render() {
+    let content;
+    if (this.state === "TEEBOX_SELECTION") {
+      content = html`${this.teeboxSelectionTemplate()}`;
+    } else {
+      content = html`<div class="row" @sl-input=${this.maybeEnabledNextButton}>
+          <div class="col-12 col-md-6 mb-5">
+            <div class="d-flex flex-column">
+              <sl-select
+                id="course"
+                name="course"
+                label="Select a course"
+                hoist
+                required
+                >${this.coursesOptionTemplate()}</sl-select
+              >
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mb-5">
+            <div class="d-flex flex-column">
+              <label>Select players:</label>${this.playersTemplate()}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <sl-button
+            variant="success"
+            ?disabled=${!this.nextButtonEnabled}
+            @click=${this.handleNextButtonClick}
+            >Next</sl-button
+          >
+        </div>`;
+    }
+
+    return html`<sl-card
+      ><h2 slot="header">Calculate strokes</h2>
+      ${content}</sl-card
+    >`;
+
     if (this.calculated) {
       return html`<sl-card>
         <h2 slot="header">Calculate strokes</h2>
