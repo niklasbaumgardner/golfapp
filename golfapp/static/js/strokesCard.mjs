@@ -1,5 +1,6 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
+import "./playerStrokes.mjs";
 
 class StrokesCard extends NikElement {
   constructor() {
@@ -127,23 +128,15 @@ class StrokesCard extends NikElement {
     this.calculated = false;
   }
 
+  handleTeeboxChange(event) {
+    console.log(event);
+  }
+
   teeboxSelectionTemplate() {
     return html`<div class="row">
       ${this.selectedPlayers
         .flatMap((p) => [
-          html`<div class="col-12">
-            <div class="d-flex justify-content-evenly">
-              <h4>${p.username}</h4>
-              <sl-select
-                label="Select a teebox"
-                hoist
-                required
-                value="${this.teeboxes[0].id}"
-                >${this.teeboxOptionsTemplate()}</sl-select
-              >
-            </div>
-            <div class="d-flex">${p.username} (${p.handicap.handicap_str})</div>
-          </div>`,
+          html`<player-strokes></player-strokes>`,
           html`<div><sl-divider></sl-divider></div>`,
         ])
         .slice(0, -1)}
