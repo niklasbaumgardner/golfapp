@@ -3,6 +3,25 @@ import { html } from "./imports.mjs";
 import "./playerStrokes.mjs";
 
 class StrokesCard extends NikElement {
+  static properties = {
+    courses: { type: Object },
+    teeboxes: { type: Array },
+    players: { type: Object },
+    nextButtonEnabled: { type: Boolean },
+    strokes: { type: Object },
+    state: { type: String },
+  };
+
+  static get queries() {
+    return {
+      dialogEl: "sl-dialog",
+      courseSelectEl: "#course",
+      teeboxSelectEl: "#teebox",
+      checkboxes: { all: "sl-checkbox" },
+      playerStrokes: { all: "player-strokes" },
+    };
+  }
+
   constructor() {
     super();
 
@@ -27,76 +46,49 @@ class StrokesCard extends NikElement {
     );
   }
 
-  static properties = {
-    courses: { type: Object },
-    teeboxes: { type: Array },
-    players: { type: Object },
-    nextButtonEnabled: { type: Boolean },
-    strokes: { type: Array },
-    state: { type: String },
-  };
-
-  static get queries() {
-    return {
-      dialogEl: "sl-dialog",
-      courseSelectEl: "#course",
-      teeboxSelectEl: "#teebox",
-      checkboxes: { all: "sl-checkbox" },
-    };
-  }
-
   get selectedCheckboxes() {
     return Array.from(this.checkboxes).filter((checkbox) => checkbox.checked);
   }
 
-  get selectedPlayers() {
-    return this.selectedCheckboxes.map((c) => this.players[c.value]);
+  calculateStrokesForPlayer(handicap, teebox) {
+    return Math.round(
+      handicap * (teebox.slope / 113) + (teebox.rating - teebox.par)
+    );
   }
 
-  maybeEnabledNextButton() {
-    this.nextButtonEnabled =
-      !!this.selectedCheckboxes.length && !!this.courseSelectEl.value;
-  }
-
-  calculateStrokesForPlayer(handicap, par, rating, slope) {
-    return Math.round(handicap * (slope / 113) + (rating - par));
-  }
-
-  calculateStrokes(teebox = null) {
-    let strokes = [];
-    let { par, rating, slope } = teebox ?? this.teeboxes[0];
+  calculateStrokes() {
+    let strokes = {};
+    let teebox = this.teeboxes[0];
     for (let player of this.selectedPlayers) {
       let numStrokes = this.calculateStrokesForPlayer(
         player.handicap.handicap,
-        par,
-        rating,
-        slope
+        teebox
       );
-      strokes.push({
+      strokes[player.id] = {
         id: player.id,
         username: player.username,
         strokes: numStrokes,
-      });
+      };
     }
-
-    strokes.sort((a, b) => a.strokes - b.strokes);
-    let minStrokes = strokes[0].strokes;
-    for (let obj of strokes) {
-      obj.netStrokes = obj.strokes - minStrokes;
-    }
-    console.log(strokes);
     this.strokes = strokes;
+
+    this.calculateNetStrokes();
   }
 
-  playersStrokesTemplate() {
-    return this.strokes.map(
-      (x) =>
-        html`<p>
-          ${x.username} gets <b>${x.strokes}</b>
-          ${x.strokes === 1 ? "stroke" : "strokes"} (net ${x.netStrokes}
-          ${x.netStrokes === 1 ? "stroke" : "strokes"})
-        </p>`
+  calculateNetStrokes() {
+    let minStrokes = Object.values(this.strokes).reduce(
+      (currentMin, currentPlayer) =>
+        currentMin < currentPlayer.strokes ? currentMin : currentPlayer.strokes,
+      99
     );
+    for (let [_, obj] of Object.entries(this.strokes)) {
+      obj.netStrokes = obj.strokes - minStrokes;
+    }
+
+    this.requestUpdate();
+    for (let p of this.playerStrokes) {
+      p.requestUpdate();
+    }
   }
 
   playersTemplate() {
@@ -114,29 +106,27 @@ class StrokesCard extends NikElement {
     );
   }
 
-  teeboxOptionsTemplate() {
-    return this.teeboxes.map(
-      (t) =>
-        html`<sl-option value="${t.id}"
-          >${t.teebox} (${t.rating} / ${t.slope})</sl-option
-        >`
-    );
-  }
+  handleTeeboxChangedForPlayer(event) {
+    let { playerId, playerHandicap, teeboxId } = event.detail;
+    let teebox = this.teeboxes.find((t) => t.id == teeboxId);
+    let newStrokes = this.calculateStrokesForPlayer(playerHandicap, teebox);
 
-  reset() {
-    this.strokes = [];
-    this.calculated = false;
-  }
-
-  handleTeeboxChange(event) {
-    console.log(event);
+    this.strokes[playerId].strokes = newStrokes;
+    this.calculateNetStrokes();
   }
 
   teeboxSelectionTemplate() {
-    return html`<div class="row">
+    return html`<div
+      class="row mb-5"
+      @TeeboxChanged=${this.handleTeeboxChangedForPlayer}
+    >
       ${this.selectedPlayers
         .flatMap((p) => [
-          html`<player-strokes></player-strokes>`,
+          html`<player-strokes
+            .player=${p}
+            .teeboxes=${this.teeboxes}
+            .strokes=${this.strokes[p.id]}
+          ></player-strokes>`,
           html`<div><sl-divider></sl-divider></div>`,
         ])
         .slice(0, -1)}
@@ -144,6 +134,10 @@ class StrokesCard extends NikElement {
   }
 
   handleNextButtonClick() {
+    this.selectedPlayers = this.selectedCheckboxes.map(
+      (c) => this.players[c.value]
+    );
+
     this.teeboxes = Object.values(
       this.courses[this.courseSelectEl.value].teeboxes
     );
@@ -157,10 +151,27 @@ class StrokesCard extends NikElement {
     this.calculateStrokes();
   }
 
+  maybeEnabledNextButton() {
+    this.nextButtonEnabled =
+      !!this.selectedCheckboxes.length && !!this.courseSelectEl.value;
+  }
+
+  handleBackButtonClick() {
+    this.state = "";
+  }
+
   render() {
     let content;
     if (this.state === "TEEBOX_SELECTION") {
-      content = html`${this.teeboxSelectionTemplate()}`;
+      content = html`${this.teeboxSelectionTemplate()}
+        <div class="row">
+          <sl-button
+            variant="success"
+            outline
+            @click=${this.handleBackButtonClick}
+            >Go back</sl-button
+          >
+        </div>`;
     } else {
       content = html`<div class="row" @sl-input=${this.maybeEnabledNextButton}>
           <div class="col-12 col-md-6 mb-5">
@@ -194,64 +205,6 @@ class StrokesCard extends NikElement {
     return html`<sl-card
       ><h2 slot="header">Calculate strokes</h2>
       ${content}</sl-card
-    >`;
-
-    if (this.calculated) {
-      return html`<sl-card>
-        <h2 slot="header">Calculate strokes</h2>
-        <div class="row mb-5">${this.playersStrokesTemplate()}</div>
-        <div class="row">
-          <sl-button variant="success" outline @click=${this.reset}
-            >Try again</sl-button
-          >
-        </div>
-      </sl-card>`;
-    }
-
-    return html`<sl-card @sl-input=${this.maybeEnabledButton}
-      ><h2 slot="header">Calculate strokes</h2>
-      <div class="row">
-        <div class="col-12 col-md-6 mb-5">
-          <div class="d-flex flex-column">
-            <label>Select players:</label>${this.playersTemplate()}
-          </div>
-        </div>
-        <div
-          class="col-12 col-md-6 mb-5"
-          style="gap:var(--sl-spacing-x-small);"
-        >
-          <sl-select
-            id="course"
-            name="course"
-            label="Select a course"
-            @sl-input=${this.handleCourseSelect}
-            hoist
-            required
-            >${this.coursesOptionTemplate()}</sl-select
-          >
-          <sl-select
-            id="teebox"
-            name="teebox"
-            label="Select a teebox"
-            hoist
-            disabled
-            required
-            >${this.teeboxOptionsTemplate()}</sl-select
-          >
-          <small>
-            <span>Don't see the course you're looking for?</span>
-            <a href="${ADD_COURSE_URL}">Add a course here</a>
-          </small>
-        </div>
-      </div>
-      <div class="row">
-        <sl-button
-          variant="success"
-          ?disabled=${!this.buttonEnabled}
-          @click=${this.handleCalculateStrokes}
-          >Calculate strokes</sl-button
-        >
-      </div></sl-card
     >`;
   }
 }
