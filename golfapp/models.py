@@ -28,7 +28,7 @@ class User(db.Model, UserMixin, SerializerMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
-    handicap = db.relationship("Handicap", uselist=False)
+    handicap = db.relationship("Handicap", uselist=False, lazy="joined")
 
     def url(self):
         return url_for("viewplayer_bp.view_player", id=self.id)
@@ -57,7 +57,7 @@ class Course(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     address = db.Column(db.String, nullable=True)
 
-    teeboxes = db.relationship("CourseTeebox")
+    teeboxes = db.relationship("CourseTeebox", lazy="joined")
 
     @property
     def address_dict(self):
@@ -121,7 +121,7 @@ class Subscription(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     subscribed_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    subscribers = db.relationship("Subscriber")
+    subscribers = db.relationship("Subscriber", lazy="joined")
 
 
 class Subscriber(db.Model, SerializerMixin):
@@ -139,5 +139,5 @@ class CourseRanking(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     rating = db.Column(db.Float, nullable=True)
-    user = db.relationship("User")
-    course = db.relationship("Course")
+    user = db.relationship("User", lazy="joined")
+    course = db.relationship("Course", lazy="joined")
