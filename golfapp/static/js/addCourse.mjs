@@ -47,7 +47,7 @@ class AddCourseEl extends NikElement {
 
   coursesOptionTemplate() {
     return COURSES.map(
-      (c) => html`<sl-option value="${c.id}">${c.name}</sl-option>`
+      (c) => html`<wa-option value="${c.id}">${c.name}</sl-option>`
     );
   }
 
@@ -62,10 +62,10 @@ class AddCourseEl extends NikElement {
   }
 
   addTeeboxTemplate() {
-    return html`<sl-tab-panel name="addteebox" style="overflow: clip;">
+    return html`<wa-tab-panel name="addteebox" style="overflow: clip;">
       <form action="${ADD_TEEBOX_URL}" method="POST">
         <div class="d-flex flex-column" style="gap:var(--sl-spacing-small);">
-          <sl-select
+          <wa-select
             class="w-100"
             id="course"
             name="course"
@@ -78,14 +78,14 @@ class AddCourseEl extends NikElement {
           <ul>
             ${this.existingTeeboxesTemplate()}
           </ul>
-          <sl-input
+          <wa-input
             id="teebox"
             name="teebox"
             label="Teebox name"
             required
           ></sl-input>
           <div class="row">
-            <sl-input
+            <wa-input
               name="par"
               label="Par"
               class="col-4"
@@ -93,7 +93,7 @@ class AddCourseEl extends NikElement {
               step="1"
               required
             ></sl-input>
-            <sl-input
+            <wa-input
               name="rating"
               label="Rating"
               class="col-4"
@@ -101,7 +101,7 @@ class AddCourseEl extends NikElement {
               step=".1"
               required
             ></sl-input>
-            <sl-input
+            <wa-input
               name="slope"
               label="Slope"
               class="col-4"
@@ -110,7 +110,7 @@ class AddCourseEl extends NikElement {
               required
             ></sl-input>
           </div>
-          <sl-button type="submit" class="w-100" variant="success"
+          <wa-button type="submit" class="w-100" variant="success"
             >Add teebox</sl-button
           >
         </div>
@@ -119,10 +119,10 @@ class AddCourseEl extends NikElement {
   }
 
   addCourseTemplate() {
-    return html`<sl-tab-panel name="addcourse" style="overflow: clip;">
+    return html`<wa-tab-panel name="addcourse" style="overflow: clip;">
       <form action="${ADD_COURSE_URL}" method="POST">
         <div class="d-flex flex-column" style="gap:var(--sl-spacing-small);">
-          <sl-input
+          <wa-input
             id="courseInput"
             name="name"
             label="Course name"
@@ -132,9 +132,9 @@ class AddCourseEl extends NikElement {
           <ul>
             ${this.existingCoursesTemplate()}
           </ul>
-          <sl-input name="teebox" label="Teebox name" required></sl-input>
+          <wa-input name="teebox" label="Teebox name" required></sl-input>
           <div class="row">
-            <sl-input
+            <wa-input
               name="par"
               label="Par"
               class="col-4"
@@ -142,7 +142,7 @@ class AddCourseEl extends NikElement {
               step="1"
               required
             ></sl-input>
-            <sl-input
+            <wa-input
               name="rating"
               label="Rating"
               class="col-4"
@@ -150,7 +150,7 @@ class AddCourseEl extends NikElement {
               step=".1"
               required
             ></sl-input>
-            <sl-input
+            <wa-input
               name="slope"
               label="Slope"
               class="col-4"
@@ -159,7 +159,7 @@ class AddCourseEl extends NikElement {
               required
             ></sl-input>
           </div>
-          <sl-button type="submit" class="w-100" variant="success"
+          <wa-button type="submit" class="w-100" variant="success"
             >Add course</sl-button
           >
         </div>
@@ -168,12 +168,12 @@ class AddCourseEl extends NikElement {
   }
 
   render() {
-    return html`<sl-card>
+    return html`<wa-card>
       <h2>Add a course or teebox</h2>
-      <sl-divider class="w-100"></sl-divider>
-      <sl-tab-group>
-        <sl-tab slot="nav" panel="addteebox">Add Teebox</sl-tab>
-        <sl-tab slot="nav" panel="addcourse">Add Course</sl-tab>
+      <wa-divider class="w-100"></sl-divider>
+      <wa-tab-group>
+        <wa-tab slot="nav" panel="addteebox">Add Teebox</sl-tab>
+        <wa-tab slot="nav" panel="addcourse">Add Course</sl-tab>
 
         ${this.addTeeboxTemplate()}
         ${this.addCourseTemplate()}

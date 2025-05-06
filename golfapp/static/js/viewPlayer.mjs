@@ -174,7 +174,7 @@ class RoundsGridManager {
         cellRenderer: (param) => {
           let date = param.data.date;
 
-          return `<sl-format-date month="long" day="numeric" year="numeric" date="${
+          return `<wa-format-date month="long" day="numeric" year="numeric" date="${
             date + "T00:00:00"
           }"></sl-format-date>`;
         },
@@ -262,7 +262,9 @@ class RoundsGridManager {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.getAttribute("data-bs-theme");
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
     this.roundsGridEl.classList.toggle(
       "ag-theme-quartz-dark",
       theme === "dark"

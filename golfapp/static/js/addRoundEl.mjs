@@ -60,7 +60,7 @@ class AddRound extends NikElement {
 
   coursesOptionTemplate() {
     return this.courses.map(
-      (c) => html`<sl-option value="${c.id}">${c.name}</sl-option>`
+      (c) => html`<wa-option value="${c.id}">${c.name}</sl-option>`
     );
   }
 
@@ -75,7 +75,7 @@ class AddRound extends NikElement {
 
     return this.teeboxes.map(
       (t) =>
-        html`<sl-option value="${t.id}"
+        html`<wa-option value="${t.id}"
           >${t.teebox} (${t.rating} / ${t.slope})</sl-option
         >`
     );
@@ -88,7 +88,7 @@ class AddRound extends NikElement {
     let day = date.getDate().toString().padStart(2, "0");
     let strDate = year + "-" + month + "-" + day;
 
-    return html`<sl-input
+    return html`<wa-input
       id="date"
       name="date"
       type="date"
@@ -100,14 +100,14 @@ class AddRound extends NikElement {
   }
 
   render() {
-    return html`<sl-dialog label="Add a new round"
+    return html`<wa-dialog label="Add a new round"
       ><form
         action="${ADD_ROUND_URL}"
         method="POST"
         style="display:flex;flex-direction:column;gap:var(--sl-spacing-small);"
       >
         <div class="row" style="gap:var(--sl-spacing-x-small);">
-          <sl-select
+          <wa-select
             id="course"
             name="course"
             label="Select a course"
@@ -116,7 +116,7 @@ class AddRound extends NikElement {
             required
             >${this.coursesOptionTemplate()}</sl-select
           >
-          <sl-select
+          <wa-select
             id="teebox"
             name="teebox"
             label="Select a teebox"
@@ -131,22 +131,22 @@ class AddRound extends NikElement {
           </small>
         </div>
         <div class="row">
-          <sl-radio-group
+          <wa-radio-group
             label="Round type"
             name="nineHoleRound"
             value="False"
             required
           >
-            <sl-radio-button value="False" variant="success"
+            <wa-radio-button value="False" variant="success"
               >18 hole round</sl-radio-button
             >
-            <sl-radio-button value="True" variant="success"
+            <wa-radio-button value="True" variant="success"
               >9 hole round</sl-radio-button
             >
           </sl-radio-group>
         </div>
         <div class="row">
-          <sl-input
+          <wa-input
             id="score"
             name="score"
             type="number"
@@ -157,21 +157,21 @@ class AddRound extends NikElement {
           >${this.dateTemplate()}
         </div>
         <div class="row">
-          <sl-input
+          <wa-input
             id="fir"
             name="fir"
             type="number"
             class="col-4"
             label="FIR"
           ></sl-input>
-          <sl-input
+          <wa-input
             id="gir"
             name="gir"
             type="number"
             class="col-4"
             label="GIR"
           ></sl-input>
-          <sl-input
+          <wa-input
             id="putts"
             name="putts"
             type="number"
@@ -180,10 +180,10 @@ class AddRound extends NikElement {
           ></sl-input>
         </div>
         <div class="row mt-3">
-          <sl-button id="close-button" class="col-6" variant="neutral" outline
+          <wa-button id="close-button" class="col-6" variant="neutral" outline
             >Cancel</sl-button
           >
-          <sl-button type="submit" class="col-6" variant="success"
+          <wa-button type="submit" class="col-6" variant="success"
             >Add round</sl-button
           >
         </div>

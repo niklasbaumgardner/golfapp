@@ -11,7 +11,7 @@
 
     <div class="row justify-content-center align-items-center">
         <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <sl-card>
+            <wa-card>
                 <div class="row" slot="header">
                     <div class="fs-4">
                         Sign up
@@ -23,11 +23,11 @@
                 <div class="mb-2">
                     <form action="{{ url_for('auth_bp.signup') }}" method="POST">
                         <div class="nb-row">
-                            <sl-input {% if email %}value="{{ email }}"{% endif %} placeholder="Your email" type="email" label="Email" id="email" name="email" required></sl-input>
-                            <sl-input placeholder="Your username" label="Username" id="username" name="username" required></sl-input>
-                            <sl-input type="password" label="Password" id="password1" name="password1" placeholder="Password" required></sl-input>
-                            <sl-input type="password" label="Confirm Password" id="password2" name="password2" placeholder="Password" required></sl-input>
-                            <sl-button id="submitButton" class="w-100" variant="primary" type="submit">Sign up</sl-button>
+                            <wa-input {% if email %}value="{{ email }}"{% endif %} placeholder="Your email" type="email" label="Email" id="email" name="email" required></sl-input>
+                            <wa-input placeholder="Your username" label="Username" id="username" name="username" required></sl-input>
+                            <wa-input type="password" label="Password" id="password1" name="password1" placeholder="Password" required></sl-input>
+                            <wa-input type="password" label="Confirm Password" id="password2" name="password2" placeholder="Password" required></sl-input>
+                            <wa-button id="submitButton" class="w-100" variant="primary" type="submit">Sign up</sl-button>
                         </div>
                     </form>
                 </div>

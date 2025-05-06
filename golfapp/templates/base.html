@@ -1,116 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="{{ theme }}" class="sl-theme-{{ theme }}">
-
-<head>
+<html lang="en" class="wa-{{ theme }}">
+  <head>
     <!-- Required meta tags -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
     <!-- Shoelace components -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/shoelace.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/styles/themes/default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/styles/webawesome.css"
+    />
+    <script
+      type="module"
+      src="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/webawesome.loader.js"
+    ></script>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="/static/css/main.css" rel="stylesheet" />
+    <link href="/static/css/light.css" rel="stylesheet" />
+    <link href="/static/css/dark.css" rel="stylesheet" />
 
-    <!-- Umami analytics -->
-    <script defer src="https://us.umami.is/script.js" data-website-id="5374eb5c-b373-4629-b48b-a5c121a3c5a4"></script>
-
-    <link href="/static/css/main.css" rel="stylesheet"/>
-    <link href="/static/css/light.css" rel="stylesheet"/>
-    <link href="/static/css/dark.css" rel="stylesheet"/>
-
-    <link rel="icon" type="image/png" href="{% block icon %}/static/images/golf.png{% endblock icon %}"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% block icon %}/static/images/golf.png{% endblock icon %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
     <title>{% block title %}{% endblock title %}</title>
     <script src="/static/js/fetch.js"></script>
-    <script src="/static/js/theme.js" defer></script>
-    <!-- <script src="/static/js/createElement.js"></script> -->
-</head>
+    <script type="module" src="/static/js/nb-theme-selector.mjs"></script>
+  </head>
 
-<script>
+  <script>
     const THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
     const THEME = "{{ theme }}";
-</script>
+  </script>
 
-
-<body class="mt-3 pt-5">
-
-    <nav class="navbar navbar-expand-lg bg-success-subtle fixed-top">
-        <div class="container">
-            {% block backButton %}{% endblock backButton %}
-            <a class="navbar-brand" href="/">NB Golf App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarsExample07">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% block courserankings %}{% endblock courserankings %}" href="{{ url_for('courseranking_bp.course_rankings') }}">Course Rankings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% block strokes %}{% endblock strokes %}" href="{{ url_for('strokes_bp.calculate_strokes') }}">Calculate Strokes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% block viewplayers %}{% endblock viewplayers %}" href="{{ url_for('viewplayers_bp.view_players') }}">View Players</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <sl-dropdown>
-                        <sl-button id="theme-button" variant="text" slot="trigger" caret>
-                            <sl-icon id="light-icon" name="sun-fill" library="default" hidden></sl-icon>
-                            <sl-icon id="dark-icon" name="moon-fill" library="default" hidden></sl-icon>
-                        </sl-button>
-                        <sl-menu id="theme-selector">
-                            <sl-menu-item id="light" type="checkbox" value="light">Light</sl-menu-item>
-                            <sl-menu-item id="dark" type="checkbox" value="dark">Dark</sl-menu-item>
-                        </sl-menu>
-                    </sl-dropdown>
-                    {% if current_user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ current_user.username }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                {% if current_user.is_authenticated and current_user.id == 3 or current_user.id == 11 %}
-                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.hijack') }}">Hijack Handicap</a></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.edit_courses') }}">Edit Courses</a></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('admin_bp.subscribers') }}">Subscribers</a></li>
-                                {% endif %}
-                                <li><a class="dropdown-item" href="{{ url_for('profile_bp.profile') }}">Profile</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link {% block login %}{% endblock login %}" href="{{ url_for('auth_bp.login') }}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+  <body>
+    <wa-page mobile-breakpoint="920"
+      ><header slot="header">
+        <div class="wa-split">
+          <div class="wa-cluster">
+            <wa-icon-button
+              name="bars"
+              label="Menu"
+              data-toggle-nav
+            ></wa-icon-button>
+            <a class="wa-heading-l">NB Golf</a>
+            <a
+              class="wa-desktop-only wa-heading-m"
+              href="{{ url_for('courseranking_bp.course_rankings') }}"
+              >Course Rankings</a
+            >
+            <a
+              class="wa-desktop-only wa-heading-m"
+              href="{{ url_for('strokes_bp.calculate_strokes') }}"
+              >Calculate Strokes</a
+            >
+            <a
+              class="wa-desktop-only wa-heading-m"
+              href="{{ url_for('viewplayers_bp.view_players') }}"
+              >View Players</a
+            >
+          </div>
+          <div class="wa-cluster wa-desktop-only">
+            <nb-theme-selector></nb-theme-selector>
+            {% if current_user.is_authenticated %}
+            <wa-dropdown
+              ><wa-button
+                id="user-button"
+                appearance="plain"
+                slot="trigger"
+                caret
+                >{{ current_user.username }}</wa-button
+              ><wa-menu id="user-dropdown-selector">
+                {% if current_user.is_authenticated and current_user.id == 3 or
+                current_user.id == 11 %}<wa-menu-item
+                  ><a href="{{ url_for('admin_bp.hijack') }}"
+                    >Hijack Handicap</a
+                  ></wa-menu-item
+                ><wa-menu-item
+                  ><a href="{{ url_for('admin_bp.edit_courses') }}"
+                    >Edit Courses</a
+                  ></wa-menu-item
+                ><wa-menu-item
+                  ><a href="{{ url_for('admin_bp.subscribers') }}"
+                    >Subscribers</a
+                  ></wa-menu-item
+                >{% endif %}
+                <wa-menu-item
+                  ><a href="{{ url_for('profile_bp.profile') }}"
+                    >Profile</a
+                  ></wa-menu-item
+                ><wa-menu-item
+                  ><a href="{{ url_for('auth_bp.logout') }}"
+                    >Logout</a
+                  ></wa-menu-item
+                >
+              </wa-menu></wa-dropdown
+            >
+            {% else %}
+            <a href="{{ url_for('auth_bp.login') }}">Login</a>
+            {% endif %}
+          </div>
         </div>
-    </nav>
+      </header>
+      <nav slot="navigation" class="wa-mobile-only">
+        <a class="wa-heading-l">NB Golf</a>
+        <a
+          class="wa-heading-m"
+          href="{{ url_for('courseranking_bp.course_rankings') }}"
+          >Course Rankings</a
+        >
+        <a
+          class="wa-heading-m"
+          href="{{ url_for('strokes_bp.calculate_strokes') }}"
+          >Calculate Strokes</a
+        >
+        <a
+          class="wa-heading-m"
+          href="{{ url_for('viewplayers_bp.view_players') }}"
+          >View Players</a
+        >
+
+        <nb-theme-selector></nb-theme-selector>
+        {% if current_user.is_authenticated %}
+        <wa-dropdown
+          ><wa-button id="user-button" appearance="plain" slot="trigger" caret
+            >{{ current_user.username }}</wa-button
+          ><wa-menu id="user-dropdown-selector">
+            {% if current_user.is_authenticated and current_user.id == 3 or
+            current_user.id == 11 %}<wa-menu-item
+              ><a href="{{ url_for('admin_bp.hijack') }}"
+                >Hijack Handicap</a
+              ></wa-menu-item
+            ><wa-menu-item
+              ><a href="{{ url_for('admin_bp.edit_courses') }}"
+                >Edit Courses</a
+              ></wa-menu-item
+            ><wa-menu-item
+              ><a href="{{ url_for('admin_bp.subscribers') }}"
+                >Subscribers</a
+              ></wa-menu-item
+            >{% endif %}
+            <wa-menu-item
+              ><a href="{{ url_for('profile_bp.profile') }}"
+                >Profile</a
+              ></wa-menu-item
+            ><wa-menu-item
+              ><a href="{{ url_for('auth_bp.logout') }}"
+                >Logout</a
+              ></wa-menu-item
+            >
+          </wa-menu></wa-dropdown
+        >
+        {% else %}
+        <a href="{{ url_for('auth_bp.login') }}">Login</a>
+        {% endif %}
+      </nav>
+      <main>{% block content %}{% endblock content %}</main></wa-page
+    >
 
     <div class="container py-5 mb-5 h-100">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            <div id="alerts" class="container d-flex justify-content-center">
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <sl-alert variant="primary" duration="5000" open closable>
-                            {{ message }}
-                        </sl-alert>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        {% endwith %}
-
-        {% block content %}{% endblock content %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      <div id="alerts" class="container d-flex justify-content-center">
+        {% if messages %} {% for category, message in messages %}
+        <sl-alert variant="primary" duration="5000" open closable>
+          {{ message }}
+        </sl-alert>
+        {% endfor %} {% endif %}
+      </div>
+      {% endwith %}
     </div>
-
-    <!-- Optional JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-</body>
+  </body>
 </html>

@@ -29,7 +29,7 @@ class PlayerStrokes extends NikElement {
   teeboxOptionsTemplate() {
     return this.teeboxes.map(
       (t) =>
-        html`<sl-option value="${t.id}"
+        html`<wa-option value="${t.id}"
           >${t.teebox} (${t.rating} / ${t.slope})</sl-option
         >`
     );
@@ -39,7 +39,7 @@ class PlayerStrokes extends NikElement {
     return html`<div class="row mb-3">
         <div class="col-6"><h4>${this.player.username}</h4></div>
         <div class="col-6">
-          <sl-select
+          <wa-select
             label="Select a teebox"
             hoist
             required

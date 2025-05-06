@@ -42,7 +42,7 @@ class DeleteRound extends NikElement {
   }
 
   render() {
-    return html`<sl-dialog label="Delete this round?">
+    return html`<wa-dialog label="Delete this round?">
       <div
         style="display:flex;flex-direction:column;gap:var(--sl-spacing-small);"
       >
@@ -51,7 +51,7 @@ class DeleteRound extends NikElement {
           <p>
             You shot <b>${this.round.score}</b> at
             <b>${COURSES[this.round.course_id].name}</b> on
-            <sl-format-date
+            <wa-format-date
               month="long"
               day="numeric"
               year="numeric"
@@ -60,7 +60,7 @@ class DeleteRound extends NikElement {
           </p>
         </div>
         <div class="row mt-3">
-          <sl-button
+          <wa-button
             id="close-button"
             class="col-6"
             variant="neutral"
@@ -68,7 +68,7 @@ class DeleteRound extends NikElement {
             @click=${this.hide}
             >Cancel</sl-button
           >
-          <sl-button
+          <wa-button
             id="delete-button"
             class="col-6"
             variant="danger"

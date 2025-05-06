@@ -127,7 +127,9 @@ class StatsCard extends NikElement {
   }
 
   createLineChart(ctx) {
-    let theme = document.documentElement.dataset.bsTheme;
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
     return new chartJs.Chart(ctx, {
       type: "line",
       data: {
@@ -223,7 +225,7 @@ class StatsCard extends NikElement {
   }
 
   handicapTemplate() {
-    return html`<sl-card class="w-100 mb-3"
+    return html`<wa-card class="w-100 mb-3"
       ><div class="row gy-3">
         <div class="col-12 col-lg-4 text-start">
           <h3>Your handicap is ${this.data?.user.handicap.handicap_str}</h3>
@@ -242,10 +244,10 @@ class StatsCard extends NikElement {
   }
 
   statsTemplate() {
-    return html`<sl-card class="w-100 mb-3">
+    return html`<wa-card class="w-100 mb-3">
       <div class="row g-3">
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>Average round</h6>
             <h4 id="avg-round">${this.averageRound}</h4>
             <small
@@ -256,7 +258,7 @@ class StatsCard extends NikElement {
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>FIR</h6>
             <div class="d-flex">
               <span class="w-50">
@@ -275,7 +277,7 @@ class StatsCard extends NikElement {
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>GIR</h6>
             <div class="d-flex">
               <span class="w-50">
@@ -294,7 +296,7 @@ class StatsCard extends NikElement {
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>Putts</h6>
             <div class="d-flex">
               <span class="w-50 inline-stat">
@@ -318,10 +320,10 @@ class StatsCard extends NikElement {
   }
 
   coursesStatsTemplate() {
-    return html`<sl-card class="w-100 mb-3"
+    return html`<wa-card class="w-100 mb-3"
       ><div class="row g-3">
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>Lowest round</h6>
             <span class="w-50 inline-stat">
               <h4 id="lowest-round">${this.lowestRound?.score}</h4>
@@ -331,19 +333,19 @@ class StatsCard extends NikElement {
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>Rounds played</h6>
             <h4 id="rounds-played">${this.data.rounds.length}</h4>
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>Courses played</h6>
             <h4 id="courses-played">${this.coursesPlayed}</h4>
           </sl-card>
         </div>
         <div class="col-12 col-md-6 col-xxl-3">
-          <sl-card class="w-100">
+          <wa-card class="w-100">
             <h6>States played in</h6>
             <h4 id="states-played">${this.statesPlayed}</h4>
           </sl-card>
@@ -353,7 +355,7 @@ class StatsCard extends NikElement {
   }
 
   chartTemplate() {
-    return html`<sl-card class="w-100">
+    return html`<wa-card class="w-100">
       <div class="row"><canvas id="handicap-graph"></canvas></div>
     </sl-card>`;
   }
@@ -369,7 +371,7 @@ class StatsCard extends NikElement {
   }
 
   render() {
-    return html`<sl-details summary="View Stats"
+    return html`<wa-details summary="View Stats"
       >${this.dataTemplate()}</sl-details
     >`;
   }

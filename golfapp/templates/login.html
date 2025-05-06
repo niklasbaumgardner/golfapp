@@ -9,7 +9,7 @@
 
 <div class="row justify-content-center align-items-center">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <sl-card>
+        <wa-card>
             <div class="row" slot="header">
                 <div class="fs-4">
                     Login
@@ -34,12 +34,12 @@
                                     <input class="nb-input mb-2" type="password" name="password" label="Password" placeholder="Your password" required/>
                                 </div>
                             </div>
-                            <sl-checkbox name="remember" value="True" checked>Remember me?</sl-checkbox>
+                            <wa-checkbox name="remember" value="True" checked>Remember me?</sl-checkbox>
                         </div>
                         <div class="w-100">
                             <!-- This submit button is hidden so "Enter" will submit the form -->
                             <button type="submit" hidden></button>
-                            <sl-button class="w-100 mb-2" type="submit" variant="primary">Login</sl-button>
+                            <wa-button class="w-100 mb-2" type="submit" variant="primary">Login</sl-button>
                             <p class="small"><a href="{{ url_for('auth_bp.password_request') }}">Forgot password?</a></p>
                         </div>
                     </div>

@@ -94,7 +94,7 @@ class StrokesCard extends NikElement {
   playersTemplate() {
     return this.playersArray.map(
       (p) =>
-        html`<sl-checkbox value="${p.id}"
+        html`<wa-checkbox value="${p.id}"
           >${p.username} (${p.handicap.handicap_str})</sl-checkbox
         >`
     );
@@ -102,7 +102,7 @@ class StrokesCard extends NikElement {
 
   coursesOptionTemplate() {
     return this.coursesArray.map(
-      (c) => html`<sl-option value="${c.id}">${c.name}</sl-option>`
+      (c) => html`<wa-option value="${c.id}">${c.name}</sl-option>`
     );
   }
 
@@ -127,7 +127,7 @@ class StrokesCard extends NikElement {
             .teeboxes=${this.teeboxes}
             .strokes=${this.strokes[p.id]}
           ></player-strokes>`,
-          html`<div><sl-divider></sl-divider></div>`,
+          html`<div><wa-divider></sl-divider></div>`,
         ])
         .slice(0, -1)}
     </div>`;
@@ -165,7 +165,7 @@ class StrokesCard extends NikElement {
     if (this.state === "TEEBOX_SELECTION") {
       content = html`${this.teeboxSelectionTemplate()}
         <div class="row">
-          <sl-button
+          <wa-button
             variant="success"
             outline
             @click=${this.handleBackButtonClick}
@@ -176,7 +176,7 @@ class StrokesCard extends NikElement {
       content = html`<div class="row" @sl-input=${this.maybeEnabledNextButton}>
           <div class="col-12 col-md-6 mb-5">
             <div class="d-flex flex-column">
-              <sl-select
+              <wa-select
                 id="course"
                 name="course"
                 label="Select a course"
@@ -193,7 +193,7 @@ class StrokesCard extends NikElement {
           </div>
         </div>
         <div class="row">
-          <sl-button
+          <wa-button
             variant="success"
             ?disabled=${!this.nextButtonEnabled}
             @click=${this.handleNextButtonClick}
@@ -202,7 +202,7 @@ class StrokesCard extends NikElement {
         </div>`;
     }
 
-    return html`<sl-card
+    return html`<wa-card
       ><h2 slot="header">Calculate strokes</h2>
       ${content}</sl-card
     >`;
