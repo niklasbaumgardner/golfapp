@@ -5,7 +5,6 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from sqlalchemy_serializer import SerializerMixin
 import usaddress
-import json
 
 
 @login_manager.user_loader
@@ -21,6 +20,7 @@ class User(db.Model, UserMixin, SerializerMixin):
         "is_publicly_visible",
         "handicap",
         "url",
+        "course_ranking_url",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +32,9 @@ class User(db.Model, UserMixin, SerializerMixin):
 
     def url(self):
         return url_for("viewplayer_bp.view_player", id=self.id)
+
+    def course_ranking_url(self):
+        return url_for("courseranking_bp.course_ranking", id=self.id)
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -45,9 +48,6 @@ class User(db.Model, UserMixin, SerializerMixin):
         except:
             return None
         return User.query.get(user_id)
-
-    def to_json(self):
-        return dict(id=self.id, username=self.username)
 
 
 class Course(db.Model, SerializerMixin):
@@ -78,6 +78,13 @@ class CourseTeebox(db.Model, SerializerMixin):
 
 
 class Round(db.Model, SerializerMixin):
+    serialize_rules = (
+        "edit_round_url",
+        "delete_round_url",
+        "teebox",
+        "course",
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
@@ -89,6 +96,15 @@ class Round(db.Model, SerializerMixin):
     putts = db.Column(db.Float, nullable=True)
     date = db.Column(db.Date, nullable=False)
     nine_hole_round = db.Column(db.Boolean, nullable=True)
+
+    course = db.relationship("Course", lazy="joined")
+    teebox = db.relationship("CourseTeebox", lazy="joined")
+
+    def edit_round_url(self):
+        return url_for("viewplayer_bp.edit_round", id=self.id)
+
+    def delete_round_url(self):
+        return url_for("viewplayer_bp.delete_round", id=self.id)
 
 
 class Handicap(db.Model, SerializerMixin):
@@ -139,5 +155,6 @@ class CourseRanking(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
     rating = db.Column(db.Float, nullable=True)
+
     user = db.relationship("User", lazy="joined")
     course = db.relationship("Course", lazy="joined")

@@ -66,7 +66,9 @@ class PlayersGridManager {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.getAttribute("data-bs-theme");
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
     this.playersGridEl.classList.toggle(
       "ag-theme-quartz-dark",
       theme === "dark"

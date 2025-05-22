@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="wa-{{ theme }}">
+<html lang="en" class="wa-{{ theme }}" data-fa-kit-code1="810ff8975b">
   <head>
     <!-- Required meta tags -->
     <meta charset="UTF-8" />
@@ -7,24 +7,52 @@
 
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
+    <script
+      src="https://kit.fontawesome.com/810ff8975b.js"
+      crossorigin="anonymous"
+    ></script>
+
     <!-- Shoelace components -->
     <link
       rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/styles/themes/default.css"
+      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/classic.css"
     />
     <link
       rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/styles/webawesome.css"
+      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/webawesome.css"
     />
     <script
       type="module"
-      src="https://early.webawesome.com/webawesome@3.0.0-alpha.12/dist/webawesome.loader.js"
+      src="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js"
     ></script>
+    <script type="module">
+      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js";
+
+      registerIconLibrary("ion", {
+        resolver: (name) =>
+          `https://cdn.jsdelivr.net/npm/ionicons@5.1.2/dist/ionicons/svg/${name}.svg`,
+        mutator: (svg) => {
+          svg.setAttribute("fill", "currentColor");
+          svg.setAttribute("stroke", "currentColor");
+          [...svg.querySelectorAll(".ionicon-fill-none")].map((el) =>
+            el.setAttribute("fill", "none")
+          );
+          [...svg.querySelectorAll(".ionicon-stroke-width")].map((el) =>
+            el.setAttribute("stroke-width", "32px")
+          );
+        },
+      });
+    </script>
 
     <link href="/static/css/main.css" rel="stylesheet" />
     <link href="/static/css/light.css" rel="stylesheet" />
     <link href="/static/css/dark.css" rel="stylesheet" />
+    <link href="/static/css/output.css" rel="stylesheet" />
 
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/native/dialog.css"
+    />
     <link
       rel="icon"
       type="image/png"
@@ -33,10 +61,6 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
     <title>{% block title %}{% endblock title %}</title>
     <script src="/static/js/fetch.js"></script>
@@ -50,127 +74,34 @@
 
   <body>
     <wa-page mobile-breakpoint="920"
-      ><header slot="header">
-        <div class="wa-split">
-          <div class="wa-cluster">
-            <wa-icon-button
-              name="bars"
-              label="Menu"
-              data-toggle-nav
-            ></wa-icon-button>
-            <a class="wa-heading-l">NB Golf</a>
-            <a
-              class="wa-desktop-only wa-heading-m"
-              href="{{ url_for('courseranking_bp.course_rankings') }}"
-              >Course Rankings</a
-            >
-            <a
-              class="wa-desktop-only wa-heading-m"
-              href="{{ url_for('strokes_bp.calculate_strokes') }}"
-              >Calculate Strokes</a
-            >
-            <a
-              class="wa-desktop-only wa-heading-m"
-              href="{{ url_for('viewplayers_bp.view_players') }}"
-              >View Players</a
-            >
-          </div>
-          <div class="wa-cluster wa-desktop-only">
-            <nb-theme-selector></nb-theme-selector>
-            {% if current_user.is_authenticated %}
-            <wa-dropdown
-              ><wa-button
-                id="user-button"
-                appearance="plain"
-                slot="trigger"
-                caret
-                >{{ current_user.username }}</wa-button
-              ><wa-menu id="user-dropdown-selector">
-                {% if current_user.is_authenticated and current_user.id == 3 or
-                current_user.id == 11 %}<wa-menu-item
-                  ><a href="{{ url_for('admin_bp.hijack') }}"
-                    >Hijack Handicap</a
-                  ></wa-menu-item
-                ><wa-menu-item
-                  ><a href="{{ url_for('admin_bp.edit_courses') }}"
-                    >Edit Courses</a
-                  ></wa-menu-item
-                ><wa-menu-item
-                  ><a href="{{ url_for('admin_bp.subscribers') }}"
-                    >Subscribers</a
-                  ></wa-menu-item
-                >{% endif %}
-                <wa-menu-item
-                  ><a href="{{ url_for('profile_bp.profile') }}"
-                    >Profile</a
-                  ></wa-menu-item
-                ><wa-menu-item
-                  ><a href="{{ url_for('auth_bp.logout') }}"
-                    >Logout</a
-                  ></wa-menu-item
-                >
-              </wa-menu></wa-dropdown
-            >
-            {% else %}
-            <a href="{{ url_for('auth_bp.login') }}">Login</a>
-            {% endif %}
-          </div>
-        </div>
-      </header>
-      <nav slot="navigation" class="wa-mobile-only">
-        <a class="wa-heading-l">NB Golf</a>
-        <a
-          class="wa-heading-m"
-          href="{{ url_for('courseranking_bp.course_rankings') }}"
-          >Course Rankings</a
+      >{% include "navbar.html" %}
+      <main class="wa-stack wa-align-items-center">
+        <wa-dialog label="Add Round body" with-header
+          ><form action="${ADD_ROUND_URL}" method="POST" class="wa-stack">
+            <wa-select
+              id="course"
+              name="course"
+              label="Select a course"
+              @wa-input="${this.handleCourseSelect}"
+              hoist
+              required
+            ></wa-select>
+            <wa-select
+              id="teebox"
+              name="teebox"
+              label="Select a teebox"
+              hoist
+              disabled
+              required
+            ></wa-select>
+            <small>
+              <span>Don't see the course you're looking for?</span>
+              <a href="${ADD_COURSE_URL}">Add a course here</a>
+            </small>
+          </form></wa-dialog
         >
-        <a
-          class="wa-heading-m"
-          href="{{ url_for('strokes_bp.calculate_strokes') }}"
-          >Calculate Strokes</a
-        >
-        <a
-          class="wa-heading-m"
-          href="{{ url_for('viewplayers_bp.view_players') }}"
-          >View Players</a
-        >
-
-        <nb-theme-selector></nb-theme-selector>
-        {% if current_user.is_authenticated %}
-        <wa-dropdown
-          ><wa-button id="user-button" appearance="plain" slot="trigger" caret
-            >{{ current_user.username }}</wa-button
-          ><wa-menu id="user-dropdown-selector">
-            {% if current_user.is_authenticated and current_user.id == 3 or
-            current_user.id == 11 %}<wa-menu-item
-              ><a href="{{ url_for('admin_bp.hijack') }}"
-                >Hijack Handicap</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a href="{{ url_for('admin_bp.edit_courses') }}"
-                >Edit Courses</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a href="{{ url_for('admin_bp.subscribers') }}"
-                >Subscribers</a
-              ></wa-menu-item
-            >{% endif %}
-            <wa-menu-item
-              ><a href="{{ url_for('profile_bp.profile') }}"
-                >Profile</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a href="{{ url_for('auth_bp.logout') }}"
-                >Logout</a
-              ></wa-menu-item
-            >
-          </wa-menu></wa-dropdown
-        >
-        {% else %}
-        <a href="{{ url_for('auth_bp.login') }}">Login</a>
-        {% endif %}
-      </nav>
-      <main>{% block content %}{% endblock content %}</main></wa-page
+        {% block content %}{% endblock content %}
+      </main></wa-page
     >
 
     <div class="container py-5 mb-5 h-100">
@@ -185,4 +116,28 @@
       {% endwith %}
     </div>
   </body>
+  <wa-dialog label="Add Round doc" with-header
+    ><form action="${ADD_ROUND_URL}" method="POST" class="wa-stack">
+      <wa-select
+        id="course"
+        name="course"
+        label="Select a course"
+        @wa-input="${this.handleCourseSelect}"
+        hoist
+        required
+      ></wa-select>
+      <wa-select
+        id="teebox"
+        name="teebox"
+        label="Select a teebox"
+        hoist
+        disabled
+        required
+      ></wa-select>
+      <small>
+        <span>Don't see the course you're looking for?</span>
+        <a href="${ADD_COURSE_URL}">Add a course here</a>
+      </small>
+    </form></wa-dialog
+  >
 </html>

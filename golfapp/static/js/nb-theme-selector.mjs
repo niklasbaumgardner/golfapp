@@ -55,7 +55,7 @@ export class ThemeSelector extends NikElement {
       button.checked = button.id === this.theme;
     }
 
-    this.icon.name = this.theme === "dark" ? "moon" : "sun";
+    this.icon.name = this.theme === "dark" ? "moon-outline" : "sunny-outline";
 
     if (!(options?.dontSend === true)) {
       fetch(THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
@@ -68,7 +68,7 @@ export class ThemeSelector extends NikElement {
   }
 
   getThemeIconName() {
-    return this.theme === "dark" ? "moon" : "sun";
+    return this.theme === "dark" ? "moon-outline" : "sunny-outline";
   }
 
   render() {
@@ -80,7 +80,11 @@ export class ThemeSelector extends NikElement {
         slot="trigger"
         caret
       >
-        <wa-icon id="icon" name="${this.getThemeIconName()}"></wa-icon>
+        <wa-icon
+          id="icon"
+          library="ion"
+          name="${this.getThemeIconName()}"
+        ></wa-icon>
       </wa-button>
 
       <wa-menu id="theme-selector">

@@ -27,7 +27,7 @@ def index():
 
     return render_template(
         "view_player.html",
-        user=current_user,
+        user=current_user.to_dict(),
         rounds=rounds,
         courses=courses,
         handicap=handicap,
@@ -140,7 +140,7 @@ def view_player(id):
     user = user_queries.get_user_by_id(user_id=id)
     return render_template(
         "view_player.html",
-        user=user,
+        user=user.to_dict(),
         rounds=rounds,
         courses=courses,
         handicap=handicap,

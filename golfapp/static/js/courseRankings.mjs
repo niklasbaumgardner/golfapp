@@ -129,12 +129,14 @@ class RankingsGridManager {
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.getAttribute("data-bs-theme");
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
     this.rankingsGridEl.classList.toggle(
-      "ag-theme-quartz-dark",
+      "ag-theme-alpine-dark",
       theme === "dark"
     );
-    this.rankingsGridEl.classList.toggle("ag-theme-quartz", theme === "light");
+    this.rankingsGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 }
 

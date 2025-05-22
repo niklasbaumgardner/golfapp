@@ -1,77 +1,25 @@
-{% extends "base.html" %}
-
-{% block title %}View Rounds{% endblock title %}
-{% block home %}active{% endblock home %}
-
-
-{% block content %}
+{% extends "base.html" %} {% block title %}View Rounds{% endblock title %} {%
+block home %}active{% endblock home %} {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 <script>
-    const EDIT_ROUND_URL = "{{ url_for('viewplayer_bp.edit_round', id=0) }}".slice(0, -1);
-    const DELETE_ROUND_URL = "{{ url_for('viewplayer_bp.delete_round', id=0) }}".slice(0, -1);
-    const VIEW_PLAYER_URL = "{{ url_for('viewplayer_bp.view_player', id=0) }}".slice(0, -1);
-    const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
-    const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
-    const COURSES = {{ courses|tojson }};
-    const IS_ME = "{{ is_me }}" === "True";
-    const ROUNDS = {{ rounds|tojson }};
+  const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
+  const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
+  const COURSES = {{ courses|tojson }};
+  const IS_ME = "{{ is_me }}" === "True";
+  const ROUNDS = {{ rounds|tojson }};
+  const USER = {{ user|tojson }};
 
-    const STATS_URL = "{{ url_for('stats_bp.get_stats_data', id=user.id) }}"
+  const STATS_URL = "{{ url_for('stats_bp.get_stats_data', id=user.id) }}"
 </script>
-<script src="/static/js/nouislider.js"></script>
-<link href="/static/css/nouislider.min.css" rel="stylesheet">
 
-<div class="row mb-5 text-center">
-    <div class="fw-bold fs-1">
-        {% if is_me %}
-            Your handicap is <span id="handicap">{{ handicap }}</span>
-        {% else %}
-            {{ user.username }}'s handicap is {{ handicap }}
-        {% endif %}
-    </div>
-    <div class="row">
-        <div class="col">
-            {% if is_me %}
-                <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View my course ranking</a>
-            {% else %}
-                <a href="{{ url_for('courseranking_bp.course_ranking', user_id=user.id) }}">View course ranking</a>
-            {% endif %}
-        </div>
-        {% if is_me %}
-            <div class="col text-end">
-                <wa-button id="addNewRoundButton" variant="success">Add new round</sl-button>
-            </div>
-        {% endif %}
-    </div>
-    <!-- <div class="m-2">
-        Show your handicap on the <a href="{{ url_for('viewplayers_bp.view_players') }}">View Players</a> page?
-        <div class="form-check form-switch ms-3" style="display:inline-block;">
-            <input class="form-check-input" type="checkbox" id="showHandicapToggle" {% if is_visible %}checked{% endif %}>
-            <label class="form-check-label" for="showHandicapToggle"></label>
-        </div>
-    </div> -->
-    <!-- <div class="row my-5" style="min-height: 400px;">
-        <canvas id="rounds-graph"></canvas>
-    </div> -->
-</div>
+<nb-view-player
+  rounds='{{ rounds|tojson }}'
+  user='{{ user|tojson }}'
+  isMe='{{ "{{ is_me }}" == "True" }}'
+  handicap="{{ handicap }}"
+  theme="{{ theme }}"
+></nb-view-player>
 
-<stats-card class="mb-5"></stats-card>
-
-<div class="d-flex justify-content-center">
-    <div id="roundsGrid" style="height: 800px;width: {% if is_me %}1051px{% else %}952px{% endif %};" class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"></div>
-</div>
-
-<add-round></add-round>
-
-
-<div id="deleteModals"></div>
-
-
-
-<script src="/static/js/setdate.js" defer></script>
-<script src="/static/js/viewPlayer.mjs" type="module"></script>
-<script src="/static/js/addRoundEl.mjs" type="module"></script>
-<script src="/static/js/deleteRoundEl.mjs" type="module"></script>
-<script src="/static/js/statsCard.mjs" type="module"></script>
+<script src="/static/js/nb-view-player.mjs" type="module"></script>
 
 {% endblock content %}
