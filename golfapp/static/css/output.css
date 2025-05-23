@@ -3,12 +3,9 @@
 @layer theme, utilities;
 @layer theme {
   :root, :host {
-    --color-green-500: oklch(72.3% 0.219 149.579);
     --spacing: 0.25rem;
     --text-6xl: 3.75rem;
     --text-6xl--line-height: 1;
-    --default-transition-duration: 150ms;
-    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 @layer utilities {

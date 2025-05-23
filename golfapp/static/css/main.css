@@ -30,12 +30,12 @@ span.rating-by-user {
   display: inline-grid;
 }
 
-/* wa-card {
-  width: fit-content;
-} */
+html {
+  --nb-content-width: 1002px;
+}
 
 #content {
-  width: min(1102px, 100%);
+  width: min(var(--nb-content-width), 100%);
 }
 
 nb-players-grid {
