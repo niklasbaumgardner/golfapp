@@ -141,7 +141,7 @@ export class AddRound extends NikElement {
             >
           </wa-radio-group>
         </div>
-        <div class="wa-cluster">
+        <div class="flex gap-(--wa-space-m)">
           <wa-input
             id="score"
             name="score"
@@ -152,26 +152,26 @@ export class AddRound extends NikElement {
           ></wa-input
           >${this.dateTemplate()}
         </div>
-        <div class="wa-cluster">
+        <div class="flex gap-(--wa-space-m) flex-nowrap">
           <wa-input
             id="fir"
             name="fir"
             type="number"
-            class="max-w-3/10"
+            class="min-w-0"
             label="FIR"
           ></wa-input>
           <wa-input
             id="gir"
             name="gir"
             type="number"
-            class="max-w-3/10"
+            class="min-w-0"
             label="GIR"
           ></wa-input>
           <wa-input
             id="putts"
             name="putts"
             type="number"
-            class="max-w-3/10"
+            class="min-w-0"
             label="Putts"
           ></wa-input>
         </div>

@@ -3,19 +3,11 @@ viewplayers %}active{% endblock viewplayers %} {% block content %}
 
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 
-<script>
-  const PLAYERS = {{ users|tojson }};
-</script>
+<nb-view-players
+  players='{{ users|tojson }}'
+  theme="{{ theme }}"
+></nb-view-players>
 
-<wa-card>
-  <h2>All Players</h2>
-  <div
-    id="playersGrid"
-    style="width: 700px; height: 900px"
-    class="{% if theme == 'dark' %}ag-theme-quartz-dark{% else %}ag-theme-quartz{% endif %}"
-  ></div>
-</wa-card>
-
-<script src="/static/js/viewPlayers.mjs" type="module"></script>
+<script src="/static/js/nb-view-players.mjs" type="module"></script>
 
 {% endblock content %}

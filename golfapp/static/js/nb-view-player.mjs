@@ -3,7 +3,6 @@ import { html } from "./imports.mjs";
 import "./nb-rounds-grid.mjs";
 import "./nb-player-stats.mjs";
 import "./nb-add-round.mjs";
-// import "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/components/dialog/dialog.js";
 
 class ViewPlayer extends NikElement {
   static properties = {

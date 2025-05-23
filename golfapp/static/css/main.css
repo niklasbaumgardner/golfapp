@@ -34,8 +34,12 @@ span.rating-by-user {
   width: fit-content;
 } */
 
-nb-view-player {
+#content {
   width: min(1102px, 100%);
+}
+
+nb-players-grid {
+  display: block;
 }
 
 nb-round-actions {

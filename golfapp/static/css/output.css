@@ -83,6 +83,15 @@
   .max-w-3\/10 {
     max-width: calc(3/10 * 100%);
   }
+  .min-w-0 {
+    min-width: calc(var(--spacing) * 0);
+  }
+  .flex-shrink {
+    flex-shrink: 1;
+  }
+  .shrink {
+    flex-shrink: 1;
+  }
   .flex-grow {
     flex-grow: 1;
   }
@@ -104,11 +113,23 @@
   .flex-col {
     flex-direction: column;
   }
+  .flex-nowrap {
+    flex-wrap: nowrap;
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
   .justify-between {
     justify-content: space-between;
   }
   .justify-center {
     justify-content: center;
+  }
+  .gap-\(--wa-space-m\) {
+    gap: var(--wa-space-m);
+  }
+  .gap-1 {
+    gap: calc(var(--spacing) * 1);
   }
   .rounded {
     border-radius: 0.25rem;

@@ -22,7 +22,13 @@ def get_visible_users():
 
 
 def get_users_with_handicap():
-    return User.query.where(Handicap.query.filter_by(user_id=User.id).exists()).all()
+    return (
+        User.query.filter_by(is_publicly_visible=True)
+        .where(
+            Handicap.query.filter_by(user_id=User.id).exists(),
+        )
+        .all()
+    )
 
 
 def get_users():

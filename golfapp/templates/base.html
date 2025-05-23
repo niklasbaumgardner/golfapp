@@ -76,31 +76,7 @@
     <wa-page mobile-breakpoint="920"
       >{% include "navbar.html" %}
       <main class="wa-stack wa-align-items-center">
-        <wa-dialog label="Add Round body" with-header
-          ><form action="${ADD_ROUND_URL}" method="POST" class="wa-stack">
-            <wa-select
-              id="course"
-              name="course"
-              label="Select a course"
-              @wa-input="${this.handleCourseSelect}"
-              hoist
-              required
-            ></wa-select>
-            <wa-select
-              id="teebox"
-              name="teebox"
-              label="Select a teebox"
-              hoist
-              disabled
-              required
-            ></wa-select>
-            <small>
-              <span>Don't see the course you're looking for?</span>
-              <a href="${ADD_COURSE_URL}">Add a course here</a>
-            </small>
-          </form></wa-dialog
-        >
-        {% block content %}{% endblock content %}
+        <div id="content">{% block content %}{% endblock content %}</div>
       </main></wa-page
     >
 
@@ -116,28 +92,4 @@
       {% endwith %}
     </div>
   </body>
-  <wa-dialog label="Add Round doc" with-header
-    ><form action="${ADD_ROUND_URL}" method="POST" class="wa-stack">
-      <wa-select
-        id="course"
-        name="course"
-        label="Select a course"
-        @wa-input="${this.handleCourseSelect}"
-        hoist
-        required
-      ></wa-select>
-      <wa-select
-        id="teebox"
-        name="teebox"
-        label="Select a teebox"
-        hoist
-        disabled
-        required
-      ></wa-select>
-      <small>
-        <span>Don't see the course you're looking for?</span>
-        <a href="${ADD_COURSE_URL}">Add a course here</a>
-      </small>
-    </form></wa-dialog
-  >
 </html>
