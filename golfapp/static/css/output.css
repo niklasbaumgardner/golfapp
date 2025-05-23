@@ -56,9 +56,6 @@
   .hidden\! {
     display: none !important;
   }
-  .table-column {
-    display: table-column;
-  }
   .min-h-20 {
     min-height: calc(var(--spacing) * 20);
   }

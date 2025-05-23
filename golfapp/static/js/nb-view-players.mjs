@@ -11,24 +11,7 @@ export class ViewPlayers extends NikElement {
 
   static queries = { card: "wa-card" };
 
-  constructor() {
-    super();
-
-    this.gridReady = false;
-  }
-
-  async firstUpdated() {
-    await this.updateComplete;
-
-    await this.card.updateComplete;
-    this.gridReady = true;
-  }
-
   playersTemplate() {
-    if (!this.gridReady) {
-      return null;
-    }
-
     return html`<nb-players-grid
       .players=${this.players}
       theme=${this.theme}
