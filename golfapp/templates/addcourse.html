@@ -1,27 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %}Add Course{% endblock title %}
-{% block addcourse %}active{% endblock addcourse %}
-
-
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Add Course{% endblock title %} {%
+block addcourse %}active{% endblock addcourse %} {% block content %}
 <script>
-    const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
-    const ADD_TEEBOX_URL = "{{ url_for('addcourse_bp.add_teebox') }}";
-    const COURSES = {{ courses|tojson }};
-    COURSES.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-    });
-    const COURSE_NAMES = COURSES.map(c => c.name);
+  const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
+  const ADD_TEEBOX_URL = "{{ url_for('addcourse_bp.add_teebox') }}";
 </script>
 
-    <div class="row justify-content-center align-items-center">
-        <div class="col-12 col-md-8 col-lg-6">
-            <add-course-el></add-course-el>
-        </div>
-    </div>
+<nb-add-course courses='{{ courses|tojson }}'></nb-add-course>
 
-<script src="/static/js/addCourse.mjs" type="module"></script>
+<script src="/static/js/nb-add-course.mjs" type="module"></script>
 
 {% endblock content %}
