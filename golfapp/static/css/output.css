@@ -32,6 +32,9 @@
   .me-1 {
     margin-inline-end: calc(var(--spacing) * 1);
   }
+  .mt-\(--wa-space-m\)\! {
+    margin-top: var(--wa-space-m) !important;
+  }
   .mt-3 {
     margin-top: calc(var(--spacing) * 3);
   }
@@ -94,6 +97,12 @@
   }
   .gap-\(--wa-space-m\) {
     gap: var(--wa-space-m);
+  }
+  .gap-\(--wa-space-s\) {
+    gap: var(--wa-space-s);
+  }
+  .self-start {
+    align-self: flex-start;
   }
   .rounded {
     border-radius: 0.25rem;

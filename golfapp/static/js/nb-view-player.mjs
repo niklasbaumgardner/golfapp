@@ -60,7 +60,7 @@ class ViewPlayer extends NikElement {
         ${this.titleTemplate()}${this.statsTemplate()}
         <div class="wa-split">
           <a href=${USER.course_ranking_url}
-            >${IS_ME ? "My" : USER.username}course rankings</a
+            >${IS_ME ? "My" : USER.username} course ratings</a
           >
           <wa-button
             variant="success"

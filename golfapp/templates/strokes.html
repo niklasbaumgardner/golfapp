@@ -1,18 +1,14 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Strokes{% endblock title %} {% block
+strokes %}active{% endblock strokes %} {% block content %} {% if courses %}
+<script>
+  const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
+</script>
+{% endif %}
 
-{% block title %}Strokes{% endblock title %}
-{% block strokes %}active{% endblock strokes %}
+<nb-calculate-strokes
+  courses='{{ courses|tojson }}'
+  players='{{ users|tojson }}'
+></nb-calculate-strokes>
 
-
-
-{% block content %}
-    {% if courses %}
-        <script>
-            const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
-        </script>
-    {% endif %}
-
-    <strokes-card courses='{{ courses|tojson }}' players='{{ users|tojson }}'></strokes-card>
-
-    <script src="/static/js/strokesCard.mjs" type="module"></script>
+<script src="/static/js/nb-calculate-strokes.mjs" type="module"></script>
 {% endblock content %}
