@@ -34,7 +34,7 @@ class User(db.Model, UserMixin, SerializerMixin):
         return url_for("viewplayer_bp.view_player", id=self.id)
 
     def course_ranking_url(self):
-        return url_for("courseranking_bp.course_ranking", id=self.id)
+        return url_for("courseranking_bp.course_ranking", user_id=self.id)
 
     def get_reset_token(self):
         s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
