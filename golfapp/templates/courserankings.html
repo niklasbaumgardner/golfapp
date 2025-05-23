@@ -2,20 +2,12 @@
 %} {% block courserankings %}active{% endblock courserankings %} {% block
 content %}
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
-<script>
-  const COURSE_RANKING_USER_URL = "{{ url_for('courseranking_bp.course_ranking', user_id=0) }}";
-  const COURSE_RANKINGS_ARRAY = {{ course_rankings|tojson }};
-</script>
 
-<wa-card style="width: 1000px">
-  <h2>Course Ratings</h2>
-  <div
-    id="rankingsGrid"
-    style="width: 100%; height: 900px"
-    class="{% if theme == 'dark' %}ag-theme-alpine-dark{% else %}ag-theme-alpine{% endif %}"
-  ></div
-></wa-card>
+<nb-course-ratings
+  ratings='{{ course_rankings|tojson }}'
+  theme="{{ theme }}"
+></nb-course-ratings>
 
-<script src="/static/js/courseRankings.mjs" type="module"></script>
+<script src="/static/js/nb-course-ratings.mjs" type="module"></script>
 
 {% endblock content %}
