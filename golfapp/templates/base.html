@@ -65,9 +65,19 @@
     <title>{% block title %}{% endblock title %}</title>
     <script src="/static/js/fetch.js"></script>
     <script type="module" src="/static/js/nb-theme-selector.mjs"></script>
+    <script src="/static/js/nb-login.mjs" type="module"></script>
+    <!-- <script src="/static/js/nb-signup.mjs" type="module"></script> -->
   </head>
 
   <script>
+    const LOGIN_URL = "{{ url_for('auth_bp.login') }}";
+    const SIGNUP_URL = "{{ url_for('auth_bp.signup') }}";
+    const PASSWORD_RESET_REQUEST_URL =
+      "{{ url_for('auth_bp.password_request') }}";
+    const PROFILE_URL = "{{ url_for('profile_bp.profile') }}";
+    const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
+    const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
+
     const THEME_URL = "{{ url_for('theme_bp.set_theme') }}";
     const THEME = "{{ theme }}";
   </script>

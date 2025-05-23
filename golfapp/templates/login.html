@@ -1,53 +1,7 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Login In{% endblock title %} {% block
+login %}active{% endblock login %} {% block content %}
 
-{% block title %}Login In{% endblock title %}
-{% block login %}active{% endblock login %}
-
-
-{% block content %}
-<link href="/static/css/nb-input.css" rel="stylesheet"/>
-
-<div class="row justify-content-center align-items-center">
-    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <wa-card>
-            <div class="row" slot="header">
-                <div class="fs-4">
-                    Login
-                </div>
-                <div>
-                    Please enter your email and password
-                </div>
-            </div>
-            <div class="mb-2">
-                <form action="{{ url_for('auth_bp.login', next=request.args.get('next', '')) }}" method="POST">
-                    <div class="nb-row">
-                        <div>
-                            <label>Email *</label>
-                            <div>
-                                <input class="nb-input" type="email" name="email" label="Email" placeholder="Your email" required/>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <label>Password *</label>
-                                <div>
-                                    <input class="nb-input mb-2" type="password" name="password" label="Password" placeholder="Your password" required/>
-                                </div>
-                            </div>
-                            <wa-checkbox name="remember" value="True" checked>Remember me?</sl-checkbox>
-                        </div>
-                        <div class="w-100">
-                            <!-- This submit button is hidden so "Enter" will submit the form -->
-                            <button type="submit" hidden></button>
-                            <wa-button class="w-100 mb-2" type="submit" variant="primary">Login</sl-button>
-                            <p class="small"><a href="{{ url_for('auth_bp.password_request') }}">Forgot password?</a></p>
-                        </div>
-                    </div>
-                </form>
-                <p class="mb-0">Don't have an account? <a href="{{ url_for('auth_bp.signup') }}">Sign Up</a></p>
-            </div>
-        </sl-card>
-    </div>
-</div>
+<nb-login class="auth-card" email="{{ email }}"></nb-login>
+<div class="hidden"></div>
 
 {% endblock content %}
