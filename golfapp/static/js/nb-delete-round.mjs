@@ -15,9 +15,11 @@ export class DeleteRound extends NikElement {
   }
 
   show() {
-    this.updateComplete.then(() => {
-      this.dialogEl.updateComplete.then(() => {
-        this.dialogEl.open = true;
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialogEl.updateComplete.then(() => {
+          this.dialogEl.open = true;
+        });
       });
     });
   }

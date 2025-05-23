@@ -1,41 +1,6 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Sign Up{% endblock title %} {% block
+content %}
 
-{% block title %}Sign Up{% endblock title %}
+<nb-signup class="auth-card" email="{{ email }}"></nb-signup>
 
-
-{% block content %}
-    <script>
-        const USERNAME_UNIQUE_URL = "{{ url_for('auth_bp.username_unique') }}";
-        const EMAIL_UNIQUE_URL = "{{ url_for('auth_bp.email_unique') }}";
-    </script>
-
-    <div class="row justify-content-center align-items-center">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <wa-card>
-                <div class="row" slot="header">
-                    <div class="fs-4">
-                        Sign up
-                    </div>
-                    <div>
-                        Please enter your email, a username, and a password
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <form action="{{ url_for('auth_bp.signup') }}" method="POST">
-                        <div class="nb-row">
-                            <wa-input {% if email %}value="{{ email }}"{% endif %} placeholder="Your email" type="email" label="Email" id="email" name="email" required></sl-input>
-                            <wa-input placeholder="Your username" label="Username" id="username" name="username" required></sl-input>
-                            <wa-input type="password" label="Password" id="password1" name="password1" placeholder="Password" required></sl-input>
-                            <wa-input type="password" label="Confirm Password" id="password2" name="password2" placeholder="Password" required></sl-input>
-                            <wa-button id="submitButton" class="w-100" variant="primary" type="submit">Sign up</sl-button>
-                        </div>
-                    </form>
-                </div>
-            </sl-card>
-        </div>
-    </div>
-
-
-    <script src="/static/js/checkUserUnique.js"></script>
-    <script src="/static/js/checkPassword.js"></script>
 {% endblock content %}

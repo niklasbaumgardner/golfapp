@@ -13,12 +13,6 @@ class ViewPlayer extends NikElement {
     theme: { type: String },
   };
 
-  static queries = {
-    input: "sl-input",
-    popup: "sl-popup",
-    menu: "sl-menu",
-  };
-
   connectedCallback() {
     super.connectedCallback();
 

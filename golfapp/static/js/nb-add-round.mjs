@@ -24,13 +24,16 @@ export class AddRound extends NikElement {
       dialogEl: "wa-dialog",
       courseSelectEl: "#course",
       teeboxSelectEl: "#teebox",
+      addRoundButton: "#add-round-button",
     };
   }
 
   show() {
-    this.updateComplete.then(() => {
-      this.dialogEl.updateComplete.then(() => {
-        this.dialogEl.open = true;
+    customElements.whenDefined("wa-dialog").then(() => {
+      this.updateComplete.then(() => {
+        this.dialogEl.updateComplete.then(() => {
+          this.dialogEl.open = true;
+        });
       });
     });
   }
@@ -93,6 +96,11 @@ export class AddRound extends NikElement {
       label="Date"
       required
     ></wa-input>`;
+  }
+
+  handleAddRoundClick() {
+    this.addRoundButton.disabled = true;
+    this.addRoundButton.loading = true;
   }
 
   render() {
@@ -186,10 +194,12 @@ export class AddRound extends NikElement {
           >Cancel</wa-button
         >
         <wa-button
+          id="add-round-button"
           form="add-round-form"
           type="submit"
           class="grow"
           variant="success"
+          @click=${this.handleAddRoundClick}
           >Add round</wa-button
         >
       </div></wa-dialog

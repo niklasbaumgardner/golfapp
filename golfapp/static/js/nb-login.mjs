@@ -100,7 +100,6 @@ export class LoginCard extends NikElement {
           type="password"
           name="password"
           placeholder="Your password"
-          maxlength="60"
           required
         ></wa-input>
 

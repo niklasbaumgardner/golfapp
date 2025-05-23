@@ -53,7 +53,12 @@ nb-round-actions {
   }
 }
 
-/* I don't know why this is needed, but it is */
-wa-dialog::part(dialog) {
-  color: inherit;
+.auth-card {
+  display: flex;
+  justify-content: center;
+
+  wa-card {
+    max-width: 100%;
+    width: 27rem;
+  }
 }

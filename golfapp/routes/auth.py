@@ -18,11 +18,6 @@ def login():
         email = email.strip()
         return render_template("login.html", email=email)
 
-    def get_url_for_route(route, args):
-        if route == "accept_budget":
-            token = args.replace("?token=", "")
-            return url_for("sharebudget_bp.accept_budget", token=token)
-
     email = request.form.get("email")
     password = request.form.get("password")
     remember = request.form.get("remember")
@@ -35,17 +30,11 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             remember = True if remember == "True" else False
             login_user(user, remember=remember)
-            print(email, "next", request.args.get("next"))
-            next_list = request.args.get("next").strip("/").split("/")
-            next = next_list[0]
-            if next:
-                try:
-                    if len(next_list) > 1:
-                        args = next_list[1]
-                    return redirect(get_url_for_route(next, args))
-                except:
-                    pass
-            return redirect(url_for("viewplayer_bp.index"))
+
+            next_url = request.args.get("next")
+            if not next_url:
+                next_url = url_for("viewplayer_bp.index")
+            return redirect(next_url)
 
         elif user:
             flash("Password was incorrect. Try again", "danger")
