@@ -20,7 +20,7 @@ class RoundActions extends NikElement {
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
       <wa-button
-        appearance="filled outline"
+        appearance="outlined"
         variant="danger"
         size="small"
         @click=${this.handleDeleteClick}
@@ -50,6 +50,8 @@ export class RoundsGrid extends NikElement {
   }
 
   async init() {
+    document.addEventListener("UpdateRounds", this);
+
     await this.updateComplete;
 
     this.createDataGrid();
@@ -196,7 +198,7 @@ export class RoundsGrid extends NikElement {
       paginationPageSizeSelector: false,
       getRowClass: (param) => {
         if (param.data.isIncluded) {
-          return "bg-success-subtle";
+          return "bg-(--wa-color-success-fill-quiet)!";
         }
       },
     };

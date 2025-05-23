@@ -129,12 +129,6 @@ def view_player(id):
         r.to_dict() for r in round_queries.get_rounds_for_user_id(user_id=id, sort=True)
     ]
 
-    handicap = handicap_queries.get_handicap_for_user_id(user_id=id)
-    if handicap:
-        handicap = str(handicap)
-    else:
-        handicap = "No handicap"
-
     courses = {c.id: c.to_dict() for c in course_queries.get_courses()}
     rounds = handicap_helpers.get_included_rounds(rounds)
     user = user_queries.get_user_by_id(user_id=id)
@@ -143,5 +137,4 @@ def view_player(id):
         user=user.to_dict(),
         rounds=rounds,
         courses=courses,
-        handicap=handicap,
     )

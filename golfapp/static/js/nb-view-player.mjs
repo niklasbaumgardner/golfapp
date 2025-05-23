@@ -13,19 +13,37 @@ class ViewPlayer extends NikElement {
     theme: { type: String },
   };
 
+  get hasHandicap() {
+    return this.user.handicap && this.user.handicap.handicap;
+  }
+
+  get handicapString() {
+    return this.user.handicap.handicap_str ?? "no handicap";
+  }
+
   connectedCallback() {
     super.connectedCallback();
 
     document.addEventListener("UpdateHandicap", (e) => {
-      this.handicap = e.detail.handicap;
+      console.log(e.detail);
+      this.handicap = e.detail;
     });
   }
 
   titleTemplate() {
-    if (this.isMe) {
-      return html`<h2>Your handicap is ${this.handicap}</h2>`;
+    if (this.hasHandicap) {
+      if (this.isMe) {
+        return html`<h2>Your handicap is ${this.handicapString}</h2>`;
+      }
+      return html`<h2>
+        ${this.user.username}'s handicap is ${this.handicapString}
+      </h2>`;
+    } else {
+      if (this.isMe) {
+        return html`<h2>You have ${this.handicapString}</h2>`;
+      }
+      return html`<h2>${this.user.username} has ${this.handicapString}</h2>`;
     }
-    return html`<h2>${this.user.username}'s handicap is ${this.handicap}</h2>`;
   }
 
   statsTemplate() {
