@@ -1,6 +1,5 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
-import { postRequest } from "./fetch.mjs";
 
 export class DeleteRound extends NikElement {
   static properties = {
@@ -29,9 +28,12 @@ export class DeleteRound extends NikElement {
   }
 
   async handleDelete() {
+    this.deleteButton.disabled = true;
     this.deleteButton.loading = true;
 
-    let response = await postRequest(this.round.delete_round_url, {});
+    let response = await fetch(this.round.delete_round_url, {
+      method: "POST",
+    });
     let jsonResponse = await response.json();
 
     document.dispatchEvent(
