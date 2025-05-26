@@ -7,7 +7,6 @@ from golfapp.utils import handicap_helpers
 def create_round(
     course_id, teebox_id, score, score_diff, nine_hole_round, fir, gir, putts, date
 ):
-
     round = Round(
         user_id=current_user.get_id(),
         course_id=course_id,
@@ -34,7 +33,7 @@ def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None
 
     should_update_handicap = False
 
-    if score is not None:
+    if score is not None and score != round.score:
         round.score = score
 
         score_diff = handicap_helpers.get_score_diff(
@@ -47,11 +46,11 @@ def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None
 
         should_update_handicap = True
 
-    if fir is not None:
+    if fir is not None and fir != round.fir:
         round.fir = fir
-    if gir is not None:
+    if gir is not None and gir != round.gir:
         round.gir = gir
-    if putts is not None:
+    if putts is not None and putts != round.putts:
         round.putts = putts
     if date is not None:
         round.date = date

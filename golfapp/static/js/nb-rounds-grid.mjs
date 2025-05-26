@@ -5,7 +5,35 @@ import "./nb-delete-round.mjs";
 class RoundActions extends NikElement {
   static properties = {
     round: { type: Object },
+    editing: { type: Boolean },
   };
+
+  get gridApi() {
+    return this.closest("nb-rounds-grid").dataGrid;
+  }
+
+  get row() {
+    let rowIndex = Array.from(
+      document.querySelectorAll("nb-round-actions")
+    ).findIndex((el) => el === this);
+
+    return rowIndex + this.gridApi.paginationGetCurrentPage() * 20;
+  }
+
+  handleDoneEditing() {
+    this.editing = false;
+    this.gridApi.stopEditing();
+  }
+
+  handleEditClick() {
+    this.editing = true;
+
+    this.gridApi.setFocusedCell(this.row, "score");
+    this.gridApi.startEditingCell({
+      rowIndex: this.row,
+      colKey: "score",
+    });
+  }
 
   handleDeleteClick() {
     if (!this.deleteRoundModal) {
@@ -18,15 +46,39 @@ class RoundActions extends NikElement {
   }
 
   render() {
-    return html`<div class="wa-cluster wa-align-items-center">
-      <wa-button
-        appearance="outlined"
-        variant="danger"
-        size="small"
-        @click=${this.handleDeleteClick}
-        >Delete</wa-button
-      >
-    </div>`;
+    if (this.editing) {
+      return html`<div class="wa-cluster wa-align-items-center">
+        <wa-button
+          appearance="outlined"
+          variant="success"
+          size="small"
+          @click=${this.handleDoneEditing}
+          >Save</wa-button
+        >
+        <wa-button
+          appearance="outlined"
+          size="small"
+          @click=${this.handleDoneEditing}
+          >Cancel</wa-button
+        >
+      </div>`;
+    } else {
+      return html`<div class="wa-cluster wa-align-items-center">
+        <wa-button
+          appearance="outlined"
+          size="small"
+          @click=${this.handleEditClick}
+          >Edit</wa-button
+        >
+        <wa-button
+          appearance="outlined"
+          variant="danger"
+          size="small"
+          @click=${this.handleDeleteClick}
+          >Delete</wa-button
+        >
+      </div>`;
+    }
   }
 }
 customElements.define("nb-round-actions", RoundActions);
@@ -150,6 +202,8 @@ export class RoundsGrid extends NikElement {
     if (IS_ME) {
       columnDefs.push({
         field: "actions",
+        minWidth: 160,
+        maxWidth: 160,
         cellRenderer: (param) => {
           let actions = document.createElement("nb-round-actions");
           actions.round = param.data;
@@ -187,9 +241,11 @@ export class RoundsGrid extends NikElement {
       defaultColDef: {
         resizable: false,
       },
-      onCellEditingStopped: (event) => this.handleEvent(event),
-      rowHeight: 50,
+      onRowEditingStarted: (event) => this.handleEvent(event),
+      onRowEditingStopped: (event) => this.handleEvent(event),
+      onRowValueChanged: (event) => this.handleEvent(event),
       domLayout: "autoHeight",
+      editType: "fullRow",
       suppressCellFocus: true,
       suppressMovableColumns: true,
       pagination: true,
@@ -206,7 +262,13 @@ export class RoundsGrid extends NikElement {
 
   handleEvent(event) {
     switch (event.type) {
-      case "cellEditingStopped":
+      case "rowEditingStarted":
+        this.hanldeRowEditingStarted(event);
+        break;
+      case "rowEditingStopped":
+        this.handleRowEditingStopped(event);
+        break;
+      case "rowValueChanged":
         this.handleEditRound(event);
         break;
       case "click":
@@ -225,14 +287,12 @@ export class RoundsGrid extends NikElement {
       return;
     }
 
-    if (!event.newValue || event.newValue === event.oldValue) {
-      return;
-    }
-
     let round = event.data;
 
     let formData = new FormData();
-    formData.append(event.colDef.field, event.newValue);
+    for (let param of ["score", "fir", "gir", "putts", "date"]) {
+      formData.append(param, round[param]);
+    }
 
     let response = await fetch(round.edit_round_url, {
       method: "POST",
@@ -247,6 +307,24 @@ export class RoundsGrid extends NikElement {
     if (jsonResponse.rounds) {
       this.updateRounds(jsonResponse.rounds);
     }
+  }
+
+  hanldeRowEditingStarted(event) {
+    let row = event.rowIndex;
+    let nbRoudnActions = Array.from(
+      document.querySelectorAll("nb-round-actions")
+    ).at(row % 20);
+
+    nbRoudnActions.editing = true;
+  }
+
+  handleRowEditingStopped(event) {
+    let row = event.rowIndex;
+    let nbRoudnActions = Array.from(
+      document.querySelectorAll("nb-round-actions")
+    ).at(row % 20);
+
+    nbRoudnActions.editing = false;
   }
 
   updateHandicap(handicap) {
