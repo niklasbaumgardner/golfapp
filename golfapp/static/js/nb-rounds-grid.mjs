@@ -66,7 +66,6 @@ export class RoundsGrid extends NikElement {
     const columnDefs = [
       {
         field: "course",
-        // editable: true,
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = param.data.course;
@@ -90,7 +89,7 @@ export class RoundsGrid extends NikElement {
       {
         field: "score",
         headerName: "Score / Par",
-        editable: true,
+        editable: IS_ME,
         filter: "agNumberColumnFilter",
         cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
@@ -107,7 +106,7 @@ export class RoundsGrid extends NikElement {
       {
         field: "fir",
         headerName: "FIR",
-        editable: true,
+        editable: IS_ME,
         filter: "agNumberColumnFilter",
         cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
@@ -117,7 +116,7 @@ export class RoundsGrid extends NikElement {
       {
         field: "gir",
         headerName: "GIR",
-        editable: true,
+        editable: IS_ME,
         filter: "agNumberColumnFilter",
         cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
@@ -126,7 +125,7 @@ export class RoundsGrid extends NikElement {
       },
       {
         field: "putts",
-        editable: true,
+        editable: IS_ME,
         filter: "agNumberColumnFilter",
         cellEditor: IS_ME ? "agNumberCellEditor" : false,
         cellEditorParams: {
@@ -135,7 +134,7 @@ export class RoundsGrid extends NikElement {
       },
       {
         field: "date",
-        editable: true,
+        editable: IS_ME,
         filter: "agDateColumnFilter",
         cellEditor: IS_ME ? "agDateStringCellEditor" : false,
         cellRenderer: (param) => {

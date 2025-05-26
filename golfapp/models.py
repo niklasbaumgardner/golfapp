@@ -149,7 +149,13 @@ class Subscriber(db.Model, SerializerMixin):
 
 
 class CourseRanking(db.Model, SerializerMixin):
-    serialize_only = ("id", "user", "course", "rating")
+    serialize_only = (
+        "id",
+        "user",
+        "course",
+        "rating",
+        "edit_rating_url",
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -158,3 +164,6 @@ class CourseRanking(db.Model, SerializerMixin):
 
     user = db.relationship("User", lazy="joined")
     course = db.relationship("Course", lazy="joined")
+
+    def edit_rating_url(self):
+        return url_for("courseranking_bp.edit_rating", id=self.id)

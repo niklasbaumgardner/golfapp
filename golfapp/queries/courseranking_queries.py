@@ -18,9 +18,13 @@ def get_course_ranking(course_ranking_id):
 def get_course_rankings_for_user_id(user_id):
     return (
         CourseRanking.query.filter_by(user_id=user_id)
-        .order_by(CourseRanking.rating)
+        .order_by(CourseRanking.rating.desc())
         .all()
     )
+
+
+def get_course_ranking_by_id(id):
+    return CourseRanking.query.filter_by(id=id, user_id=current_user.id).first()
 
 
 def get_course_ranking_by_course_and_user(course_id, user_id):
