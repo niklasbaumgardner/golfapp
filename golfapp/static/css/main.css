@@ -62,3 +62,7 @@ nb-round-actions {
     width: 27rem;
   }
 }
+
+wa-page > main {
+  padding: var(--wa-space-m);
+}
