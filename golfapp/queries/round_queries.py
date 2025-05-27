@@ -25,7 +25,15 @@ def create_round(
     return round
 
 
-def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None):
+def update_round(
+    round_id,
+    score=None,
+    fir=None,
+    gir=None,
+    putts=None,
+    date=None,
+    nine_hole_round=None,
+):
     round = get_round_by_id(round_id=round_id)
 
     if not round:
@@ -52,6 +60,18 @@ def update_round(round_id, score=None, fir=None, gir=None, putts=None, date=None
         round.gir = gir
     if putts is not None and putts != round.putts:
         round.putts = putts
+    if nine_hole_round is not None and nine_hole_round != round.nine_hole_round:
+        round.nine_hole_round
+
+        score_diff = handicap_helpers.get_score_diff(
+            teebox_id=round.teebox_id,
+            score=score,
+            nine_hole_round=round.nine_hole_round,
+        )
+
+        round.score_diff = score_diff
+        should_update_handicap = True
+
     if date is not None:
         round.date = date
         should_update_handicap = True

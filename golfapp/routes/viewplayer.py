@@ -83,6 +83,7 @@ def edit_round(id):
     new_fir = request.form.get("fir", type=int)
     new_putts = request.form.get("putts", type=int)
     new_date = request.form.get("date")
+    nine_hole_round = request.form.get("nineHoleRound") == "True"
 
     should_update_handicap, round = round_queries.update_round(
         round_id=id,
@@ -91,6 +92,7 @@ def edit_round(id):
         gir=new_gir,
         putts=new_putts,
         date=new_date,
+        nine_hole_round=nine_hole_round,
     )
 
     if should_update_handicap:

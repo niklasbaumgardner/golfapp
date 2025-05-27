@@ -5,34 +5,16 @@ import "./nb-delete-round.mjs";
 class RoundActions extends NikElement {
   static properties = {
     round: { type: Object },
-    editing: { type: Boolean },
   };
 
-  get gridApi() {
-    return this.closest("nb-rounds-grid").dataGrid;
-  }
-
-  get row() {
-    let rowIndex = Array.from(
-      document.querySelectorAll("nb-round-actions")
-    ).findIndex((el) => el === this);
-
-    return rowIndex + this.gridApi.paginationGetCurrentPage() * 20;
-  }
-
-  handleDoneEditing() {
-    this.editing = false;
-    this.gridApi.stopEditing();
-  }
-
   handleEditClick() {
-    this.editing = true;
+    if (!this.editRoundModal) {
+      this.editRoundModal = document.createElement("nb-edit-round");
+      this.editRoundModal.round = this.round;
+      document.body.appendChild(this.editRoundModal);
+    }
 
-    this.gridApi.setFocusedCell(this.row, "score");
-    this.gridApi.startEditingCell({
-      rowIndex: this.row,
-      colKey: "score",
-    });
+    this.editRoundModal.show();
   }
 
   handleDeleteClick() {
@@ -46,39 +28,21 @@ class RoundActions extends NikElement {
   }
 
   render() {
-    if (this.editing) {
-      return html`<div class="wa-cluster wa-align-items-center">
-        <wa-button
-          appearance="outlined"
-          variant="success"
-          size="small"
-          @click=${this.handleDoneEditing}
-          >Save</wa-button
-        >
-        <wa-button
-          appearance="outlined"
-          size="small"
-          @click=${this.handleDoneEditing}
-          >Cancel</wa-button
-        >
-      </div>`;
-    } else {
-      return html`<div class="wa-cluster wa-align-items-center">
-        <wa-button
-          appearance="outlined"
-          size="small"
-          @click=${this.handleEditClick}
-          >Edit</wa-button
-        >
-        <wa-button
-          appearance="outlined"
-          variant="danger"
-          size="small"
-          @click=${this.handleDeleteClick}
-          >Delete</wa-button
-        >
-      </div>`;
-    }
+    return html`<div class="wa-cluster wa-align-items-center">
+      <wa-button
+        appearance="outlined"
+        size="small"
+        @click=${this.handleEditClick}
+        >Edit</wa-button
+      >
+      <wa-button
+        appearance="outlined"
+        variant="danger"
+        size="small"
+        @click=${this.handleDeleteClick}
+        >Delete</wa-button
+      >
+    </div>`;
   }
 }
 customElements.define("nb-round-actions", RoundActions);
@@ -118,6 +82,7 @@ export class RoundsGrid extends NikElement {
     const columnDefs = [
       {
         field: "course",
+        headerName: "Course - Teebox",
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = param.data.course;
@@ -141,12 +106,7 @@ export class RoundsGrid extends NikElement {
       {
         field: "score",
         headerName: "Score / Par",
-        editable: IS_ME,
         filter: "agNumberColumnFilter",
-        cellEditor: IS_ME ? "agNumberCellEditor" : false,
-        cellEditorParams: {
-          step: 1,
-        },
         cellRenderer: (param) => {
           let teebox = param.data.teebox;
 
@@ -158,37 +118,20 @@ export class RoundsGrid extends NikElement {
       {
         field: "fir",
         headerName: "FIR",
-        editable: IS_ME,
         filter: "agNumberColumnFilter",
-        cellEditor: IS_ME ? "agNumberCellEditor" : false,
-        cellEditorParams: {
-          step: 1,
-        },
       },
       {
         field: "gir",
         headerName: "GIR",
-        editable: IS_ME,
         filter: "agNumberColumnFilter",
-        cellEditor: IS_ME ? "agNumberCellEditor" : false,
-        cellEditorParams: {
-          step: 1,
-        },
       },
       {
         field: "putts",
-        editable: IS_ME,
         filter: "agNumberColumnFilter",
-        cellEditor: IS_ME ? "agNumberCellEditor" : false,
-        cellEditorParams: {
-          step: 1,
-        },
       },
       {
         field: "date",
-        editable: IS_ME,
         filter: "agDateColumnFilter",
-        cellEditor: IS_ME ? "agDateStringCellEditor" : false,
         cellRenderer: (param) => {
           let date = param.data.date;
 
@@ -241,9 +184,6 @@ export class RoundsGrid extends NikElement {
       defaultColDef: {
         resizable: false,
       },
-      onRowEditingStarted: (event) => this.handleEvent(event),
-      onRowEditingStopped: (event) => this.handleEvent(event),
-      onRowValueChanged: (event) => this.handleEvent(event),
       domLayout: "autoHeight",
       editType: "fullRow",
       suppressCellFocus: true,
@@ -262,15 +202,6 @@ export class RoundsGrid extends NikElement {
 
   handleEvent(event) {
     switch (event.type) {
-      case "rowEditingStarted":
-        this.hanldeRowEditingStarted(event);
-        break;
-      case "rowEditingStopped":
-        this.handleRowEditingStopped(event);
-        break;
-      case "rowValueChanged":
-        this.handleEditRound(event);
-        break;
       case "click":
         this.handleClick(event);
         break;
@@ -280,51 +211,6 @@ export class RoundsGrid extends NikElement {
         this.updateRounds(rounds);
       }
     }
-  }
-
-  async handleEditRound(event) {
-    if (!IS_ME) {
-      return;
-    }
-
-    let round = event.data;
-
-    let formData = new FormData();
-    for (let param of ["score", "fir", "gir", "putts", "date"]) {
-      formData.append(param, round[param]);
-    }
-
-    let response = await fetch(round.edit_round_url, {
-      method: "POST",
-      body: formData,
-    });
-
-    let jsonResponse = await response.json();
-
-    if (jsonResponse.handicap) {
-      this.updateHandicap(jsonResponse.handicap);
-    }
-    if (jsonResponse.rounds) {
-      this.updateRounds(jsonResponse.rounds);
-    }
-  }
-
-  hanldeRowEditingStarted(event) {
-    let row = event.rowIndex;
-    let nbRoudnActions = Array.from(
-      document.querySelectorAll("nb-round-actions")
-    ).at(row % 20);
-
-    nbRoudnActions.editing = true;
-  }
-
-  handleRowEditingStopped(event) {
-    let row = event.rowIndex;
-    let nbRoudnActions = Array.from(
-      document.querySelectorAll("nb-round-actions")
-    ).at(row % 20);
-
-    nbRoudnActions.editing = false;
   }
 
   updateHandicap(handicap) {

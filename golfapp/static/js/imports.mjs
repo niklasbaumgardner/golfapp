@@ -2,6 +2,7 @@ import {
   LitElement,
   html,
   nothing,
-} from "https://cdn.jsdelivr.net/gh/lit/dist@2/core/lit-core.min.js";
+  ifDefined,
+} from "https://cdn.jsdelivr.net/gh/lit/dist@3/all/lit-all.min.js";
 
-export { html, LitElement, nothing };
+export { html, LitElement, nothing, ifDefined };

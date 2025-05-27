@@ -13,10 +13,17 @@ export class AddRound extends NikElement {
     this.courses.sort((a, b) => {
       return a.name.localeCompare(b.name);
     });
+
+    this.label = "Add Round";
+    this.formId = "add-round-form";
+    this.formAction = ADD_ROUND_URL;
   }
 
   static properties = {
     teeboxes: { type: Array },
+    label: { type: String },
+    formId: { type: String },
+    formAction: { type: String },
   };
 
   static get queries() {
@@ -57,6 +64,50 @@ export class AddRound extends NikElement {
     this.teeboxSelectEl.disabled = this.teeboxes.length === 0;
   }
 
+  courseAndTeeboxTemplate() {
+    return html`<wa-select
+        id="course"
+        name="course"
+        label="Select a course"
+        @input=${this.handleCourseSelect}
+        hoist
+        required
+        >${this.coursesOptionTemplate()}</wa-select
+      >
+      <wa-select
+        id="teebox"
+        name="teebox"
+        label="Select a teebox"
+        hoist
+        disabled
+        required
+        >${this.teeboxOptionsTemplate()}</wa-select
+      >
+      <small>
+        <span>Don't see the course you're looking for?</span>
+        <a href="${ADD_COURSE_URL}">Add a course here</a>
+      </small>`;
+  }
+
+  roundTypeTemplate() {
+    return html`<div>
+      <wa-radio-group
+        label="Round type"
+        name="nineHoleRound"
+        value="False"
+        orientation="horizontal"
+        required
+      >
+        <wa-radio-button value="False" variant="success"
+          >18 hole round</wa-radio-button
+        >
+        <wa-radio-button value="True" variant="success"
+          >9 hole round</wa-radio-button
+        >
+      </wa-radio-group>
+    </div>`;
+  }
+
   coursesOptionTemplate() {
     return this.courses.map(
       (c) => html`<wa-option value="${c.id}">${c.name}</wa-option>`
@@ -80,6 +131,17 @@ export class AddRound extends NikElement {
     );
   }
 
+  scoreTemplate() {
+    return html`<wa-input
+      id="score"
+      name="score"
+      type="number"
+      label="Score"
+      class="grow min-w-0"
+      required
+    ></wa-input>`;
+  }
+
   dateTemplate() {
     let date = new Date();
     let year = date.getFullYear();
@@ -98,90 +160,61 @@ export class AddRound extends NikElement {
     ></wa-input>`;
   }
 
+  statsTemplate() {
+    return html`<wa-input
+        id="fir"
+        name="fir"
+        type="number"
+        class="min-w-0"
+        label="FIR"
+      ></wa-input>
+      <wa-input
+        id="gir"
+        name="gir"
+        type="number"
+        class="min-w-0"
+        label="GIR"
+      ></wa-input>
+      <wa-input
+        id="putts"
+        name="putts"
+        type="number"
+        class="min-w-0"
+        label="Putts"
+      ></wa-input>`;
+  }
+
+  saveButtonTemplate() {
+    return html`<wa-button
+      id="add-round-button"
+      form=${this.formId}
+      type="submit"
+      class="grow"
+      variant="success"
+      @click=${this.handleAddRoundClick}
+      >Add round</wa-button
+    >`;
+  }
+
   handleAddRoundClick() {
     this.addRoundButton.disabled = true;
     this.addRoundButton.loading = true;
   }
 
   render() {
-    return html`<wa-dialog label="Add Round"
+    return html`<wa-dialog label=${this.label}
       ><form
-        id="add-round-form"
-        action="${ADD_ROUND_URL}"
+        id=${this.formId}
+        action="${this.formAction}"
         method="POST"
         class="wa-stack"
       >
-        <wa-select
-          id="course"
-          name="course"
-          label="Select a course"
-          @input=${this.handleCourseSelect}
-          hoist
-          required
-          >${this.coursesOptionTemplate()}</wa-select
-        >
-        <wa-select
-          id="teebox"
-          name="teebox"
-          label="Select a teebox"
-          hoist
-          disabled
-          required
-          >${this.teeboxOptionsTemplate()}</wa-select
-        >
-        <small>
-          <span>Don't see the course you're looking for?</span>
-          <a href="${ADD_COURSE_URL}">Add a course here</a>
-        </small>
-        <div>
-          <wa-radio-group
-            label="Round type"
-            name="nineHoleRound"
-            value="False"
-            orientation="horizontal"
-            required
-          >
-            <wa-radio-button value="False" variant="success"
-              >18 hole round</wa-radio-button
-            >
-            <wa-radio-button value="True" variant="success"
-              >9 hole round</wa-radio-button
-            >
-          </wa-radio-group>
-        </div>
+        ${this.courseAndTeeboxTemplate()}${this.roundTypeTemplate()}
         <div class="flex gap-(--wa-space-m)">
-          <wa-input
-            id="score"
-            name="score"
-            type="number"
-            label="Score"
-            class="grow"
-            required
-          ></wa-input
-          >${this.dateTemplate()}
+          ${this.scoreTemplate()}${this.dateTemplate()}
         </div>
         <div class="flex gap-(--wa-space-m) flex-nowrap">
-          <wa-input
-            id="fir"
-            name="fir"
-            type="number"
-            class="min-w-0"
-            label="FIR"
-          ></wa-input>
-          <wa-input
-            id="gir"
-            name="gir"
-            type="number"
-            class="min-w-0"
-            label="GIR"
-          ></wa-input>
-          <wa-input
-            id="putts"
-            name="putts"
-            type="number"
-            class="min-w-0"
-            label="Putts"
-          ></wa-input>
+          ${this.statsTemplate()}
         </div>
       </form>
       <div class="wa-cluster w-full" slot="footer">
@@ -193,15 +226,7 @@ export class AddRound extends NikElement {
           data-dialog="close"
           >Cancel</wa-button
         >
-        <wa-button
-          id="add-round-button"
-          form="add-round-form"
-          type="submit"
-          class="grow"
-          variant="success"
-          @click=${this.handleAddRoundClick}
-          >Add round</wa-button
-        >
+        ${this.saveButtonTemplate()}
       </div></wa-dialog
     >`;
   }
