@@ -2,6 +2,22 @@ import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 
 export class AddRound extends NikElement {
+  static properties = {
+    teeboxes: { type: Array },
+    label: { type: String },
+    formId: { type: String },
+    formAction: { type: String },
+  };
+
+  static get queries() {
+    return {
+      dialogEl: "wa-dialog",
+      courseSelectEl: "#course",
+      teeboxSelectEl: "#teebox",
+      addRoundButton: "#add-round-button",
+    };
+  }
+
   constructor() {
     super();
 
@@ -17,22 +33,6 @@ export class AddRound extends NikElement {
     this.label = "Add Round";
     this.formId = "add-round-form";
     this.formAction = ADD_ROUND_URL;
-  }
-
-  static properties = {
-    teeboxes: { type: Array },
-    label: { type: String },
-    formId: { type: String },
-    formAction: { type: String },
-  };
-
-  static get queries() {
-    return {
-      dialogEl: "wa-dialog",
-      courseSelectEl: "#course",
-      teeboxSelectEl: "#teebox",
-      addRoundButton: "#add-round-button",
-    };
   }
 
   show() {
@@ -205,7 +205,7 @@ export class AddRound extends NikElement {
     return html`<wa-dialog label=${this.label}
       ><form
         id=${this.formId}
-        action="${this.formAction}"
+        action=${this.formAction}
         method="POST"
         class="wa-stack"
       >

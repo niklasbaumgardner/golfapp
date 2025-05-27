@@ -1,6 +1,34 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 
+class RatingActions extends NikElement {
+  static properties = {
+    rating: { type: Object },
+  };
+
+  handleEditClick() {
+    if (!this.editRatingModal) {
+      this.editRatingModal = document.createElement("nb-edit-course-rating");
+      this.editRatingModal.rating = this.rating;
+      document.body.appendChild(this.editRatingModal);
+    }
+
+    this.editRatingModal.show();
+  }
+
+  render() {
+    return html`<div class="wa-cluster wa-align-items-center">
+      <wa-button
+        appearance="outlined"
+        size="small"
+        @click=${this.handleEditClick}
+        >Edit</wa-button
+      >
+    </div>`;
+  }
+}
+customElements.define("nb-course-rating-actions", RatingActions);
+
 export class PlayersCourseRatingGrid extends NikElement {
   static properties = {
     ratings: {
@@ -20,7 +48,7 @@ export class PlayersCourseRatingGrid extends NikElement {
   }
 
   async init() {
-    await this.updateComplete;
+    document.addEventListener("UpdateRatings", this);
 
     this.createDataGrid();
     this.setupThemeWatcher();
@@ -73,15 +101,24 @@ export class PlayersCourseRatingGrid extends NikElement {
       },
       {
         field: "rating",
-        editable: IS_ME,
         filter: "agNumberColumnFilter",
-        cellEditor: IS_ME ? "agNumberCellEditor" : false,
-        cellEditorParams: {
-          step: 0.01,
-        },
         minWidth: 100,
       },
     ];
+
+    if (IS_ME) {
+      columnDefs.push({
+        field: "actions",
+        minWidth: 80,
+        maxWidth: 80,
+        cellRenderer: (param) => {
+          let actions = document.createElement("nb-course-rating-actions");
+          actions.rating = param.data;
+
+          return actions;
+        },
+      });
+    }
 
     const gridOptions = {
       columnDefs,
@@ -89,26 +126,11 @@ export class PlayersCourseRatingGrid extends NikElement {
       defaultColDef: {
         resizable: false,
       },
-      rowHeight: 50,
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
-      onCellEditingStopped: (event) => this.handleEvent(event),
       autoSizeStrategy: {
         type: "fitGridWidth",
-        // columnLimits: [
-        //   { colId: "Rank", wdith: 50 },
-        // {
-        //   colId: "Course",
-        //   minWidth: 200,
-        //   maxWidth: 850,
-        // },
-        //   {
-        //     colId: "Rating",
-        //     minWidth: 50,
-        //     maxWidth: 100,
-        //   },
-        // ],
       },
       onGridReady: (event) =>
         new Promise((r) => setTimeout(r, 200)).then(() => {
@@ -120,35 +142,10 @@ export class PlayersCourseRatingGrid extends NikElement {
 
   handleEvent(event) {
     switch (event.type) {
-      case "cellEditingStopped":
-        this.handleEditRating(event);
+      case "UpdateRatings":
+        let ratings = event.detail;
+        this.updateRatings(ratings);
         break;
-    }
-  }
-
-  async handleEditRating(event) {
-    if (!IS_ME) {
-      return;
-    }
-
-    if (!event.newValue || event.newValue === event.oldValue) {
-      return;
-    }
-
-    let courseRating = event.data;
-
-    let formData = new FormData();
-    formData.append("rating", event.newValue);
-
-    let response = await fetch(courseRating.edit_rating_url, {
-      method: "POST",
-      body: formData,
-    });
-
-    let jsonResponse = await response.json();
-
-    if (jsonResponse.ratings) {
-      this.updateRatings(jsonResponse.ratings);
     }
   }
 
@@ -158,10 +155,6 @@ export class PlayersCourseRatingGrid extends NikElement {
     this.rankCourses();
 
     this.dataGrid.setGridOption("rowData", this.ratings);
-
-    document.dispatchEvent(
-      new CustomEvent("UpdateRatings", { detail: ratings, bubbles: true })
-    );
   }
 
   setupThemeWatcher() {

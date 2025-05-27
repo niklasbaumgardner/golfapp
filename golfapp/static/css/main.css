@@ -42,7 +42,8 @@ nb-players-grid {
   display: block;
 }
 
-nb-round-actions {
+nb-round-actions,
+nb-course-rating-actions {
   display: block;
   width: 100%;
   height: 100%;

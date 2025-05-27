@@ -2,6 +2,7 @@ import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 import "./nb-players-course-rating-grid.mjs";
 import "./nb-add-course-rating.mjs";
+import "./nb-edit-course-rating.mjs";
 
 class ViewCourseRating extends NikElement {
   static properties = {

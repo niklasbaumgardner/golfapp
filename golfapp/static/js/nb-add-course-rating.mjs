@@ -4,6 +4,9 @@ import { html } from "./imports.mjs";
 export class AddCourseRating extends NikElement {
   static properties = {
     courses: { type: Object },
+    label: { type: String },
+    formId: { type: String },
+    formAction: { type: String },
   };
 
   static get queries() {
@@ -12,6 +15,14 @@ export class AddCourseRating extends NikElement {
       courseSelectEl: "#course",
       addRatingButton: "#add-rating-button",
     };
+  }
+
+  constructor() {
+    super();
+
+    this.label = "Add Course Rating";
+    this.formId = "add-rating-form";
+    this.formAction = ADD_COURSE_RATING_URL;
   }
 
   connectedCallback() {
@@ -46,38 +57,55 @@ export class AddCourseRating extends NikElement {
     );
   }
 
-  handleAddRatingClick() {
+  courseTemplate() {
+    return html`<wa-select
+      id="course"
+      name="course"
+      label="Select a course"
+      @input=${this.handleCourseSelect}
+      hoist
+      required
+      >${this.coursesOptionTemplate()}</wa-select
+    >`;
+  }
+
+  ratingTemplate() {
+    return html`<wa-input
+      id="rating"
+      name="rating"
+      type="number"
+      label="Rating"
+      min="0"
+      max="10"
+      step="0.01"
+      placeholder="1.23"
+    ></wa-input>`;
+  }
+
+  saveButtonTemplate() {
+    return html`<wa-button
+      id="edit-rating-button"
+      class="grow"
+      variant="success"
+      @click=${this.handleEditRatingClick}
+      >Save</wa-button
+    >`;
+  }
+
+  handleEditRatingClick() {
     this.addRoundButton.disabled = true;
     this.addRoundButton.loading = true;
   }
 
   render() {
-    return html`<wa-dialog label="Add Course Rating"
+    return html`<wa-dialog label=${this.label}
       ><form
-        id="add-rating-form"
-        action="${ADD_COURSE_RATING_URL}"
+        id=${this.formId}
+        action=${this.formAction}
         method="POST"
         class="wa-stack"
       >
-        <wa-select
-          id="course"
-          name="course"
-          label="Select a course"
-          @input=${this.handleCourseSelect}
-          hoist
-          required
-          >${this.coursesOptionTemplate()}</wa-select
-        >
-        <wa-input
-          id="rating"
-          name="rating"
-          type="number"
-          label="Rating"
-          min="0"
-          max="10"
-          step="0.01"
-          placeholder="1.23"
-        ></wa-input>
+        ${this.courseTemplate()}${this.ratingTemplate()}
       </form>
       <div class="wa-cluster w-full" slot="footer">
         <wa-button
@@ -88,15 +116,7 @@ export class AddCourseRating extends NikElement {
           data-dialog="close"
           >Cancel</wa-button
         >
-        <wa-button
-          id="add-rating-button"
-          form="add-rating-form"
-          type="submit"
-          class="grow"
-          variant="success"
-          @click=${this.handleAddRatingClick}
-          >Add Rating</wa-button
-        >
+        ${this.saveButtonTemplate()}
       </div></wa-dialog
     >`;
   }
