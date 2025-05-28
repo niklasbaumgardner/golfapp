@@ -1,51 +1,48 @@
-{% extends "base.html" %}
-
-{% block title %}Subscribers{% endblock title %}
-
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Subscribers{% endblock title %} {%
+block content %}
 <script>
-    const CREATE_SUBSCRIBER_URL = "{{ url_for('admin_bp.create_subscriber', subscription_id=0) }}";
-    const USERS = {{ users|tojson }};
-    const SUBSCRIBERS = {{ subs|tojson }};
+  const CREATE_SUBSCRIBER_URL = "{{ url_for('admin_bp.create_subscriber', subscription_id=0) }}";
+  const USERS = {{ users|tojson }};
+  const SUBSCRIBERS = {{ subs|tojson }};
 </script>
 
-<div class="container-fluid">
-    <div class="container pb-5">
-        <div class="fw-bold fs-1">
-            All players
-        </div>
-    </div>
+<div class="">
+  <div class="">
+    <div class="">All players</div>
+  </div>
 </div>
 
-<div class="container-fluid mb-5">
-    <div class="container">
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Subscription</th>
-                        <th scope="col">Subscribers</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <form action="{{ url_for('admin_bp.create_subscription') }}" method="POST">
-                        <td>
-                            <label for="user_id">Add a subscription</label>
-                            <select name="user_id" id="user_id">
-                                <option value="" selected disabled hidden>Select here</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" type="submit">Create subscription</button>
-                        </td>
-                        </form>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="">
+  <div class="">
+    <div class="">
+      <table class="">
+        <thead>
+          <tr>
+            <th scope="col">Subscription</th>
+            <th scope="col">Subscribers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <form
+              action="{{ url_for('admin_bp.create_subscription') }}"
+              method="POST"
+            >
+              <td>
+                <label for="user_id">Add a subscription</label>
+                <select name="user_id" id="user_id">
+                  <option value="" selected disabled hidden>Select here</option>
+                </select>
+              </td>
+              <td>
+                <button class="" type="submit">Create subscription</button>
+              </td>
+            </form>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>
 
 <script src="/static/js/subscription.mjs" type="module"></script>

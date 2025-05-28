@@ -39,15 +39,15 @@
     <wa-card>
       <div slot="header">De-duplicate courses</div>
       <form action="{{ url_for('admin_bp.dedup_course') }}" method="POST">
-        <div class="row mb-3">
-          <div class="col">
+        <div class="">
+          <div class="">
             <wa-select label="Duplicate course" name="duplicate" hoist>
               {% for course in courses %}
                 <wa-option value="{{ course.id }}">{{ course.name }}</sl-option>
               {% endfor %}
             </sl-select>
           </div>
-          <div class="col">
+          <div class="">
             <wa-select label="Keep this course" name="keep" hoist>
               {% for course in courses %}
                 <wa-option value="{{ course.id }}">{{ course.name }}</sl-option>
@@ -58,12 +58,12 @@
         <wa-button variant="danger" type="submit">Deduplicate course</sl-button>
       </form>
     </sl-card>
-    <div class="card">
-        <div class="card-body p-5">
-            <p class="card-title fs-2 mb-3">Edit Courses</p>
+    <div class="">
+        <div class="">
+            <p class="">Edit Courses</p>
 
-            <div class="table-responsive">
-              <table class="table table-striped">
+            <div class="">
+              <table class="">
                   <thead>
                       <tr>
                           <th scope="col">Name</th>
@@ -77,11 +77,11 @@
                       <tr>
                         <td>
                           <form id="course{{ course.id }}" action="{{ url_for('admin_bp.edit_course', c_id=course.id) }}" method="POST">
-                            <input class="form-control" type="text" name="name" value="{{ course.name }}" required>
+                            <input class="" type="text" name="name" value="{{ course.name }}" required>
                           </form>
                         </td>
                         <td>
-                          <table class="table">
+                          <table class="">
                             <thead>
                               <tr>
                                 <th scope="col">Teebox</th>
@@ -95,21 +95,21 @@
                                 <tr>
                                   <form id="teebox{{ teebox.id }}" action="{{ url_for('admin_bp.edit_teebox', t_id=teebox.id) }}" method="POST">
                                     <td>
-                                      <input class="form-control" name="teebox" type="text" value="{{ teebox.teebox }}" required>
+                                      <input class="" name="teebox" type="text" value="{{ teebox.teebox }}" required>
                                     </td>
                                     <td>
-                                      <input class="form-control" step="1" name="par" type="number" value="{{ teebox.par }}" required>
+                                      <input class="" step="1" name="par" type="number" value="{{ teebox.par }}" required>
                                     </td>
                                     <td>
-                                      <input class="form-control" step="1" name="slope" type="number" value="{{ teebox.slope }}" required>
+                                      <input class="" step="1" name="slope" type="number" value="{{ teebox.slope }}" required>
                                     </td>
                                     <td>
-                                      <input class="form-control" step="0.1" name="rating" type="number" value="{{ teebox.rating }}" required>
+                                      <input class="" step="0.1" name="rating" type="number" value="{{ teebox.rating }}" required>
                                     </td>
                                     <td>
-                                      <div class="row g-2">
-                                        <button class="form-control btn btn-outline-primary" type="submit" form="teebox{{ teebox.id }}">Update</button>
-                                        <button class="form-control btn btn-outline-danger" type="button" onclick="delete_teebox('{{ teebox.id }}')">Delete</button>
+                                      <div class="">
+                                        <button class="" type="submit" form="teebox{{ teebox.id }}">Update</button>
+                                        <button class="" type="button" onclick="delete_teebox('{{ teebox.id }}')">Delete</button>
                                       </div>
                                     </td>
                                   </form>
@@ -119,9 +119,9 @@
                           </table>
                         </td>
                         <td>
-                          <div class="row g-2">
-                            <button class="form-control btn btn-primary" type="submit" form="course{{ course.id }}">Update</button>
-                            <button class="form-control btn btn-danger" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
+                          <div class="">
+                            <button class="" type="submit" form="course{{ course.id }}">Update</button>
+                            <button class="" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
                           </div>
                         </td>
                       </tr>

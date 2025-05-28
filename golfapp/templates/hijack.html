@@ -1,50 +1,48 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Home{% endblock title %} {% block
+hijack %}active{% endblock hijack %} {% block content %}
 
-{% block title %}Home{% endblock title %}
-{% block hijack %}active{% endblock hijack %}
-
-
-
-{% block content %}
-
-<div class="container-fluid">
-    <div class="container pb-5">
-        <div class="fw-bold fs-1">
-            Hijack Handicap
-        </div>
-    </div>
+<div class="">
+  <div class="">
+    <div class="">Hijack Handicap</div>
+  </div>
 </div>
 
-<div class="container-fluid mb-5">
-    <div class="container">
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Player</th>
-                        <th scope="col">Handicap</th>
-                        <th scope="col">Hijack</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <form action="{{ url_for('admin_bp.hijack') }}" method="POST">
-                                <input type="text" name="user_id" value="{{ user.id }}" hidden>
-                                <td class="name">{{ user.username }}</td>
-                                <td class="handicap">
-                                    <input class="form-control w-80p" type="number" name="handicap" step=".01" value="{{ user.handicap.handicap }}">
-                                </td>
-                                <td class="hijack">
-                                    <input class="btn btn-primary" type="submit" value="Hijack">
-                                </td>
-                            </form>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="">
+  <div class="">
+    <div class="">
+      <table class="">
+        <thead>
+          <tr>
+            <th scope="col">Player</th>
+            <th scope="col">Handicap</th>
+            <th scope="col">Hijack</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <form action="{{ url_for('admin_bp.hijack') }}" method="POST">
+              <input type="text" name="user_id" value="{{ user.id }}" hidden />
+              <td class="name">{{ user.username }}</td>
+              <td class="handicap">
+                <input
+                  class=""
+                  type="number"
+                  name="handicap"
+                  step=".01"
+                  value="{{ user.handicap.handicap }}"
+                />
+              </td>
+              <td class="hijack">
+                <input class="" type="submit" value="Hijack" />
+              </td>
+            </form>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>
 
 {% endblock content %}

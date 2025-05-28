@@ -33,24 +33,34 @@
         ><wa-menu id="user-dropdown-selector">
           {% if current_user.is_authenticated and current_user.id == 3 or
           current_user.id == 11 %}<wa-menu-item
-            ><a href="{{ url_for('admin_bp.hijack') }}" class="w-full"
+            ><a
+              href="{{ url_for('admin_bp.hijack') }}"
+              class="inline-block w-full"
               >Hijack Handicap</a
             ></wa-menu-item
           ><wa-menu-item
-            ><a href="{{ url_for('admin_bp.edit_courses') }}" class="w-full"
+            ><a
+              href="{{ url_for('admin_bp.edit_courses') }}"
+              class="inline-block w-full"
               >Edit Courses</a
             ></wa-menu-item
           ><wa-menu-item
-            ><a href="{{ url_for('admin_bp.subscribers') }}" class="w-full"
+            ><a
+              href="{{ url_for('admin_bp.subscribers') }}"
+              class="inline-block w-full"
               >Subscribers</a
             ></wa-menu-item
           >{% endif %}
           <wa-menu-item
-            ><a href="{{ url_for('profile_bp.profile') }}" class="w-full"
+            ><a
+              href="{{ url_for('profile_bp.profile') }}"
+              class="inline-block w-full"
               >Profile</a
             ></wa-menu-item
           ><wa-menu-item
-            ><a href="{{ url_for('auth_bp.logout') }}" class="w-full"
+            ><a
+              href="{{ url_for('auth_bp.logout') }}"
+              class="inline-block w-full"
               >Logout</a
             ></wa-menu-item
           >
@@ -84,24 +94,30 @@
     ><wa-menu id="user-dropdown-selector">
       {% if current_user.is_authenticated and current_user.id == 3 or
       current_user.id == 11 %}<wa-menu-item
-        ><a href="{{ url_for('admin_bp.hijack') }}" class="w-full"
+        ><a href="{{ url_for('admin_bp.hijack') }}" class="inline-block w-full"
           >Hijack Handicap</a
         ></wa-menu-item
       ><wa-menu-item
-        ><a href="{{ url_for('admin_bp.edit_courses') }}" class="w-full"
+        ><a
+          href="{{ url_for('admin_bp.edit_courses') }}"
+          class="inline-block w-full"
           >Edit Courses</a
         ></wa-menu-item
       ><wa-menu-item
-        ><a href="{{ url_for('admin_bp.subscribers') }}" class="w-full"
+        ><a
+          href="{{ url_for('admin_bp.subscribers') }}"
+          class="inline-block w-full"
           >Subscribers</a
         ></wa-menu-item
       >{% endif %}
       <wa-menu-item
-        ><a href="{{ url_for('profile_bp.profile') }}" class="w-full"
+        ><a
+          href="{{ url_for('profile_bp.profile') }}"
+          class="inline-block w-full"
           >Profile</a
         ></wa-menu-item
       ><wa-menu-item
-        ><a href="{{ url_for('auth_bp.logout') }}" class="w-full"
+        ><a href="{{ url_for('auth_bp.logout') }}" class="inline-block w-full"
           >Logout</a
         ></wa-menu-item
       >

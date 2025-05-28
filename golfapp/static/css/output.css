@@ -1,6 +1,6 @@
 /*! tailwindcss v4.1.7 | MIT License | https://tailwindcss.com */
 @layer properties;
-@layer theme, utilities;
+@layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --spacing: 0.25rem;
@@ -15,6 +15,9 @@
   .mt-\(--wa-space-m\)\! {
     margin-top: var(--wa-space-m) !important;
   }
+  .block {
+    display: block;
+  }
   .flex {
     display: flex;
   }
@@ -26,6 +29,9 @@
   }
   .hidden\! {
     display: none !important;
+  }
+  .inline-block {
+    display: inline-block;
   }
   .min-h-20 {
     min-height: calc(var(--spacing) * 20);
