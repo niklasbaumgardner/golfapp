@@ -3,7 +3,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from golfapp.queries import user_queries
 from golfapp.models import User
 from golfapp import bcrypt
-from golfapp.utils.send_email import send_reset_email
+from golfapp.utils import send_email
+
 
 auth_bp = Blueprint("auth_bp", __name__)
 
@@ -15,7 +16,6 @@ def login():
 
     email = request.args.get("email")
     if email:
-        email = email.strip()
         return render_template("login.html", email=email)
 
     email = request.form.get("email")
@@ -23,8 +23,6 @@ def login():
     remember = request.form.get("remember")
 
     if email and password:
-        email = email.strip()
-        password = password.strip()
         user = user_queries.get_user_by_email(email=email)
 
         if user and bcrypt.check_password_hash(user.password, password):
@@ -48,10 +46,9 @@ def login():
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        email = request.form.get("email").strip()
-        username = request.form.get("username").strip()
-        password1 = request.form.get("password1").strip()
-        password2 = request.form.get("password2").strip()
+        email = request.form.get("email")
+        username = request.form.get("username")
+        password1 = request.form.get("password1")
 
         if not user_queries.is_email_unique(email):
             flash("Email already exists. Please log in", "primary")
@@ -62,13 +59,14 @@ def signup():
                 "Username already exists. Please choose a different username",
                 "danger",
             )
-            return render_template("signup.html")
+            return redirect(url_for("auth_bp.signup"))
 
-        if password1 != password2:
-            flash("Passwords don't match. Try again", "warning")
-            return render_template("signup.html", email=email)
+        if len(password1) < 6:
+            flash("Password must be longer than 6 characters. Try again", "warning")
+            return redirect(url_for("auth_bp.signup"))
 
         user_queries.create_user(email=email, username=username, password=password1)
+
         flash("Sign up succesful", "success")
         return redirect(url_for("auth_bp.login"))
 
@@ -83,9 +81,9 @@ def password_request():
         return redirect(url_for("auth_bp.password_reset", token=token))
 
     if request.method == "POST":
-        email = request.form.get("email").strip()
+        email = request.form.get("email")
         user = user_queries.get_user_by_email(email=email)
-        send_reset_email(user)
+        send_email.send_reset_email(user)
         flash(
             "An email has been sent with instructions to reset your password. (Check spam folder)",
             "primary",
@@ -107,8 +105,8 @@ def password_reset():
             else:
                 return redirect(url_for("auth_bp.password_request"))
 
-        password1 = request.form.get("password1").strip()
-        password2 = request.form.get("password2").strip()
+        password1 = request.form.get("password1")
+        password2 = request.form.get("password2")
 
         if password1 != password2:
             flash("Passwords are not equal. Please try again", "warning")
@@ -116,10 +114,10 @@ def password_reset():
 
         user_queries.update_user_password(user.id, password=password1)
         flash(
-            "Your password has been updated!",
+            "Your password has been updated! You are now able to log in",
             "success",
         )
-        return redirect(url_for("viewplayer_bp.index"))
+        return redirect(url_for("auth_bp.login"))
 
     return render_template("password_reset.html")
 
@@ -133,13 +131,13 @@ def logout():
 
 @auth_bp.route("/username_unique", methods=["GET"])
 def username_unique():
-    username = request.args.get("username").strip()
+    username = request.args.get("username")
 
     return {"isUnique": user_queries.is_username_unique(username)}
 
 
 @auth_bp.route("/email_unique", methods=["GET"])
 def email_unique():
-    email = request.args.get("email").strip()
+    email = request.args.get("email")
 
     return {"isUnique": user_queries.is_email_unique(email)}
