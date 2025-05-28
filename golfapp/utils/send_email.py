@@ -44,7 +44,7 @@ def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message("Password Reset Request", recipients=[user.email])
     msg.body = f"""To reset your password, visit the following link:
-{url_for('auth_bp.password_reset', token=token, _external=True)}
+{url_for("auth_bp.password_reset", token=token, _external=True)}
 If you did not make this request then please ignore this email and no changes will be made.
 """
     mail.send(msg)
@@ -92,9 +92,9 @@ def get_random_message(new_round, user_id, old_handicap, new_handicap):
 {current_user.username} shot {new_round.score} at {course.name}.
 Their {get_handicap_change_message(old_handicap, new_handicap)}.
 
-View the rest of their rounds at {url_for('viewplayer_bp.view_player', id=user_id, _external=True)}
+View the rest of their rounds at {url_for("viewplayer_bp.view_player", id=user_id, _external=True)}
 
-{ GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index] }
+{GOOD_SARCASTIC_MESSAGES[index] if is_round_in_included(new_round, included_rounds) else BAD_SARCASTIC_MESSAGES[index]}
 
 Please thank ChatGPT for the wonderful message.
 """
