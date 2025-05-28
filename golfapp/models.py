@@ -21,6 +21,7 @@ class User(db.Model, UserMixin, SerializerMixin):
         "handicap",
         "url",
         "course_ranking_url",
+        "is_admin",
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +32,10 @@ class User(db.Model, UserMixin, SerializerMixin):
     role = db.Column(db.Integer, nullable=True)
 
     handicap = db.relationship("Handicap", uselist=False, lazy="joined")
+
+    @property
+    def is_admin(self):
+        return self.role is not None and self.role > 1
 
     def url(self):
         return url_for("viewplayer_bp.view_player", id=self.id)

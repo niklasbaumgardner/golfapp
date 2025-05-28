@@ -31,8 +31,7 @@
         ><wa-button id="user-button" appearance="plain" slot="trigger" caret
           >{{ current_user.username }}</wa-button
         ><wa-menu id="user-dropdown-selector">
-          {% if current_user.is_authenticated and current_user.id == 3 or
-          current_user.id == 11 %}<wa-menu-item
+          {% if current_user.is_admin %}<wa-menu-item
             ><a
               href="{{ url_for('admin_bp.hijack') }}"
               class="inline-block w-full"
@@ -92,8 +91,7 @@
     ><wa-button id="user-button" appearance="plain" slot="trigger" caret
       >{{ current_user.username }}</wa-button
     ><wa-menu id="user-dropdown-selector">
-      {% if current_user.is_authenticated and current_user.id == 3 or
-      current_user.id == 11 %}<wa-menu-item
+      {% if current_user.is_admin %}<wa-menu-item
         ><a href="{{ url_for('admin_bp.hijack') }}" class="inline-block w-full"
           >Hijack Handicap</a
         ></wa-menu-item

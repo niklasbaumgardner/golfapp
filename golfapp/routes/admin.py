@@ -15,18 +15,13 @@ from golfapp import db
 admin_bp = Blueprint("admin_bp", __name__)
 
 
-def is_admin():
-    return current_user.id == 3 or current_user.id == 11
-
-
 @admin_bp.route("/hijack", methods=["GET", "POST"])
 @login_required
 def hijack():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     if request.method == "POST":
-
         user_id = int(request.form.get("user_id"))
         hcp = float(request.form.get("handicap"))
         handicap_queries.create_or_update_handicap(user_id=user_id, handicap_diff=hcp)
@@ -41,7 +36,7 @@ def hijack():
 @admin_bp.route("/edit_courses", methods=["GET"])
 @login_required
 def edit_courses():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     courses = course_queries.get_courses(sort=True)
@@ -52,7 +47,7 @@ def edit_courses():
 @admin_bp.route("/edit_course/<int:c_id>", methods=["POST"])
 @login_required
 def edit_course(c_id):
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     new_name = request.form.get("name")
@@ -64,7 +59,7 @@ def edit_course(c_id):
 @admin_bp.post("/dedup_course")
 @login_required
 def dedup_course():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     duplicate_course_id = request.form.get("duplicate")
@@ -80,7 +75,7 @@ def dedup_course():
 @admin_bp.route("/delete_course/<int:c_id>", methods=["DELETE"])
 @login_required
 def delete_course(c_id):
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     rounds = round_queries.get_rounds_by_course_id(course_id=c_id)
@@ -120,7 +115,7 @@ def delete_course(c_id):
 @admin_bp.route("/edit_teebox/<int:t_id>", methods=["POST"])
 @login_required
 def edit_teebox(t_id):
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     new_teebox = request.form.get("teebox")
@@ -142,7 +137,7 @@ def edit_teebox(t_id):
 @admin_bp.route("/delete_teebox/<int:t_id>", methods=["DELETE"])
 @login_required
 def delete_teebox(t_id):
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     teeboxes_rounds = round_queries.get_rounds_by_teebox_id(teebox_id=t_id)
@@ -160,7 +155,7 @@ def delete_teebox(t_id):
 @admin_bp.route("/subscribers", methods=["GET"])
 @login_required
 def subscribers():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     users = user_queries.get_users()
@@ -179,7 +174,7 @@ def subscribers():
 @admin_bp.route("/create_subscription", methods=["POST"])
 @login_required
 def create_subscription():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     user_id = request.form.get("user_id")
@@ -191,7 +186,7 @@ def create_subscription():
 @admin_bp.route("/create_subscriber/<int:subscription_id>", methods=["POST"])
 @login_required
 def create_subscriber(subscription_id):
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     user_id = request.form.get("user_id")
@@ -205,7 +200,7 @@ def create_subscriber(subscription_id):
 @admin_bp.get("/get_all_handicaps")
 @login_required
 def get_all_handicaps():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     users = user_queries.get_users_with_handicap()
@@ -221,7 +216,7 @@ def get_all_handicaps():
 @admin_bp.get("/update_all_handicaps")
 @login_required
 def update_all_handicaps():
-    if not is_admin():
+    if not current_user.is_admin:
         return redirect(url_for("home.index"))
 
     teeboxes = {}
