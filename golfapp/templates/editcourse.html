@@ -1,10 +1,5 @@
-{% extends "base.html" %}
-
-{% block title %}Edit Courses{% endblock title %}
-
-
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Edit Courses{% endblock title %} {%
+block content %}
 <script>
   const DELETE_COURSE_URL = "{{ url_for('admin_bp.delete_course', c_id=0) }}";
   const DELETE_TEEBOX_URL = "{{ url_for('admin_bp.delete_teebox', t_id=0) }}";
@@ -18,7 +13,7 @@
     if (response.success) {
       window.location.reload();
     } else {
-      window.alert(response.info)
+      window.alert(response.info);
     }
   }
 
@@ -31,104 +26,169 @@
     if (response.success) {
       window.location.reload();
     } else {
-      window.alert(response.info)
+      window.alert(response.info);
     }
   }
 </script>
 
-    <wa-card>
-      <div slot="header">De-duplicate courses</div>
-      <form action="{{ url_for('admin_bp.dedup_course') }}" method="POST">
-        <div class="">
-          <div class="">
-            <wa-select label="Duplicate course" name="duplicate" hoist>
-              {% for course in courses %}
-                <wa-option value="{{ course.id }}">{{ course.name }}</sl-option>
-              {% endfor %}
-            </sl-select>
-          </div>
-          <div class="">
-            <wa-select label="Keep this course" name="keep" hoist>
-              {% for course in courses %}
-                <wa-option value="{{ course.id }}">{{ course.name }}</sl-option>
-              {% endfor %}
-            </sl-select>
-          </div>
-        </div>
-        <wa-button variant="danger" type="submit">Deduplicate course</sl-button>
-      </form>
-    </sl-card>
+<wa-card>
+  <form
+    action="{{ url_for('admin_bp.dedup_course') }}"
+    method="POST"
+    class="wa-stack"
+  >
+    <h2>De-duplicate courses</h2>
     <div class="">
-        <div class="">
-            <p class="">Edit Courses</p>
-
-            <div class="">
-              <table class="">
-                  <thead>
-                      <tr>
-                          <th scope="col">Name</th>
-                          <th scope="col">Teeboxes</th>
-                          <th></th>
-                          <th></th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {% for course in courses %}
-                      <tr>
-                        <td>
-                          <form id="course{{ course.id }}" action="{{ url_for('admin_bp.edit_course', c_id=course.id) }}" method="POST">
-                            <input class="" type="text" name="name" value="{{ course.name }}" required>
-                          </form>
-                        </td>
-                        <td>
-                          <table class="">
-                            <thead>
-                              <tr>
-                                <th scope="col">Teebox</th>
-                                <th scope="col">Par</th>
-                                <th scope="col">Slope</th>
-                                <th scope="col">Rating</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {% for teebox in course.teeboxes %}
-                                <tr>
-                                  <form id="teebox{{ teebox.id }}" action="{{ url_for('admin_bp.edit_teebox', t_id=teebox.id) }}" method="POST">
-                                    <td>
-                                      <input class="" name="teebox" type="text" value="{{ teebox.teebox }}" required>
-                                    </td>
-                                    <td>
-                                      <input class="" step="1" name="par" type="number" value="{{ teebox.par }}" required>
-                                    </td>
-                                    <td>
-                                      <input class="" step="1" name="slope" type="number" value="{{ teebox.slope }}" required>
-                                    </td>
-                                    <td>
-                                      <input class="" step="0.1" name="rating" type="number" value="{{ teebox.rating }}" required>
-                                    </td>
-                                    <td>
-                                      <div class="">
-                                        <button class="" type="submit" form="teebox{{ teebox.id }}">Update</button>
-                                        <button class="" type="button" onclick="delete_teebox('{{ teebox.id }}')">Delete</button>
-                                      </div>
-                                    </td>
-                                  </form>
-                                </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </td>
-                        <td>
-                          <div class="">
-                            <button class="" type="submit" form="course{{ course.id }}">Update</button>
-                            <button class="" type="button" onclick="delete_course('{{ course.id }}')">Delete</button>
-                          </div>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-        </div>
+      <div class="">
+        <wa-select label="Duplicate course" name="duplicate" hoist>
+          {% for course in courses %}
+          <wa-option value="{{ course.id }}">{{ course.name }}</wa-option>
+          {% endfor %}
+        </wa-select>
+      </div>
+      <div class="">
+        <wa-select label="Keep this course" name="keep" hoist>
+          {% for course in courses %}
+          <wa-option value="{{ course.id }}">{{ course.name }}</wa-option>
+          {% endfor %}
+        </wa-select>
+      </div>
     </div>
+    <wa-button variant="danger" type="submit">Deduplicate course</wa-button>
+  </form>
+</wa-card>
+<div class="">
+  <div class="">
+    <p class="">Edit Courses</p>
+
+    <div class="">
+      <table class="">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Teeboxes</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for course in courses %}
+          <tr>
+            <td>
+              <form
+                id="course{{ course.id }}"
+                action="{{ url_for('admin_bp.edit_course', c_id=course.id) }}"
+                method="POST"
+              >
+                <input
+                  class=""
+                  type="text"
+                  name="name"
+                  value="{{ course.name }}"
+                  required
+                />
+              </form>
+            </td>
+            <td>
+              <table class="">
+                <thead>
+                  <tr>
+                    <th scope="col">Teebox</th>
+                    <th scope="col">Par</th>
+                    <th scope="col">Slope</th>
+                    <th scope="col">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for teebox in course.teeboxes %}
+                  <tr>
+                    <form
+                      id="teebox{{ teebox.id }}"
+                      action="{{ url_for('admin_bp.edit_teebox', t_id=teebox.id) }}"
+                      method="POST"
+                    >
+                      <td>
+                        <input
+                          class=""
+                          name="teebox"
+                          type="text"
+                          value="{{ teebox.teebox }}"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class=""
+                          step="1"
+                          name="par"
+                          type="number"
+                          value="{{ teebox.par }}"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class=""
+                          step="1"
+                          name="slope"
+                          type="number"
+                          value="{{ teebox.slope }}"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class=""
+                          step="0.1"
+                          name="rating"
+                          type="number"
+                          value="{{ teebox.rating }}"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <div class="">
+                          <button
+                            class=""
+                            type="submit"
+                            form="teebox{{ teebox.id }}"
+                          >
+                            Update
+                          </button>
+                          <button
+                            class=""
+                            type="button"
+                            onclick="delete_teebox('{{ teebox.id }}')"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </form>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </td>
+            <td>
+              <div class="">
+                <button class="" type="submit" form="course{{ course.id }}">
+                  Update
+                </button>
+                <button
+                  class=""
+                  type="button"
+                  onclick="delete_course('{{ course.id }}')"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock content %}
