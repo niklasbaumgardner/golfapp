@@ -28,6 +28,8 @@ class User(db.Model, UserMixin, SerializerMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
+    role = db.Column(db.Integer, nullable=True)
+
     handicap = db.relationship("Handicap", uselist=False, lazy="joined")
 
     def url(self):
