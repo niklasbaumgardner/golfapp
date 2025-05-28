@@ -17,6 +17,7 @@ def profile():
         )
 
         return redirect(url_for("profile_bp.profile"))
+
     return render_template(
         "profile.html", username=current_user.username, email=current_user.email
     )
