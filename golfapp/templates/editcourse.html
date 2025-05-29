@@ -147,21 +147,25 @@ block content %}
                         />
                       </td>
                       <td>
-                        <div class="">
-                          <button
-                            class=""
+                        <div class="wa-cluster">
+                          <wa-button
+                            size="small"
+                            variant="primary"
+                            appearance="outlined"
                             type="submit"
                             form="teebox{{ teebox.id }}"
                           >
                             Update
-                          </button>
-                          <button
-                            class=""
+                          </wa-button>
+                          <wa-button
+                            size="small"
+                            variant="danger"
+                            appearance="outlined"
                             type="button"
                             onclick="delete_teebox('{{ teebox.id }}')"
                           >
                             Delete
-                          </button>
+                          </wa-button>
                         </div>
                       </td>
                     </form>
@@ -171,17 +175,21 @@ block content %}
               </table>
             </td>
             <td>
-              <div class="">
-                <button class="" type="submit" form="course{{ course.id }}">
+              <div class="wa-cluster">
+                <wa-button
+                  variant="brand"
+                  type="submit"
+                  form="course{{ course.id }}"
+                >
                   Update
-                </button>
-                <button
-                  class=""
+                </wa-button>
+                <wa-button
+                  variant="danger"
                   type="button"
                   onclick="delete_course('{{ course.id }}')"
                 >
                   Delete
-                </button>
+                </wa-button>
               </div>
             </td>
           </tr>
