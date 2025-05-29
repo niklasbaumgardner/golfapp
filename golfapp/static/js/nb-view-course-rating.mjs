@@ -49,7 +49,7 @@ class ViewCourseRating extends NikElement {
 
   addRatingButtonTemplate() {
     return html`<wa-button
-      variant="success"
+      variant="brand"
       appearance="filled outlined"
       @click=${this.handleAddRatingClick}
       >Add Rating</wa-button

@@ -76,7 +76,7 @@ class ViewPlayer extends NikElement {
             >${IS_ME ? "My" : USER.username} course ratings</a
           >
           <wa-button
-            variant="success"
+            variant="brand"
             appearance="filled outlined"
             @click=${this.handleAddRoundClick}
             >Add Round</wa-button

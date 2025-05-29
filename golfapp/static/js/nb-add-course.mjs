@@ -141,7 +141,7 @@ export class AddCourse extends NikElement {
               required
             ></wa-input>
           </div>
-          <wa-button type="submit" class="w-full" variant="success"
+          <wa-button type="submit" class="w-full" variant="brand"
             >Add Teebox</wa-button
           >
         </div>
@@ -190,7 +190,7 @@ export class AddCourse extends NikElement {
               required
             ></wa-input>
           </div>
-          <wa-button type="submit" class="w-full" variant="success"
+          <wa-button type="submit" class="w-full" variant="brand"
             >Add Course</wa-button
           >
         </div>

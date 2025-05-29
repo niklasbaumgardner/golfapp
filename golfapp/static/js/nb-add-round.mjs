@@ -98,10 +98,10 @@ export class AddRound extends NikElement {
         orientation="horizontal"
         required
       >
-        <wa-radio-button value="False" variant="success"
+        <wa-radio-button value="False" variant="brand"
           >18 hole round</wa-radio-button
         >
-        <wa-radio-button value="True" variant="success"
+        <wa-radio-button value="True" variant="brand"
           >9 hole round</wa-radio-button
         >
       </wa-radio-group>
@@ -190,7 +190,7 @@ export class AddRound extends NikElement {
       form=${this.formId}
       type="submit"
       class="grow"
-      variant="success"
+      variant="brand"
       @click=${this.handleAddRoundClick}
       >Add round</wa-button
     >`;

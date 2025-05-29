@@ -1,11 +1,9 @@
 import { html } from "./imports.mjs";
 import { NikElement } from "./customElement.mjs";
 
-const themeStorage = window["localStorage"];
-
 export class ThemeSelector extends NikElement {
   static properties = {
-    theme: { type: String, reflect: true },
+    theme: { type: Object },
   };
 
   static queries = {
@@ -15,7 +13,7 @@ export class ThemeSelector extends NikElement {
   };
 
   get currentThemeIcon() {
-    if (this.theme === "dark") {
+    if (this.theme?.mode === "dark") {
       return this.darkIcon;
     }
     return this.lightIcon;
@@ -30,36 +28,36 @@ export class ThemeSelector extends NikElement {
   async init() {
     await this.updateComplete;
 
-    if (THEME === "") {
-      let storedTheme = themeStorage.getItem("theme");
-      this.setTheme(storedTheme);
-    } else {
-      this.setTheme(THEME, { dontSend: true });
-    }
+    this.theme = THEME;
+
+    this.setupThemeWatcher();
   }
 
-  setTheme(theme, options) {
-    this.theme = theme === "dark" ? "dark" : "light";
-
-    console.log("setting theme", this.theme);
-
-    themeStorage.setItem("theme", this.theme);
-    // Set theme on document
-    document.documentElement.classList.toggle("wa-dark", this.theme === "dark");
-    document.documentElement.classList.toggle(
-      "wa-light",
-      this.theme === "light"
+  setupThemeWatcher() {
+    this.mutationObserver = new MutationObserver((params) =>
+      this.handleThemeChange(params)
     );
 
+    this.mutationObserver.observe(document.documentElement, {
+      attributes: true,
+    });
+
+    this.handleThemeChange();
+  }
+
+  handleThemeChange() {
     for (let button of this.themeItems) {
-      button.checked = button.id === this.theme;
+      button.checked = button.id === this.theme.mode;
     }
 
-    this.icon.name = this.theme === "dark" ? "moon-outline" : "sunny-outline";
+    this.icon.name =
+      this.theme.mode === "dark" ? "moon-outline" : "sunny-outline";
+  }
 
-    if (!(options?.dontSend === true)) {
-      fetch(THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
-    }
+  setTheme(themeMode) {
+    this.theme.mode = themeMode;
+
+    console.log("setting theme mode", this.theme.mode);
   }
 
   handleThemeSelect(event) {
@@ -68,7 +66,7 @@ export class ThemeSelector extends NikElement {
   }
 
   getThemeIconName() {
-    return this.theme === "dark" ? "moon-outline" : "sunny-outline";
+    return this.theme?.mode === "dark" ? "moon-outline" : "sunny-outline";
   }
 
   render() {

@@ -198,7 +198,7 @@ export class CalculateStrokes extends NikElement {
         </div>
         <wa-button
           class="w-full mt-(--wa-space-m)!"
-          variant="success"
+          variant="brand"
           ?disabled=${!this.nextButtonEnabled}
           @click=${this.handleNextButtonClick}
           >Next</wa-button

@@ -62,7 +62,7 @@ export class LoginCard extends NikElement {
           <wa-button
             class="w-full"
             type="submit"
-            variant="primary"
+            variant="brand"
             form="login-form"
             >Login</wa-button
           >
@@ -117,7 +117,7 @@ export class LoginCard extends NikElement {
           <wa-button
             class="w-full"
             type="submit"
-            variant="success"
+            variant="brand"
             form="login-form"
             >Login</wa-button
           >

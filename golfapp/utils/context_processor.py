@@ -17,6 +17,6 @@ def utility_processor():
     theme = get_theme()
 
     if theme:
-        return dict(theme=theme.color)
+        return dict(theme=theme.to_dict())
 
-    return dict(theme="")
+    return dict(theme=dict(theme="classic"))

@@ -137,7 +137,7 @@ export class SignupCard extends NikElement {
           form="signup-form"
           id="submitButton"
           class="w-full"
-          variant="success"
+          variant="brand"
           type="submit"
           ?disabled=${!(this.emailValid && this.usernameValid)}
           >Sign Up</wa-button

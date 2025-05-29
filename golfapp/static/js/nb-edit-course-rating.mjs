@@ -57,7 +57,7 @@ export class EditCourseRating extends AddCourseRating {
     return html`<wa-button
       id="edit-rating-button"
       class="grow"
-      variant="success"
+      variant="brand"
       @click=${this.handleEditRatingClick}
       >Save</wa-button
     >`;

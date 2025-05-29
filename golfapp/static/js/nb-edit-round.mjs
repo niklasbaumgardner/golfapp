@@ -61,10 +61,10 @@ export class EditRound extends AddRound {
         orientation="horizontal"
         required
       >
-        <wa-radio-button value="False" variant="success"
+        <wa-radio-button value="False" variant="brand"
           >18 hole round</wa-radio-button
         >
-        <wa-radio-button value="True" variant="success"
+        <wa-radio-button value="True" variant="brand"
           >9 hole round</wa-radio-button
         >
       </wa-radio-group>
@@ -126,7 +126,7 @@ export class EditRound extends AddRound {
     return html`<wa-button
       id="save-round-button"
       class="grow"
-      variant="success"
+      variant="brand"
       @click=${this.handleSaveRoundClick}
       >Save</wa-button
     >`;
