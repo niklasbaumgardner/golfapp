@@ -58,7 +58,6 @@ export class PlayersGrid extends NikElement {
       defaultColDef: {
         resizable: false,
       },
-      rowHeight: 50,
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
