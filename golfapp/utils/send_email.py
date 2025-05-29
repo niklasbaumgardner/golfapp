@@ -50,9 +50,9 @@ If you did not make this request then please ignore this email and no changes wi
     mail.send(msg)
 
 
-def send_new_course_email(course):
+def send_new_course_email(course, user_id):
     msg = Message("New Course Added", recipients=["niklasbaumgardner@gmail.com"])
-    msg.body = f"A new course has been added. {course.to_dict()}"
+    msg.body = f"A new course has been added by user id {user_id}. {course.to_dict()}"
     mail.send(msg)
 
 
