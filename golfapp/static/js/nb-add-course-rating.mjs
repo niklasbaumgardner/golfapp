@@ -84,17 +84,19 @@ export class AddCourseRating extends NikElement {
 
   saveButtonTemplate() {
     return html`<wa-button
-      id="edit-rating-button"
+      id="add-rating-button"
+      form=${this.formId}
       class="grow"
       variant="brand"
-      @click=${this.handleEditRatingClick}
+      type="submit"
+      @click=${this.handleAddRatingClick}
       >Save</wa-button
     >`;
   }
 
-  handleEditRatingClick() {
-    this.addRoundButton.disabled = true;
-    this.addRoundButton.loading = true;
+  handleAddRatingClick() {
+    this.addRatingButton.disabled = true;
+    this.addRatingButton.loading = true;
   }
 
   render() {
