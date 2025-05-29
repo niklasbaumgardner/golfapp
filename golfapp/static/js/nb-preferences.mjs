@@ -1,29 +1,18 @@
+import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
-import { SignupCard } from "./nb-signup.mjs";
 
-export class ProfileCard extends SignupCard {
+export class PreferencesCard extends NikElement {
   static properties = {
-    username: { type: String },
+    theme: { type: Object },
   };
 
-  async handleEmailInput() {
-    if (this.emailInput.value === this.email) {
-      this.emailInput.helpText = "";
-      this.emailValid = false;
-      return;
-    }
+  static queries = { themesSelect: "#themes" };
 
-    super.handleEmailInput();
-  }
-
-  async handleUsernameInput() {
-    if (this.usernameInput.value === this.username) {
-      this.usernameInput.helpText = "";
-      this.usernameValid = false;
-      return;
-    }
-
-    super.handleUsernameInput();
+  handleThemeChange() {
+    let theme = this.themesSelect.value;
+    console.log(theme);
+    let themeStylesheet = document.getElementById("themes-stylesheet");
+    themeStylesheet.href = `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${theme}.css`;
   }
 
   render() {
@@ -32,7 +21,7 @@ export class ProfileCard extends SignupCard {
       <div class="wa-stack">
         <h2>Preferences</h2>
 
-        <wa-select label="Themes"
+        <wa-select id="themes" label="Themes" @input=${this.handleThemeChange}
           ><wa-option value="default">Default</wa-option
           ><wa-option value="classic">Classic</wa-option
           ><wa-option value="awesome">Awesome</wa-option
@@ -64,4 +53,4 @@ export class ProfileCard extends SignupCard {
   }
 }
 
-customElements.define("nb-profile", ProfileCard);
+customElements.define("nb-preferences", PreferencesCard);

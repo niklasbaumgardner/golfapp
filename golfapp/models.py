@@ -139,6 +139,13 @@ class Theme(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     color = db.Column(db.String, nullable=False)
 
+    # theme = db.Column(db.String, nullable=True)  # default, classic, custom, etc...
+    # mode = db.Column(db.String, nullable=True)  # light, dark
+    # primary_color = db.Column(
+    #     db.String, nullable=True
+    # )  # red, blue, green, etc... (i think)
+    # color_pallete = db.Column(db.String, nullable=True)  # web-awesome values
+
 
 class Subscription(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)

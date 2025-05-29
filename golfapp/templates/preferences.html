@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% block title %}Preferences{% endblock title %} {%
+block preferences %}active{% endblock preferences %} {% block content %}
+<script>
+  const COLOR_URL = "{{ url_for('preferences_bp.set_primary_color') }}";
+  const BACKGROUND_COLOR_URL =
+    "{{ url_for('preferences_bp.set_background_color') }}";
+</script>
+
+<nb-preferences></nb-preferences>
+
+{% endblock content %}

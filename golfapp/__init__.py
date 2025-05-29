@@ -32,6 +32,7 @@ from golfapp.routes.addcourse import addcourse_bp
 from golfapp.routes.admin import admin_bp
 from golfapp.routes.auth import auth_bp
 from golfapp.routes.courseranking import courseranking_bp
+from golfapp.routes.preferences import preferences_bp
 from golfapp.routes.profile import profile_bp
 from golfapp.routes.strokes import strokes_bp
 from golfapp.routes.stats import stats_bp
@@ -44,6 +45,7 @@ app.register_blueprint(addcourse_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(courseranking_bp)
+app.register_blueprint(preferences_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(strokes_bp)
 app.register_blueprint(stats_bp)
