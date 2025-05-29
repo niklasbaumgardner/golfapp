@@ -6,6 +6,8 @@ from flask_mail import Mail
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.pool import NullPool
+import sentry_sdk
+import os
 
 
 bcrypt = Bcrypt()
@@ -13,6 +15,27 @@ migrate = Migrate()
 mail = Mail()
 login_manager = LoginManager()
 db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
+
+if not os.environ.get("FLASK_DEBUG"):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for tracing.
+        traces_sample_rate=1.0,
+        # Set profile_session_sample_rate to 1.0 to profile 100%
+        # of profile sessions.
+        profile_session_sample_rate=1.0,
+        # Set profile_lifecycle to "trace" to automatically
+        # run the profiler on when there is an active transaction
+        profile_lifecycle="trace",
+        _experiments={
+            # Set continuous_profiling_auto_start to True
+            # to automatically start the profiler on when
+            # possible.
+            "continuous_profiling_auto_start": True,
+        },
+        release="nbgolf@1.0.0",
+    )
 
 
 app = Flask(__name__)
