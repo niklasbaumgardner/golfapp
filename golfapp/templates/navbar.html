@@ -49,14 +49,14 @@
               class="inline-block w-full"
               >Subscribers</a
             ></wa-menu-item
-          ><wa-menu-item
+          >{% endif %}
+          <wa-menu-item
             ><a
               href="{{ url_for('preferences_bp.preferences') }}"
               class="inline-block w-full"
               >Preferences</a
             ></wa-menu-item
-          >{% endif %}
-          <wa-menu-item
+          ><wa-menu-item
             ><a
               href="{{ url_for('profile_bp.profile') }}"
               class="inline-block w-full"
@@ -113,14 +113,14 @@
           class="inline-block w-full"
           >Subscribers</a
         ></wa-menu-item
-      ><wa-menu-item
+      >{% endif %}
+      <wa-menu-item
         ><a
           href="{{ url_for('preferences_bp.preferences') }}"
           class="inline-block w-full"
           >Preferences</a
         ></wa-menu-item
-      >{% endif %}
-      <wa-menu-item
+      ><wa-menu-item
         ><a
           href="{{ url_for('profile_bp.profile') }}"
           class="inline-block w-full"
