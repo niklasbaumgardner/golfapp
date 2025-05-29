@@ -5,7 +5,7 @@ viewplayers %}active{% endblock viewplayers %} {% block content %}
 
 <nb-view-players
   players='{{ users|tojson }}'
-  theme="{{ theme }}"
+  theme="{{ theme.mode }}"
 ></nb-view-players>
 
 <script src="/static/js/nb-view-players.mjs" type="module"></script>

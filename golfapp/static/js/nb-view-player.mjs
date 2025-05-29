@@ -8,7 +8,6 @@ import "./nb-edit-round.mjs";
 class ViewPlayer extends NikElement {
   static properties = {
     user: { type: Object },
-    isMe: { type: Boolean },
     rounds: { type: Object },
     handicap: { type: Number },
     theme: { type: String },
@@ -33,14 +32,14 @@ class ViewPlayer extends NikElement {
 
   titleTemplate() {
     if (this.hasHandicap) {
-      if (this.isMe) {
+      if (IS_ME) {
         return html`<h2>Your handicap is ${this.handicapString}</h2>`;
       }
       return html`<h2>
         ${this.user.username}'s handicap is ${this.handicapString}
       </h2>`;
     } else {
-      if (this.isMe) {
+      if (IS_ME) {
         return html`<h2>You have ${this.handicapString}</h2>`;
       }
       return html`<h2>${this.user.username} has ${this.handicapString}</h2>`;

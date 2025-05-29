@@ -6,7 +6,6 @@ import "./nb-edit-course-rating.mjs";
 
 class ViewCourseRating extends NikElement {
   static properties = {
-    isMe: { type: Boolean },
     ratings: { type: Object },
     courses: { type: Object },
     theme: { type: String },
