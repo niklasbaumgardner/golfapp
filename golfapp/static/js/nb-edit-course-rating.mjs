@@ -49,6 +49,7 @@ export class EditCourseRating extends AddCourseRating {
       min="0"
       max="10"
       step="0.01"
+      required
       value=${this.rating.rating}
     ></wa-input>`;
   }
@@ -64,6 +65,10 @@ export class EditCourseRating extends AddCourseRating {
   }
 
   async handleEditRatingClick() {
+    if (!this.form.reportValidity()) {
+      return;
+    }
+
     this.editRatingButton.disabled = true;
     this.editRatingButton.loading = true;
 

@@ -14,6 +14,7 @@ export class AddCourseRating extends NikElement {
       dialogEl: "wa-dialog",
       courseSelectEl: "#course",
       addRatingButton: "#add-rating-button",
+      form: "form",
     };
   }
 
@@ -79,6 +80,7 @@ export class AddCourseRating extends NikElement {
       max="10"
       step="0.01"
       placeholder="1.23"
+      required
     ></wa-input>`;
   }
 
@@ -95,8 +97,10 @@ export class AddCourseRating extends NikElement {
   }
 
   handleAddRatingClick() {
-    this.addRatingButton.disabled = true;
-    this.addRatingButton.loading = true;
+    if (this.form.reportValidity()) {
+      this.addRatingButton.disabled = true;
+      this.addRatingButton.loading = true;
+    }
   }
 
   render() {

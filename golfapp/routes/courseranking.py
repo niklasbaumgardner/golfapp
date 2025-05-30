@@ -59,7 +59,9 @@ def add_course_rating():
     course_id = request.form.get("course")
     rating = request.form.get("rating")
 
-    course_ranking = courseranking_queries.get_course_ranking_by_id(id=id)
+    course_ranking = courseranking_queries.get_course_ranking_by_course_and_user(
+        course_id=course_id, user_id=current_user.id
+    )
     if course_ranking:
         courseranking_queries.update_course_ranking(
             course_ranking=course_ranking, rating=rating

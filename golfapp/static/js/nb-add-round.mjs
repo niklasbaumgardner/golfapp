@@ -15,6 +15,7 @@ export class AddRound extends NikElement {
       courseSelectEl: "#course",
       teeboxSelectEl: "#teebox",
       addRoundButton: "#add-round-button",
+      form: "form",
     };
   }
 
@@ -197,8 +198,10 @@ export class AddRound extends NikElement {
   }
 
   handleAddRoundClick() {
-    this.addRoundButton.disabled = true;
-    this.addRoundButton.loading = true;
+    if (this.form.reportValidity()) {
+      this.addRoundButton.disabled = true;
+      this.addRoundButton.loading = true;
+    }
   }
 
   render() {

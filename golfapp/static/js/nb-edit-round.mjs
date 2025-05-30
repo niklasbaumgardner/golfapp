@@ -133,6 +133,10 @@ export class EditRound extends AddRound {
   }
 
   async handleSaveRoundClick() {
+    if (!this.form.reportValidity()) {
+      return;
+    }
+
     this.saveRoundButton.disabled = true;
     this.saveRoundButton.loading = true;
 
