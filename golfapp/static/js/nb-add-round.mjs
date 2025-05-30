@@ -193,7 +193,7 @@ export class AddRound extends NikElement {
       class="grow"
       variant="brand"
       @click=${this.handleAddRoundClick}
-      >Add round</wa-button
+      >Save Round</wa-button
     >`;
   }
 

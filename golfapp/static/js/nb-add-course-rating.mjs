@@ -92,7 +92,7 @@ export class AddCourseRating extends NikElement {
       variant="brand"
       type="submit"
       @click=${this.handleAddRatingClick}
-      >Save</wa-button
+      >Save Rating</wa-button
     >`;
   }
 
