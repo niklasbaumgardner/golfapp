@@ -185,7 +185,6 @@ export class RoundsGrid extends NikElement {
         resizable: false,
       },
       domLayout: "autoHeight",
-      editType: "fullRow",
       suppressCellFocus: true,
       suppressMovableColumns: true,
       pagination: true,

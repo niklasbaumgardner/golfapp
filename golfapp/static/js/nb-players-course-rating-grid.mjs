@@ -81,11 +81,22 @@ export class PlayersCourseRatingGrid extends NikElement {
         field: "course",
         flex: 1,
         minWidth: 200,
+        autoHeight: true,
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = param.data.course;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
 
-          return course.name;
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${city}, ${state}</div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
           let courseA = nodeA.data.course;
@@ -123,19 +134,15 @@ export class PlayersCourseRatingGrid extends NikElement {
     const gridOptions = {
       columnDefs,
       rowData: this.ratings,
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+      },
       defaultColDef: {
         resizable: false,
       },
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-      },
-      onGridReady: (event) =>
-        new Promise((r) => setTimeout(r, 200)).then(() => {
-          event.api.sizeColumnsToFit();
-        }),
     };
     this.dataGrid = agGrid.createGrid(this.ratingsGrid, gridOptions);
   }

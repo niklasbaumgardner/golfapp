@@ -90,25 +90,60 @@ export class CourseRatingsGrid extends NikElement {
     const columnDefs = [
       {
         field: "rank",
+        width: 75,
+        minWidth: 75,
+        maxWidth: 75,
+        filter: "agNumberColumnFilter",
       },
       {
         field: "name",
         headerName: "Course",
+        autoHeight: true,
+        width: 240,
+        minWidth: 240,
+        maxWidth: 240,
+        cellRenderer: (param) => {
+          let course = param.data;
+          let address = course.address ?? "";
+          let [street, city, stateZip] = address.split(", ");
+          let [state, zip] = stateZip.split(" ");
+
+          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${city}, ${state}</div>`;
+        },
+        comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
+          let courseA = nodeA.data.course;
+          let courseB = nodeB.data.course;
+
+          return courseA.name.localeCompare(courseB.name);
+        },
+        filterValueGetter: (param) => {
+          let course = param.data.course;
+
+          return course.name;
+        },
       },
       {
         field: "averageRating",
-        headerName: "Average Weighted Rating",
+        headerName: "Weighted Rating",
+        width: 130,
+        minWidth: 130,
+        maxWidth: 130,
+        filter: "agNumberColumnFilter",
       },
       {
         field: "array",
         headerName: "All Ratings",
+        autoHeight: true,
+        flex: 1,
+        minWidth: 200,
         cellRenderer: (param) => {
           let rankings = param.data.array.map(
             (x) =>
-              `<a class="rating-by-user" href="/course_ranking/${x.user.id}" title="Rating from ${x.user.username}">${x.rating} by ${x.user.username}</a>`
+              `<a class="rating-by-user_" href="/course_ranking/${x.user.id}" title="Rating from ${x.user.username}">${x.rating} by ${x.user.username}</a>`
           );
+          rankings = rankings.join('<span class="min-w-[1ch]">, </span>');
 
-          return rankings.join('<span class="rating-by-user">, </span>');
+          return `<div class="flex flex-wrap">${rankings}</div>`;
         },
       },
     ];
@@ -117,8 +152,7 @@ export class CourseRatingsGrid extends NikElement {
       columnDefs,
       rowData: this.ratings,
       autoSizeStrategy: {
-        type: "fitCellContents",
-        skipHeader: false,
+        type: "fitGridWidth",
       },
       defaultColDef: {
         resizable: false,

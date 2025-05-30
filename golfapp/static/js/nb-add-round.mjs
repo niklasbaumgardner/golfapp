@@ -166,21 +166,21 @@ export class AddRound extends NikElement {
         id="fir"
         name="fir"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="FIR"
       ></wa-input>
       <wa-input
         id="gir"
         name="gir"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="GIR"
       ></wa-input>
       <wa-input
         id="putts"
         name="putts"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="Putts"
       ></wa-input>`;
   }

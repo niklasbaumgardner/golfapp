@@ -36,6 +36,9 @@ export class PlayersGrid extends NikElement {
         field: "username",
         headerName: "Player",
         filter: "agTextColumnFilter",
+        flex: 2,
+        minWidth: 200,
+        maxWidth: 850,
         cellRenderer: (param) => {
           return `<a href="${param.data.url}">${param.data.username}</a>`;
         },
@@ -43,6 +46,9 @@ export class PlayersGrid extends NikElement {
       {
         field: "handicap",
         filter: "agNumberColumnFilter",
+        flex: 1,
+        minWidth: 100,
+        maxWidth: 350,
         cellRenderer: (param) => {
           return param.data.handicap.handicap_str;
         },
@@ -55,30 +61,21 @@ export class PlayersGrid extends NikElement {
     const gridOptions = {
       columnDefs,
       rowData: this.players,
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+      },
       defaultColDef: {
         resizable: false,
       },
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        columnLimits: [
-          {
-            colId: "username",
-            minWidth: 200,
-            maxWidth: 850,
-          },
-          {
-            colId: "handicap",
-            minWidth: 100,
-          },
-        ],
-      },
-      onGridReady: (event) =>
-        new Promise((r) => setTimeout(r, 200)).then(() => {
-          event.api.sizeColumnsToFit();
-        }),
+
+      // onGridReady: (event) => {
+      //   new Promise((r) => setTimeout(r, 200)).then(() => {
+      //     event.api.sizeColumnsToFit();
+      //   });
+      // },
     };
     this.dataGrid = agGrid.createGrid(this.playersGridEl, gridOptions);
   }

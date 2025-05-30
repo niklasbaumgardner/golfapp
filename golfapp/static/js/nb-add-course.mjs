@@ -2,7 +2,7 @@ import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
 
 function match(name, courses) {
-  const regex = new RegExp(".*" + name + ".*", "i");
+  const regex = new RegExp(".*" + name.replace(" ", "") + ".*", "i");
   return courses.filter((course) => regex.test(course.replace(" ", "")));
 }
 
@@ -119,7 +119,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="par"
               label="Par"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step="1"
               required
@@ -127,7 +127,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="rating"
               label="Rating"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step=".1"
               required
@@ -135,7 +135,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="slope"
               label="Slope"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step="1"
               required
@@ -168,7 +168,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="par"
               label="Par"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step="1"
               required
@@ -176,7 +176,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="rating"
               label="Rating"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step=".1"
               required
@@ -184,7 +184,7 @@ export class AddCourse extends NikElement {
             <wa-input
               name="slope"
               label="Slope"
-              class="min-w-0"
+              class="grow min-w-0"
               type="number"
               step="1"
               required

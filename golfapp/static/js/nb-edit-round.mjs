@@ -100,7 +100,7 @@ export class EditRound extends AddRound {
         id="fir"
         name="fir"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="FIR"
         value=${ifDefined(this.round.fir)}
       ></wa-input>
@@ -108,7 +108,7 @@ export class EditRound extends AddRound {
         id="gir"
         name="gir"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="GIR"
         value=${ifDefined(this.round.gir)}
       ></wa-input>
@@ -116,7 +116,7 @@ export class EditRound extends AddRound {
         id="putts"
         name="putts"
         type="number"
-        class="min-w-0"
+        class="grow min-w-0"
         label="Putts"
         value=${ifDefined(this.round.putts)}
       ></wa-input>`;
