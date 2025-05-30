@@ -50,6 +50,19 @@ class ViewPlayer extends NikElement {
     return html`<nb-player-stats></nb-player-stats>`;
   }
 
+  addRoundButtonTemplate() {
+    if (!IS_ME) {
+      return null;
+    }
+
+    return html`<wa-button
+      variant="brand"
+      appearance="filled outlined"
+      @click=${this.handleAddRoundClick}
+      >Add Round</wa-button
+    >`;
+  }
+
   roundsTemplate() {
     return html`<nb-rounds-grid
       .rounds=${this.rounds}
@@ -74,12 +87,7 @@ class ViewPlayer extends NikElement {
           <a href=${USER.course_ranking_url}
             >${IS_ME ? "My" : USER.username} course ratings</a
           >
-          <wa-button
-            variant="brand"
-            appearance="filled outlined"
-            @click=${this.handleAddRoundClick}
-            >Add Round</wa-button
-          >
+          ${this.addRoundButtonTemplate()}
         </div>
         ${this.roundsTemplate()}
       </div></wa-card
