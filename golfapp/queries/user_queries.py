@@ -4,7 +4,9 @@ from golfapp import bcrypt, db
 
 def create_user(email, username, password):
     hash_ = hash_password(password=password)
-    new_user = User(email=email, username=username, password=hash_)
+    new_user = User(
+        email=email, username=username, password=hash_, is_publicly_visible=True
+    )
     db.session.add(new_user)
     db.session.commit()
 
