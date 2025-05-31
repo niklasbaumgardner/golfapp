@@ -68,9 +68,12 @@ def add_round_submit():
 
     old_handicap, new_handicap = handicap_helpers.update_handicap()
 
-    send_email.send_subscribers_message(
-        current_user.get_id(), new_round, old_handicap, new_handicap
-    )
+    try:
+        send_email.send_subscribers_message(
+            current_user.get_id(), new_round, old_handicap, new_handicap
+        )
+    except:
+        pass
 
     return redirect(url_for("viewplayer_bp.index"))
 

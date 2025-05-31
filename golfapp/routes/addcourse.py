@@ -24,7 +24,10 @@ def add_course():
             name=name, teebox=teebox, par=par, rating=rating, slope=slope
         )
 
-        send_email.send_new_course_email(course=course, user_id=current_user.id)
+        try:
+            send_email.send_new_course_email(course=course, user_id=current_user.id)
+        except:
+            pass
 
         return redirect(url_for("addcourse_bp.add_course"))
 
@@ -47,9 +50,12 @@ def add_teebox():
         course_id=course_id, teebox=teebox, par=par, rating=rating, slope=slope
     )
 
-    send_email.send_new_course_email(
-        course=course_queries.get_course_by_id(course_id=course_id),
-        user_id=current_user.id,
-    )
+    try:
+        send_email.send_new_course_email(
+            course=course_queries.get_course_by_id(course_id=course_id),
+            user_id=current_user.id,
+        )
+    except:
+        pass
 
     return redirect(url_for("addcourse_bp.add_course"))
