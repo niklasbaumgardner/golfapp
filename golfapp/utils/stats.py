@@ -1,5 +1,5 @@
-from golfapp.queries import round_queries
 from golfapp.utils import handicap_helpers
+from copy import deepcopy
 
 
 def get_dates_for_range(first, last):
@@ -24,10 +24,7 @@ def get_next_smallest_date_index(rounds, target_date):
     return len(rounds) - 1
 
 
-def get_handicap_graph_list_for_user(user_id):
-    rounds = round_queries.get_rounds_for_user_id(user_id=user_id, sort=True)
-    rounds.reverse()
-
+def get_handicap_graph_list_for_user(user_id, rounds):
     first_date = rounds[0].date
     last_date = rounds[-1].date
     dates, step = get_dates_for_range(first_date, last_date)
@@ -48,20 +45,23 @@ def get_handicap_graph_list_for_user(user_id):
     return [d.strftime("%m/%d/%Y") for d in dates], handicaps
 
 
-def get_anitcap_for_user(user_id):
-    rounds = round_queries.get_rounds_for_user_id(
-        user_id=user_id, sort=True, max_rounds=20
-    )
-    anticap = handicap_helpers.calculate_handicap(rounds=rounds, reverse=True)
-
-    return anticap
-
-
-def get_averagecap_for_user(user_id):
-    rounds = round_queries.get_rounds_for_user_id(
-        user_id=user_id, sort=True, max_rounds=20
-    )
+def get_averagecap_for_user(rounds):
     score_diffs = handicap_helpers.get_score_diffs(rounds=rounds)
     averagecap = round(sum(score_diffs) / len(score_diffs), 2)
 
     return averagecap
+
+
+def get_all_stats(user_id, rounds):
+    graph_rounds = deepcopy(rounds)
+    a_cap_rounds = deepcopy(rounds[-20:])
+
+    dates, handicaps = get_handicap_graph_list_for_user(
+        user_id=user_id, rounds=graph_rounds
+    )
+
+    anticap = handicap_helpers.calculate_handicap(rounds=a_cap_rounds, reverse=True)
+
+    averagecap = get_averagecap_for_user(rounds=a_cap_rounds)
+
+    return [[dates, handicaps], anticap, averagecap]

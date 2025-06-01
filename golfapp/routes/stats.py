@@ -80,16 +80,15 @@ def stats():
 
 @stats_bp.get("/get_stats_data/<int:id>")
 def get_stats_data(id):
-    rounds = [
-        r.to_dict()
-        for r in round_queries.get_rounds_for_user_id(
-            user_id=id, sort=True, reverse_sort=True
-        )
-    ]
+    rounds = round_queries.get_rounds_for_user_id(
+        user_id=id, sort=True, reverse_sort=True
+    )
 
-    dates, handicaps = handicap_stats.get_handicap_graph_list_for_user(user_id=id)
-    anticap = handicap_stats.get_anitcap_for_user(user_id=id)
-    averagecap = handicap_stats.get_averagecap_for_user(user_id=id)
+    [[dates, handicaps], anticap, averagecap] = handicap_stats.get_all_stats(
+        user_id=id, rounds=rounds
+    )
+
+    rounds = [r.to_dict() for r in rounds]
 
     user = user_queries.get_user_by_id(user_id=id)
     return {
