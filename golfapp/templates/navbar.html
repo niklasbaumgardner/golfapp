@@ -32,7 +32,8 @@
           ><wa-button id="user-button" appearance="plain" slot="trigger" caret
             >{{ current_user.username }}</wa-button
           ><wa-menu id="user-dropdown-selector">
-            {% if current_user.is_admin %}<wa-menu-item
+            {% if current_user.is_admin %}
+            <wa-menu-item
               ><a
                 href="{{ url_for('admin_bp.hijack') }}"
                 class="inline-block w-full"
@@ -50,7 +51,9 @@
                 class="inline-block w-full"
                 >Subscribers</a
               ></wa-menu-item
-            >{% endif %}
+            >
+            <wa-divider></wa-divider>
+            {% endif %}
             <wa-menu-item
               ><a
                 href="{{ url_for('preferences_bp.preferences') }}"
@@ -99,7 +102,8 @@
     ><wa-button id="user-button" appearance="plain" slot="trigger" caret
       >{{ current_user.username }}</wa-button
     ><wa-menu id="user-dropdown-selector">
-      {% if current_user.is_admin %}<wa-menu-item
+      {% if current_user.is_admin %}
+      <wa-menu-item
         ><a href="{{ url_for('admin_bp.hijack') }}" class="inline-block w-full"
           >Hijack Handicap</a
         ></wa-menu-item
@@ -115,7 +119,9 @@
           class="inline-block w-full"
           >Subscribers</a
         ></wa-menu-item
-      >{% endif %}
+      >
+      <wa-divider></wa-divider>
+      {% endif %}
       <wa-menu-item
         ><a
           href="{{ url_for('preferences_bp.preferences') }}"

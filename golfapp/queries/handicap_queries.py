@@ -5,7 +5,7 @@ from flask_login import current_user
 
 def create_handicap(handicap_diff):
     return create_handicap_for_user(
-        user_id=current_user.get_id(), handicap=handicap_diff
+        user_id=current_user.get_id(), handicap_diff=handicap_diff
     )
 
 

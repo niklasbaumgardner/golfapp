@@ -30,7 +30,50 @@ def hijack():
 
     users = [u.to_dict() for u in user_queries.get_users()]
     users.sort(key=lambda u: u["handicap"]["handicap"] if u["handicap"] else 999)
-    return render_template("hijack.html", users=users)
+    courses = {c.id: c.to_dict() for c in course_queries.get_courses()}
+
+    return render_template("hijack.html", users=users, courses=courses)
+
+
+@admin_bp.post("/add_round_for_user")
+@login_required
+def add_round_for_user():
+    if not current_user.is_admin:
+        return redirect(url_for("home.index"))
+
+    user_id = request.form.get("user", type=int)
+
+    course_id = request.form.get("course", type=int)
+    teebox_id = request.form.get("teebox", type=int)
+    nine_hole_round = request.form.get("nineHoleRound") == "True"
+    score = request.form.get("score", type=int)
+    gir = request.form.get("gir", type=int)
+    fir = request.form.get("fir", type=int)
+    putts = request.form.get("putts", type=int)
+    date = request.form.get("date")
+
+    date = handicap_helpers.get_date_from_string(date)
+
+    score_diff = handicap_helpers.get_score_diff(
+        teebox_id=teebox_id, score=score, nine_hole_round=nine_hole_round
+    )
+
+    round_queries.create_round_for_user(
+        user_id=user_id,
+        course_id=course_id,
+        teebox_id=teebox_id,
+        score=score,
+        score_diff=score_diff,
+        nine_hole_round=nine_hole_round,
+        fir=fir,
+        gir=gir,
+        putts=putts,
+        date=date,
+    )
+
+    handicap_helpers.update_handicap()
+
+    return redirect(url_for("viewplayer_bp.view_player", id=user_id))
 
 
 @admin_bp.route("/edit_courses", methods=["GET"])

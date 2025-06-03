@@ -25,6 +25,36 @@ def create_round(
     return round
 
 
+def create_round_for_user(
+    user_id,
+    course_id,
+    teebox_id,
+    score,
+    score_diff,
+    nine_hole_round,
+    fir,
+    gir,
+    putts,
+    date,
+):
+    round = Round(
+        user_id=user_id,
+        course_id=course_id,
+        teebox_id=teebox_id,
+        score=score,
+        score_diff=score_diff,
+        nine_hole_round=nine_hole_round,
+        fir=fir,
+        gir=gir,
+        putts=putts,
+        date=date,
+    )
+    db.session.add(round)
+    db.session.commit()
+
+    return round
+
+
 def update_round(
     round_id,
     score=None,

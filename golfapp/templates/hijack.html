@@ -1,11 +1,18 @@
 {% extends "base.html" %} {% block title %}Home{% endblock title %} {% block
 hijack %}active{% endblock hijack %} {% block content %}
 
-<div class="">
-  <div class="">
-    <div class="">Hijack Handicap</div>
-  </div>
-</div>
+<script>
+  const ADD_ROUND_FOR_USER = "{{ url_for('admin_bp.add_round_for_user') }}";
+  const COURSES = {{ courses|tojson }};
+</script>
+<script src="/static/js/nb-add-round-for-user.mjs" type="module"></script>
+
+<h2>Hijack Handicap</h2>
+
+<nb-add-round-for-user users='{{ users|tojson }}'></nb-add-round-for-user>
+<wa-button variant="brand" id="add-round-for-user"
+  >Add Round For User</wa-button
+>
 
 <div class="">
   <div class="">
@@ -44,5 +51,13 @@ hijack %}active{% endblock hijack %} {% block content %}
     </div>
   </div>
 </div>
+
+<script>
+  document
+    .getElementById("add-round-for-user")
+    .addEventListener("click", () => {
+      document.querySelector("nb-add-round-for-user").show();
+    });
+</script>
 
 {% endblock content %}

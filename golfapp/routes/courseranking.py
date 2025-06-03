@@ -43,13 +43,12 @@ def course_ranking(user_id):
         cr.to_dict()
         for cr in courseranking_queries.get_course_rankings_for_user_id(user_id=user_id)
     ]
-    courses = []
     return render_template(
         "courseranking.html",
         user=user.to_dict(),
         is_me=False,
         course_rankings=course_rankings,
-        courses=courses,
+        courses=[],
     )
 
 

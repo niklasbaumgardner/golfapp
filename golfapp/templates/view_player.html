@@ -2,8 +2,6 @@
 block home %}active{% endblock home %} {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
 <script>
-  const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
-  const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
   const COURSES = {{ courses|tojson }};
   const IS_ME = "{{ is_me }}" === "True";
   const ROUNDS = {{ rounds|tojson }};
