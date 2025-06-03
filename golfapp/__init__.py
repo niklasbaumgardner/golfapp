@@ -28,7 +28,7 @@ if not os.environ.get("FLASK_DEBUG"):
             # possible.
             "continuous_profiling_auto_start": True,
         },
-        release="nbgolf@1.0.6",
+        release="nbgolf@1.0.7",
     )
 
 
