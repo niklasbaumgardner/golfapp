@@ -18,7 +18,7 @@ class ViewPlayer extends NikElement {
   }
 
   get handicapString() {
-    return this.user.handicap.handicap_str ?? "no handicap";
+    return this.user.handicap?.handicap_str ?? "no handicap";
   }
 
   connectedCallback() {
