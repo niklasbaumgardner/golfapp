@@ -105,10 +105,14 @@ export class CourseRatingsGrid extends NikElement {
         cellRenderer: (param) => {
           let course = param.data;
           let address = course.address ?? "";
-          let [street, city, stateZip] = address.split(", ");
-          let [state, zip] = stateZip.split(" ");
+          let courseAddress = "";
+          try {
+            let [street, city, stateZip] = address.split(", ");
+            let [state, zip] = stateZip.split(" ");
+            courseAddress = `${city}, ${state}`;
+          } catch {}
 
-          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${city}, ${state}</div>`;
+          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${courseAddress}</div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
           let courseA = nodeA.data.course;
