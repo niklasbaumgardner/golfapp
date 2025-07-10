@@ -86,9 +86,17 @@ export class RoundsGrid extends NikElement {
         filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = param.data.course;
+          let address = course.address ?? "";
+          let courseAddress = "";
+          try {
+            let [street, city, stateZip] = address.split(", ");
+            let [state, zip] = stateZip.split(" ");
+            courseAddress = `${city}, ${state}`;
+          } catch {}
+
           let teebox = param.data.teebox;
 
-          return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
+          return `<div class="wa-heading-xs">${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})</div><div class="wa-body-xs">${courseAddress}</div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
           let courseA = nodeA.data.course;
