@@ -83,7 +83,11 @@ class PlayerStats extends NikElement {
     let gir = [];
     let putts = [];
     for (let round of last20Rounds) {
-      avgRoundArr.push(round.score);
+      let multiplier = 1;
+      if (round.nine_hole_round) {
+        multiplier = 2;
+      }
+      avgRoundArr.push(round.score * multiplier);
       fir.push(round.fir);
       gir.push(round.gir);
       putts.push(round.putts);
