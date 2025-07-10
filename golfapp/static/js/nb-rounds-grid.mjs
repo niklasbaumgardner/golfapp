@@ -84,6 +84,7 @@ export class RoundsGrid extends NikElement {
         field: "course",
         headerName: "Course - Teebox",
         filter: "agTextColumnFilter",
+        autoHeight: true,
         cellRenderer: (param) => {
           let course = param.data.course;
           let address = course.address ?? "";
