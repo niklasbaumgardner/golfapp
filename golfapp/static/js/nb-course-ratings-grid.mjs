@@ -15,6 +15,17 @@ export class CourseRatingsGrid extends NikElement {
     ratingsGridEl: "#grid",
   };
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+
+    return colorScheme;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -164,31 +175,26 @@ export class CourseRatingsGrid extends NikElement {
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.ratingsGridEl, gridOptions);
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
       attributes: true,
     });
-
-    this.handleThemeChange();
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.ratingsGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
-    this.ratingsGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 
   render() {
@@ -196,13 +202,7 @@ export class CourseRatingsGrid extends NikElement {
       return null;
     }
 
-    return html`<div
-      id="grid"
-      style="--ag-grid-size: 4px;"
-      class=${this.theme === "dark"
-        ? "ag-theme-alpine-dark"
-        : "ag-theme-alpine"}
-    ></div>`;
+    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
 

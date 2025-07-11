@@ -15,6 +15,17 @@ export class PlayersGrid extends NikElement {
     playersGridEl: "#grid",
   };
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+
+    return colorScheme;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -70,6 +81,7 @@ export class PlayersGrid extends NikElement {
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
 
       // onGridReady: (event) => {
       //   new Promise((r) => setTimeout(r, 200)).then(() => {
@@ -81,26 +93,20 @@ export class PlayersGrid extends NikElement {
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
       attributes: true,
     });
-
-    this.handleThemeChange();
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.playersGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
-    this.playersGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 
   render() {
@@ -108,13 +114,7 @@ export class PlayersGrid extends NikElement {
       return null;
     }
 
-    return html`<div
-      id="grid"
-      style="--ag-grid-size: 4px;"
-      class=${this.theme === "dark"
-        ? "ag-theme-alpine-dark"
-        : "ag-theme-alpine"}
-    ></div>`;
+    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
 customElements.define("nb-players-grid", PlayersGrid);

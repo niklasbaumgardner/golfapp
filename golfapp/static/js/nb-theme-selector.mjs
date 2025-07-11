@@ -34,8 +34,8 @@ export class ThemeSelector extends NikElement {
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {

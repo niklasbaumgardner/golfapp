@@ -43,6 +43,17 @@ export class PlayersCourseRatingGrid extends NikElement {
     ratingsGrid: "#grid",
   };
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+
+    return colorScheme;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -143,6 +154,7 @@ export class PlayersCourseRatingGrid extends NikElement {
       domLayout: "autoHeight",
       suppressCellFocus: true,
       suppressMovableColumns: true,
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.ratingsGrid, gridOptions);
   }
@@ -165,23 +177,20 @@ export class PlayersCourseRatingGrid extends NikElement {
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
       attributes: true,
     });
-
-    this.handleThemeChange();
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.ratingsGrid.classList.toggle("ag-theme-alpine-dark", theme === "dark");
-    this.ratingsGrid.classList.toggle("ag-theme-alpine", theme === "light");
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
+    );
   }
 
   render() {
@@ -189,13 +198,7 @@ export class PlayersCourseRatingGrid extends NikElement {
       return null;
     }
 
-    return html`<div
-      id="grid"
-      style="--ag-grid-size: 4px;"
-      class=${this.theme === "dark"
-        ? "ag-theme-alpine-dark"
-        : "ag-theme-alpine"}
-    ></div>`;
+    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
 customElements.define("nb-players-course-rating-grid", PlayersCourseRatingGrid);

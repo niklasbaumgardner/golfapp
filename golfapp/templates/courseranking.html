@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block title %}Course Ranking{% endblock title %} {%
 block content %}
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.3/dist/ag-grid-community.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.2/dist/ag-grid-community.min.js"></script>
 <script>
   const ADD_COURSE_RATING_URL = "{{ url_for('courseranking_bp.add_course_rating') }}";
   const IS_ME = "{{ is_me }}" === "True";

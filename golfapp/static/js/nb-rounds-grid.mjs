@@ -61,6 +61,17 @@ export class RoundsGrid extends NikElement {
     roundsGridEl: "#grid",
   };
 
+  get currentColorScheme() {
+    let theme = document.documentElement.classList.contains("wa-dark")
+      ? "dark"
+      : "light";
+
+    let colorScheme =
+      theme === "dark" ? agGrid.colorSchemeDark : agGrid.colorSchemeLight;
+
+    return colorScheme;
+  }
+
   firstUpdated() {
     this.init();
   }
@@ -204,6 +215,7 @@ export class RoundsGrid extends NikElement {
           return "bg-(--wa-color-success-fill-quiet)!";
         }
       },
+      theme: agGrid.themeAlpine.withPart(this.currentColorScheme),
     };
     this.dataGrid = agGrid.createGrid(this.roundsGridEl, gridOptions);
   }
@@ -232,26 +244,20 @@ export class RoundsGrid extends NikElement {
   }
 
   setupThemeWatcher() {
-    this.mutationObserver = new MutationObserver((params) =>
-      this.handleThemeChange(params)
+    this.mutationObserver = new MutationObserver(() =>
+      this.handleThemeChange()
     );
 
     this.mutationObserver.observe(document.documentElement, {
       attributes: true,
     });
-
-    this.handleThemeChange();
   }
 
   handleThemeChange() {
-    let theme = document.documentElement.classList.contains("wa-dark")
-      ? "dark"
-      : "light";
-    this.roundsGridEl.classList.toggle(
-      "ag-theme-alpine-dark",
-      theme === "dark"
+    this.dataGrid.setGridOption(
+      "theme",
+      agGrid.themeAlpine.withPart(this.currentColorScheme)
     );
-    this.roundsGridEl.classList.toggle("ag-theme-alpine", theme === "light");
   }
 
   render() {
@@ -259,13 +265,7 @@ export class RoundsGrid extends NikElement {
       return null;
     }
 
-    return html`<div
-      id="grid"
-      style="--ag-grid-size: 4px;"
-      class=${this.theme === "dark"
-        ? "ag-theme-alpine-dark"
-        : "ag-theme-alpine"}
-    ></div>`;
+    return html`<div id="grid" style="--ag-grid-size: 4px;"></div>`;
   }
 }
 
