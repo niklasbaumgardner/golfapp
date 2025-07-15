@@ -12,3 +12,7 @@ class Config:
     MAIL_DEFAULT_SENDER = ("NB Golf", "golf@niklasb.com")
     ERROR_LOGGING_EMAIL = os.environ.get("ERROR_LOGGING_EMAIL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    REMEMBER_COOKIE_NAME = os.environ.get("REMEMBER_COOKIE_NAME")
+    REMEMBER_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN")
+    SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME")
+    SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN")
