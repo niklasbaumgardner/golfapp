@@ -8,7 +8,7 @@ from golfapp.queries import (
     subscriber_queries,
     user_queries,
 )
-from golfapp.utils import handicap_helpers
+from golfapp.utils import handicap_helpers, ghin
 from golfapp import db
 
 
@@ -293,3 +293,15 @@ def update_all_handicaps():
 
         print(f"{u.username:<20} {hc}")
     db.session.commit()
+
+
+@admin_bp.get("/get_ghin_data")
+@login_required
+def get_ghin_data():
+    if not current_user.is_admin:
+        return redirect(url_for("viewplayer_bp.index"))
+
+    rounds = ghin.get_ghin_rounds("12557735")
+    print(rounds)
+
+    return redirect(url_for("viewplayer_bp.index"))

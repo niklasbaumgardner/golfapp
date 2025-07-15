@@ -31,6 +31,8 @@ class User(db.Model, UserMixin, SerializerMixin):
     is_publicly_visible = db.Column(db.Boolean, nullable=True)
     role = db.Column(db.Integer, nullable=True)
 
+    # ghin_id = db.Column(db.String, nullable=True)
+
     handicap = db.relationship("Handicap", uselist=False, lazy="joined")
 
     @property
@@ -183,3 +185,55 @@ class CourseRanking(db.Model, SerializerMixin):
 
     def edit_rating_url(self):
         return url_for("courseranking_bp.edit_rating", id=self.id)
+
+
+# class GHINRound(db.Model, SerializerMixin):
+#     # use my own id. not ghin id
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+#     number_of_holes = db.Column(db.Integer, nullable=False)
+#     number_of_played_holes = db.Column(db.Integer, nullable=False)
+
+#     ghin_round_id = db.Column(db.Integer, nullable=False)  # maps to "id"
+
+#     played_at = db.Column(db.Date, nullable=False)
+
+#     course_id = db.Column(db.Integer, nullable=False)
+#     course_name = db.Column(db.String, nullable=False)
+#     course_rating = db.Column(db.Float, nullable=False)
+#     slope_rating = db.Column(db.Float, nullable=False)
+
+#     tee_name = db.Column(db.String, nullable=False)
+
+#     adjusted_gross_score = db.Column(db.Integer, nullable=False)
+
+#     course_handicap = db.Column(db.Integer, nullable=False)
+
+#     pcc = db.Column(db.Float, nullable=False)
+#     differential = db.Column(db.Float, nullable=False)
+#     unadjusted_differential = db.Column(db.Float, nullable=False)
+
+#     used = db.Column(db.Boolean, nullable=False)
+
+
+# class GHINHole(db.Model, SerializerMixin):
+#     # use my own id. not ghin id
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+#     ghin_hole_id = db.Column(db.Integer, nullable=False)  # maps to "id"
+
+#     adjusted_gross_score = db.Column(db.Integer, nullable=False)
+#     raw_score = db.Column(db.Integer, nullable=False)
+
+#     hole_number = db.Column(db.Integer, nullable=False)
+#     par = db.Column(db.Integer, nullable=False)
+
+#     putts = db.Column(db.Integer, nullable=False)
+
+#     fairway_hit = db.Column(db.Boolean, nullable=True)
+#     drive_accuracy = db.Column(db.Integer, nullable=True)
+
+#     gir_flag = db.Column(db.Boolean, nullable=False)
+#     approach_shot_accuracy = db.Column(db.Integer, nullable=True)
