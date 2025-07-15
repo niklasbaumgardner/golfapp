@@ -9,17 +9,17 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
+import logging
+from logging.handlers import SMTPHandler
+import traceback
 
 
 class Base(DeclarativeBase):
     pass
 
 
-bcrypt = Bcrypt()
-migrate = Migrate()
-mail = Mail()
-login_manager = LoginManager()
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True), model_class=Base)
+app = Flask(__name__)
+
 
 if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(
@@ -36,16 +36,41 @@ if not os.environ.get("FLASK_DEBUG"):
         release="nbgolf@1.0.7",
     )
 
+    mail_handler = SMTPHandler(
+        mailhost=(Config.MAIL_SERVER, Config.MAIL_PORT),
+        fromaddr=Config.MAIL_DEFAULT_SENDER[1],
+        toaddrs=[Config.ERROR_LOGGING_EMAIL],
+        subject="NB Golf Application Error",
+        credentials=(Config.MAIL_USERNAME, Config.MAIL_PASSWORD),
+        secure=(),
+    )
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(
+        logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
+    )
 
-app = Flask(__name__)
+    app.logger.addHandler(mail_handler)
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        app.logger.error("\n" + traceback.format_exc() + "\n")
+        return "<h1>Internal Server Error</h1>", 500
+
 
 app.config.from_object(Config)
 
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True), model_class=Base)
 db.init_app(app)
+
+bcrypt = Bcrypt()
 bcrypt.init_app(app)
+
+login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth_bp.login"
 login_manager.login_message_category = "alert-primary"
+
+mail = Mail()
 mail.init_app(app)
 
 
@@ -79,4 +104,5 @@ app.register_blueprint(context_processor_bp)
 with app.app_context():
     db.create_all()
 
+migrate = Migrate()
 migrate.init_app(app, db)

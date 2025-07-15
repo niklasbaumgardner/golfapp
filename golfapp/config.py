@@ -10,4 +10,5 @@ class Config:
     MAIL_USERNAME = os.environ.get("EMAIL_USER")
     MAIL_PASSWORD = os.environ.get("EMAIL_PASS")
     MAIL_DEFAULT_SENDER = ("NB Golf", "golf@niklasb.com")
+    ERROR_LOGGING_EMAIL = os.environ.get("ERROR_LOGGING_EMAIL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
