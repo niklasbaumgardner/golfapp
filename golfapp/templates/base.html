@@ -87,6 +87,7 @@
       }
       console.log(window.THEME);
     </script>
+    <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script type="module" src="/static/js/nb-theme-selector.mjs"></script>
     <script src="/static/js/nb-login.mjs" type="module"></script>
     <script src="/static/js/nb-signup.mjs" type="module"></script>
@@ -156,9 +157,7 @@
       {% with messages = get_flashed_messages(with_categories=true) %}
       <div id="alerts" class="">
         {% if messages %} {% for category, message in messages %}
-        <sl-alert variant="primary" duration="5000" open closable>
-          {{ message }}
-        </sl-alert>
+        <nb-alert category="{{ category }}" message="{{ message }}"></nb-alert>
         {% endfor %} {% endif %}
       </div>
       {% endwith %}
