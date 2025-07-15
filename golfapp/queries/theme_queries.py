@@ -1,6 +1,7 @@
 from golfapp.models import Theme
 from flask_login import current_user
 from golfapp import db
+from sqlalchemy import insert, select, update
 
 
 ##
@@ -11,7 +12,7 @@ from golfapp import db
 def create_theme(
     theme=None, mode=None, primary_color=None, color_contrast=None, color_palette=None
 ):
-    theme = Theme(
+    stmt = insert(Theme).values(
         user_id=current_user.id,
         theme=theme or None,
         mode=mode or None,
@@ -19,13 +20,20 @@ def create_theme(
         color_contrast=color_contrast or None,
         color_palette=color_palette or None,
     )
-    db.session.add(theme)
+    db.session.execute(stmt)
     db.session.commit()
-    return theme
 
 
 def get_theme():
-    return Theme.query.filter_by(user_id=current_user.id).first()
+    return db.session.scalars(
+        select(Theme).where(Theme.user_id == current_user.id).limit(1)
+    ).first()
+
+
+def update_theme(**values):
+    stmt = update(Theme).where(Theme.user_id == current_user.id).values(values)
+    db.session.execute(stmt)
+    db.session.commit()
 
 
 def set_theme(theme):
@@ -52,8 +60,7 @@ def set_theme(theme):
     theme_model = get_theme()
 
     if theme_model:
-        theme_model.theme = theme
-        db.session.commit()
+        update_theme(theme=theme)
     else:
         create_theme(theme=theme, mode="light")
 
@@ -69,8 +76,7 @@ def set_theme_mode(mode):
     theme = get_theme()
 
     if theme:
-        theme.mode = mode
-        db.session.commit()
+        update_theme(mode=mode)
     else:
         create_theme(theme="classic", mode=mode)
 
@@ -98,8 +104,7 @@ def set_primary_color(primary_color):
     theme = get_theme()
 
     if theme:
-        theme.primary_color = primary_color
-        db.session.commit()
+        update_theme(primary_color=primary_color)
     else:
         create_theme(theme="classic", mode="light", primary_color=primary_color)
 
@@ -128,8 +133,7 @@ def set_color_contrast(color_contrast):
     theme = get_theme()
 
     if theme:
-        theme.color_contrast = color_contrast
-        db.session.commit()
+        update_theme(color_contrast=color_contrast)
     else:
         create_theme(theme="classic", mode="light", color_contrast=color_contrast)
 
@@ -156,8 +160,7 @@ def set_color_palette(color_palette):
     theme = get_theme()
 
     if theme:
-        theme.color_palette = color_palette
-        db.session.commit()
+        update_theme(color_palette=color_palette)
     else:
         create_theme(theme="classic", mode="light", color_palette=color_palette)
 

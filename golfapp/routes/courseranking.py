@@ -58,15 +58,7 @@ def add_course_rating():
     course_id = request.form.get("course")
     rating = request.form.get("rating")
 
-    course_ranking = courseranking_queries.get_course_ranking_by_course_and_user(
-        course_id=course_id, user_id=current_user.id
-    )
-    if course_ranking:
-        courseranking_queries.update_course_ranking(
-            course_ranking=course_ranking, rating=rating
-        )
-    else:
-        courseranking_queries.create_course_ranking(course_id, rating)
+    courseranking_queries.upsert_course_ranking(course_id=course_id, rating=rating)
 
     ratings = [
         cr.to_dict()
@@ -85,13 +77,7 @@ def edit_rating(id):
     course_id = request.form.get("course")
     rating = request.form.get("rating")
 
-    course_ranking = courseranking_queries.get_course_ranking_by_id(id=id)
-    if course_ranking:
-        courseranking_queries.update_course_ranking(
-            course_ranking=course_ranking, rating=rating
-        )
-    else:
-        courseranking_queries.create_course_ranking(course_id, rating)
+    courseranking_queries.upsert_course_ranking(course_id=course_id, rating=rating)
 
     ratings = [
         cr.to_dict()

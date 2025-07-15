@@ -67,3 +67,13 @@ nb-course-rating-actions {
 wa-page > main {
   padding: var(--wa-space-m);
 }
+
+#alerts {
+  position: absolute;
+  width: 100%;
+  top: var(--wa-space-4xl);
+  z-index: 999999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

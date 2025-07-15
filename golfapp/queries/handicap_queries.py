@@ -1,49 +1,39 @@
 from golfapp.models import Handicap
 from golfapp import db
 from flask_login import current_user
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 
-def create_handicap(handicap_diff):
-    return create_handicap_for_user(
-        user_id=current_user.get_id(), handicap_diff=handicap_diff
+def upsert_handicap_for_user(user_id, handicap_diff):
+    # Is this needed?
+    current_user_id = int(current_user.id)
+    user_id = int(user_id)
+    if current_user_id == user_id:
+        pass
+    elif not current_user.is_admin:
+        return
+
+    stmt = pg_insert(Handicap).values(user_id=user_id, handicap=handicap_diff)
+
+    upsert_stmt = stmt.on_conflict_do_update(
+        index_elements=["user_id"],
+        set_={"handicap": stmt.excluded.handicap},
     )
 
+    db.session.execute(upsert_stmt)
 
-def create_handicap_for_user(user_id, handicap_diff):
-    handicap = Handicap(user_id=user_id, handicap=handicap_diff)
-    db.session.add(handicap)
     db.session.commit()
 
-    return handicap
+
+def upsert_handicap(handicap_diff):
+    upsert_handicap_for_user(user_id=current_user.id, handicap_diff=handicap_diff)
 
 
-def create_or_update_handicap(user_id, handicap_diff):
-    updated = update_handicap_for_user(user_id=user_id, handicap_diff=handicap_diff)
-
-    if not updated:
-        create_handicap_for_user(user_id=user_id, handicap_diff=handicap_diff)
-
-
-def update_handicap(handicap_diff):
-    return update_handicap_for_user(
-        user_id=current_user.id, handicap_diff=handicap_diff
-    )
-
-
-def update_handicap_for_user(user_id, handicap_diff):
-    handicap = get_handicap_for_user_id(user_id=user_id)
-    if not handicap:
-        return False
-
-    handicap.handicap = handicap_diff
-    db.session.commit()
-
-    return True
+def get_handicap_for_user_id(user_id):
+    stmt = select(Handicap).where(Handicap.user_id == user_id).limit(1)
+    return db.session.scalars(stmt).first()
 
 
 def get_handicap():
     return get_handicap_for_user_id(user_id=current_user.id)
-
-
-def get_handicap_for_user_id(user_id):
-    return Handicap.query.filter_by(user_id=user_id).first()

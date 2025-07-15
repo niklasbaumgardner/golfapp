@@ -24,7 +24,7 @@ def hijack():
     if request.method == "POST":
         user_id = int(request.form.get("user_id"))
         hcp = float(request.form.get("handicap"))
-        handicap_queries.create_or_update_handicap(user_id=user_id, handicap_diff=hcp)
+        handicap_queries.upsert_handicap_for_user(user_id=user_id, handicap_diff=hcp)
 
         return redirect(url_for("admin_bp.hijack"))
 
@@ -71,7 +71,7 @@ def add_round_for_user():
         date=date,
     )
 
-    handicap_helpers.update_handicap()
+    handicap_helpers.update_handicap_for_user(user_id=user_id)
 
     return redirect(url_for("viewplayer_bp.view_player", id=user_id))
 
@@ -289,7 +289,7 @@ def update_all_handicaps():
 
         rounds = round_queries.get_rounds(sort=True, max_rounds=20)
 
-        handicap_queries.create_or_update_handicap(user_id=u.id, handicap_diff=hc)
+        handicap_queries.upsert_handicap_for_user(user_id=u.id, handicap_diff=hc)
 
         print(f"{u.username:<20} {hc}")
     db.session.commit()

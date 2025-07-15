@@ -102,7 +102,7 @@ Please thank ChatGPT for the wonderful message.
     return message
 
 
-def send_subscribers_message(user_id, new_round, old_handicap, new_handicap):
+def send_subscribers_message(user_id, old_handicap, new_handicap, round_dict):
     subscribers = subscriber_queries.get_subscribers_for_user(user_id=user_id)
 
     if not subscribers:
@@ -116,10 +116,10 @@ def send_subscribers_message(user_id, new_round, old_handicap, new_handicap):
     msg = Message(
         f"{current_user.username} just added a new round", recipients=subscribers_emails
     )
-    msg.body = get_random_message(
-        new_round=new_round,
-        user_id=user_id,
-        old_handicap=old_handicap,
-        new_handicap=new_handicap,
-    )
+    msg.body = f"""
+{current_user.username} shot {round_dict.score} at {round_dict.course_name} on {round_dict.date}.
+Their {get_handicap_change_message(old_handicap, new_handicap)}.
+
+View all of their rounds at {url_for("viewplayer_bp.view_player", id=user_id, _external=True)}
+"""
     mail.send(msg)

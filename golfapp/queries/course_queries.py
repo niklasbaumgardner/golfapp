@@ -2,97 +2,125 @@ from golfapp.models import Course, CourseTeebox
 from golfapp import db
 from flask_login import current_user
 from golfapp.queries import courseranking_queries, round_queries
+from sqlalchemy import delete, insert, select, update
+from sqlalchemy.sql import and_
 
 
-def create_course(name):
-    course = Course(name=name)
-    db.session.add(course)
-    db.session.commit()
+def create_course(name, commit=True):
+    stmt = insert(Course).values(name=name)
+    result = db.session.execute(stmt)
 
-    return course
+    if commit:
+        db.session.commit()
+    else:
+        db.session.flush()
+
+    course_id = result.inserted_primary_key[0]
+    return course_id
 
 
 def create_teebox(course_id, teebox, par, slope, rating):
-    teebox = CourseTeebox(
+    stmt = insert(CourseTeebox).values(
         course_id=course_id,
         teebox=teebox,
         par=par,
         slope=slope,
         rating=rating,
     )
-    db.session.add(teebox)
+
+    db.session.execute(stmt)
     db.session.commit()
 
 
 def get_course_by_id(course_id):
-    return Course.query.filter_by(id=course_id).first()
+    stmt = select(Course).where(Course.id == course_id).limit(1)
+    return db.session.scalars(stmt).first()
 
 
 def get_course_by_name(name):
-    return Course.query.filter_by(name=name).first()
+    stmt = select(Course).where(Course.name == name).limit(1)
+    return db.session.scalars(stmt).first()
 
 
 def add_course(name, teebox, par, rating, slope):
     course = get_course_by_name(name=name)
+    course_id = None
     if not course:
-        course = create_course(name=name)
+        course_id = create_course(name=name)
+    else:
+        course_id = course.id
 
     create_teebox(
-        course_id=course.id, teebox=teebox, par=par, slope=slope, rating=rating
+        course_id=course_id, teebox=teebox, par=par, slope=slope, rating=rating
     )
 
     return course
 
 
 def get_courses(sort=False):
-    courses = Course.query
+    stmt = select(Course)
     if sort:
-        courses = courses.order_by(Course.name)
+        stmt = stmt.order_by(Course.name)
 
-    return courses.all()
+    return db.session.scalars(stmt).unique().all()
 
 
+# Remove me
 def get_courses_without_teeboxes(sort=False):
     courses = get_courses(sort=sort)
     return [c.to_dict(only=("id", "name")) for c in courses]
 
 
 def get_teebox_by_id(teebox_id):
-    return CourseTeebox.query.filter_by(id=teebox_id).first()
+    stmt = select(CourseTeebox).where(CourseTeebox.id == teebox_id).limit(1)
+    return db.session.scalars(stmt).first()
 
 
 def get_teeboxes_by_course_id(course_id):
-    return CourseTeebox.query.filter_by(course_id=course_id).all()
+    stmt = select(CourseTeebox).where(CourseTeebox.course_id == course_id)
+    return db.session.scalars(stmt).all()
 
 
 def update_course(course_id, name=None):
     if name is None:
         return
 
-    course = get_course_by_id(course_id=course_id)
-    course.name = name
+    stmt = update(Course).where(Course.id == course_id).values(name=name)
+    db.session.execute(stmt)
     db.session.commit()
 
 
 def update_teebox(teebox_id, name=None, par=None, rating=None, slope=None):
-    teebox = get_teebox_by_id(teebox_id=teebox_id)
+    stmt = update(CourseTeebox).where(CourseTeebox.id == teebox_id)
 
+    update_dict = dict()
     if name is not None:
-        teebox.teebox = name
+        update_dict["teebox"] = name
     if par is not None:
-        teebox.par = par
+        update_dict["par"] = par
     if rating is not None:
-        teebox.rating = rating
+        update_dict["rating"] = rating
     if slope is not None:
-        teebox.slope = slope
+        update_dict["slope"] = slope
 
+    db.session.execute(stmt)
     db.session.commit()
 
 
 def get_teebox_for_course_by_par_slope_rating(course_id, par, slope, rating):
-    return CourseTeebox.query.filter_by(
-        course_id=course_id, par=par, slope=slope, rating=rating
-    ).first()
+    stmt = (
+        select(CourseTeebox)
+        .where(
+            and_(
+                CourseTeebox.course_id == course_id,
+                CourseTeebox.par == par,
+                CourseTeebox.slope == slope,
+                CourseTeebox.rating == rating,
+            )
+        )
+        .limit(1)
+    )
+    return db.session.scalars(stmt).first()
 
 
 def deduplicate_course(duplicate_course_id, keep_course_id):
@@ -145,7 +173,6 @@ def deduplicate_course(duplicate_course_id, keep_course_id):
 
 
 def deduplicate_teebox(duplicate_teebox_id, keep_teebox_id):
-
     if duplicate_teebox_id == keep_teebox_id:
         return False
 
@@ -167,28 +194,22 @@ def deduplicate_teebox(duplicate_teebox_id, keep_teebox_id):
 
 
 def delete_course(course_id):
-    course = get_course_by_id(course_id=course_id)
-
-    if not course:
+    if not current_user.is_admin:
         return False
 
-    print(f"Deleting course {course.name}")
-
-    db.session.delete(course)
+    stmt = delete(Course).where(Course.id == course_id)
+    db.session.execute(stmt)
     db.session.commit()
 
     return True
 
 
 def delete_teebox(teebox_id):
-    teebox = get_teebox_by_id(teebox_id=teebox_id)
-
-    if not teebox:
+    if not current_user.is_admin:
         return False
 
-    print(f"Deleting teebox {teebox.teebox}")
-
-    db.session.delete(teebox)
+    stmt = delete(CourseTeebox).where(CourseTeebox.id == teebox_id)
+    db.session.execute(stmt)
     db.session.commit()
 
     return True

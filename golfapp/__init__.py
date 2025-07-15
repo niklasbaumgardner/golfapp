@@ -5,16 +5,21 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 import sentry_sdk
 import os
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 bcrypt = Bcrypt()
 migrate = Migrate()
 mail = Mail()
 login_manager = LoginManager()
-db = SQLAlchemy(engine_options=dict(poolclass=NullPool))
+db = SQLAlchemy(engine_options=dict(poolclass=NullPool, future=True), model_class=Base)
 
 if not os.environ.get("FLASK_DEBUG"):
     sentry_sdk.init(

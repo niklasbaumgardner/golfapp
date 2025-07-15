@@ -139,9 +139,8 @@ def update_handicap(updated_round=None):
 
     if user_handicap:
         old_handicap = user_handicap.handicap
-        handicap_queries.update_handicap(handicap_diff=handicap)
-    else:
-        handicap_queries.create_handicap(handicap_diff=handicap)
+
+    handicap_queries.upsert_handicap(handicap_diff=handicap)
 
     return old_handicap, handicap
 
@@ -151,17 +150,10 @@ def update_handicap_for_user(user_id):
         user_id=user_id, sort=True, max_rounds=20
     )
     handicap_diff = calculate_handicap(rounds)
-    user = user_queries.get_user_by_id(user_id=user_id)
 
-    user_handicap = user.handicap
-    if user_handicap:
-        handicap_queries.update_handicap_for_user(
-            user_id=user_id, handicap_diff=handicap_diff
-        )
-    else:
-        handicap_queries.create_handicap_for_user(
-            user_id=user_id, handicap_diff=handicap_diff
-        )
+    handicap_queries.upsert_handicap_for_user(
+        user_id=user_id, handicap_diff=handicap_diff
+    )
 
 
 def get_date_from_string(str_date):

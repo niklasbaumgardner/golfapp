@@ -111,6 +111,12 @@
 
     const ADD_ROUND_URL = "{{ url_for('viewplayer_bp.add_round_submit') }}";
     const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
+
+    {% if current_user.is_authenticated %}
+      const CURRENT_USER = {{ current_user.to_dict()|tojson }};
+    {% else %}
+      const CURRENT_USER = {};
+    {% endif %}
   </script>
 
   <script

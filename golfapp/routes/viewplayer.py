@@ -54,7 +54,7 @@ def add_round_submit():
         teebox_id=teebox_id, score=score, nine_hole_round=nine_hole_round
     )
 
-    new_round = round_queries.create_round(
+    round_queries.create_round(
         course_id=course_id,
         teebox_id=teebox_id,
         score=score,
@@ -68,9 +68,14 @@ def add_round_submit():
 
     old_handicap, new_handicap = handicap_helpers.update_handicap()
 
+    course = course_queries.get_course_by_id(course_id=course_id)
+
     try:
         send_email.send_subscribers_message(
-            current_user.get_id(), new_round, old_handicap, new_handicap
+            user_id=current_user,
+            old_handicap=old_handicap,
+            new_handicap=new_handicap,
+            round_dict=dict(score=score, course_name=course.name, date=date),
         )
     except:
         pass
@@ -88,7 +93,7 @@ def edit_round(id):
     new_date = request.form.get("date")
     nine_hole_round = request.form.get("nineHoleRound") == "True"
 
-    should_update_handicap, round = round_queries.update_round(
+    round_queries.update_round(
         round_id=id,
         score=new_score,
         fir=new_fir,
@@ -97,9 +102,6 @@ def edit_round(id):
         date=new_date,
         nine_hole_round=nine_hole_round,
     )
-
-    if should_update_handicap:
-        handicap_helpers.update_handicap(updated_round=round)
 
     return {
         "handicap": current_user.handicap.handicap_str(),

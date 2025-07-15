@@ -8,12 +8,8 @@ import usaddress
 from typing import List, Optional
 from datetime import date as date_type
 from typing_extensions import Annotated
-from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column, Mapped
-from sqlalchemy import ForeignKey
-
-
-class Base(DeclarativeBase):
-    pass
+from sqlalchemy.orm import relationship, mapped_column, Mapped
+from sqlalchemy import ForeignKey, UniqueConstraint
 
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
@@ -25,7 +21,7 @@ def load_user(id):
     return db.session.get(User, int(id))
 
 
-class User(Base, UserMixin, SerializerMixin):
+class User(db.Model, UserMixin, SerializerMixin):
     __tablename__ = "user"
 
     serialize_only = (
@@ -74,7 +70,7 @@ class User(Base, UserMixin, SerializerMixin):
         return User.query.get(user_id)
 
 
-class Course(Base, SerializerMixin):
+class Course(db.Model, SerializerMixin):
     __tablename__ = "course"
 
     serialize_only = ("id", "name", "address", "address_dict", "teeboxes")
@@ -94,7 +90,7 @@ class Course(Base, SerializerMixin):
         return {}
 
 
-class CourseTeebox(Base, SerializerMixin):
+class CourseTeebox(db.Model, SerializerMixin):
     __tablename__ = "course_teebox"
 
     id: Mapped[int_pk]
@@ -105,7 +101,7 @@ class CourseTeebox(Base, SerializerMixin):
     slope: Mapped[float]
 
 
-class Round(Base, SerializerMixin):
+class Round(db.Model, SerializerMixin):
     __tablename__ = "round"
 
     serialize_rules = (
@@ -137,13 +133,13 @@ class Round(Base, SerializerMixin):
         return url_for("viewplayer_bp.delete_round", id=self.id)
 
 
-class Handicap(Base, SerializerMixin):
+class Handicap(db.Model, SerializerMixin):
     __tablename__ = "handicap"
 
     serialize_only = ("id", "user_id", "handicap", "handicap_str")
 
     id: Mapped[int_pk]
-    user_id: Mapped[user_fk]
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), unique=True)
     handicap: Mapped[float]
 
     def handicap_str(self):
@@ -159,7 +155,7 @@ class Handicap(Base, SerializerMixin):
         return self.__str__()
 
 
-class Theme(Base, SerializerMixin):
+class Theme(db.Model, SerializerMixin):
     __tablename__ = "theme"
 
     serialize_rules = (
@@ -176,7 +172,7 @@ class Theme(Base, SerializerMixin):
     color_palette: Mapped[Optional[str]]  # web-awesome values
 
 
-class Subscription(Base, SerializerMixin):
+class Subscription(db.Model, SerializerMixin):
     __tablename__ = "subscription"
 
     id: Mapped[int_pk]
@@ -185,7 +181,7 @@ class Subscription(Base, SerializerMixin):
     subscribers: Mapped[List["Subscriber"]] = relationship(lazy="joined", viewonly=True)
 
 
-class Subscriber(Base, SerializerMixin):
+class Subscriber(db.Model, SerializerMixin):
     __tablename__ = "subscriber"
 
     id: Mapped[int_pk]
@@ -193,8 +189,9 @@ class Subscriber(Base, SerializerMixin):
     user_id: Mapped[user_fk]
 
 
-class CourseRanking(Base, SerializerMixin):
+class CourseRanking(db.Model, SerializerMixin):
     __tablename__ = "course_ranking"
+    __table_args__ = (UniqueConstraint("user_id", "course_id"),)
 
     serialize_only = (
         "id",

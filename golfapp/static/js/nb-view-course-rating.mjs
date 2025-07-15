@@ -47,6 +47,10 @@ class ViewCourseRating extends NikElement {
   }
 
   addRatingButtonTemplate() {
+    if (!IS_ME) {
+      return null;
+    }
+
     return html`<wa-button
       variant="brand"
       appearance="filled outlined"

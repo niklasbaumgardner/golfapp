@@ -37,6 +37,13 @@ export class EditCourseRating extends AddCourseRating {
     return html`<div>
       <div class="wa-heading-">Course:</div>
       <div class="wa-heading-m">${this.rating.course.name}</div>
+      <input
+        name="course"
+        type="text"
+        value=${this.rating.course.id}
+        class="hidden"
+        hidden
+      />
     </div>`;
   }
 
