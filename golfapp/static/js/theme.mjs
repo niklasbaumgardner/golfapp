@@ -6,13 +6,18 @@ export class Theme {
   #primaryColor;
   #colorContrast;
   #colorPalette;
+  #initing;
 
   constructor(theme) {
+    this.#initing = true;
+
     this.theme = theme.theme;
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
     this.colorContrast = theme.color_contrast;
     this.colorPalette = theme.color_palette;
+
+    this.#initing = false;
 
     if (!this.theme) {
       this.makeDefault();
@@ -68,7 +73,10 @@ export class Theme {
     document.getElementById("theme-stylesheet").href = this.theme
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.theme}.css`
       : "";
-    fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
+
+    if (!this.#initing) {
+      fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
+    }
   }
 
   set mode(mode) {
@@ -96,7 +104,11 @@ export class Theme {
       this.mode === "light"
     );
 
-    fetch(SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode }));
+    if (!this.#initing) {
+      fetch(
+        SET_THEME_MODE_URL + "?" + new URLSearchParams({ mode: this.mode })
+      );
+    }
   }
 
   set primaryColor(primaryColor) {
@@ -127,11 +139,14 @@ export class Theme {
     document.getElementById("primary-color-stylesheet").href = this.primaryColor
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/brand/${this.primaryColor}.css`
       : "";
-    fetch(
-      SET_PRIMARY_COLOR_URL +
-        "?" +
-        new URLSearchParams({ primary_color: this.primaryColor })
-    );
+
+    if (!this.#initing) {
+      fetch(
+        SET_PRIMARY_COLOR_URL +
+          "?" +
+          new URLSearchParams({ primary_color: this.primaryColor })
+      );
+    }
   }
 
   set colorContrast(colorContrast) {
@@ -164,11 +179,14 @@ export class Theme {
       .colorContrast
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.colorContrast}/color.css`
       : "";
-    fetch(
-      SET_COLOR_CONTRAST_URL +
-        "?" +
-        new URLSearchParams({ color_contrast: this.colorContrast })
-    );
+
+    if (!this.#initing) {
+      fetch(
+        SET_COLOR_CONTRAST_URL +
+          "?" +
+          new URLSearchParams({ color_contrast: this.colorContrast })
+      );
+    }
   }
 
   set colorPalette(colorPalette) {
@@ -198,11 +216,14 @@ export class Theme {
     document.getElementById("color-pallete-stylesheet").href = this.colorPalette
       ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/color/${this.colorPalette}.css`
       : "";
-    fetch(
-      SET_COLOR_PALETTE_URL +
-        "?" +
-        new URLSearchParams({ color_palette: this.colorPalette })
-    );
+
+    if (!this.#initing) {
+      fetch(
+        SET_COLOR_PALETTE_URL +
+          "?" +
+          new URLSearchParams({ color_palette: this.colorPalette })
+      );
+    }
   }
 
   makeDefault() {
