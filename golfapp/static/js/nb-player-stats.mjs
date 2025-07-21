@@ -36,7 +36,12 @@ const COLORS = {
 
 class PlayerStats extends NikElement {
   static properties = {
+    rounds: { type: Array },
+    user: { type: Object },
+
     data: { type: Object },
+    averagecap: { type: String },
+    anticap: { type: String },
     averageRound: { type: Number },
     numStatsRounds: { type: Number },
     firAverage: { type: Number },
@@ -48,7 +53,7 @@ class PlayerStats extends NikElement {
 
     coursesPlayed: { type: Number },
     statesPlayed: { type: Number },
-    lowestRound: { type: Object },
+    highLowRound: { type: Object },
   };
 
   static get queries() {
@@ -64,25 +69,96 @@ class PlayerStats extends NikElement {
   }
 
   async init() {
-    let response = await fetch(STATS_URL);
-    this.data = await response.json();
-    console.log(this.data);
-
-    await this.updateComplete;
-
     this.calculateStats();
+    this.getHighLowRounds();
     this.calculateCourseStats();
-    this.initChart();
+    // this.initChart();
+  }
+
+  calculate_handicap(rounds) {
+    let count = rounds.length;
+    let score_diffs = rounds.map((r) => r.score_diff);
+    let handicap;
+
+    if (count <= 3) {
+      handicap = score_diffs[0] - 2;
+    } else if (count === 4) {
+      handicap = score_diffs[0] - 1;
+    } else if (count === 5) {
+      handicap = score_diffs[0];
+    } else if (count === 6) {
+      handicap = sum(score_diffs.silce(0, 2)) / 2 - 1;
+    } else if (count > 6) {
+      let numberOfRounds = 0;
+      if (count === 7 || count === 8) {
+        numberOfRounds = 2;
+      } else if (9 <= count && count <= 11) {
+        numberOfRounds = 3;
+      } else if (12 <= count && count <= 14) {
+        numberOfRounds = 4;
+      } else if (count === 15 || count === 16) {
+        numberOfRounds = 5;
+      } else if (count === 17 || count === 18) {
+        numberOfRounds = 6;
+      } else if (count === 19) {
+        numberOfRounds = 7;
+      } else if (count >= 20) {
+        numberOfRounds = 8;
+      }
+
+      handicap =
+        score_diffs
+          .slice(0, numberOfRounds)
+          .reduce((currentSum, sd) => currentSum + sd, 0) / numberOfRounds;
+    }
+
+    return round(handicap, 2);
+  }
+
+  handicapString(number) {
+    if (number < 0) {
+      return `+${-1 * number}`;
+    }
+    return `${number}`;
+  }
+
+  calculateAveragecap(rounds) {
+    if (!rounds.length) {
+      return null;
+    }
+
+    let averagecap = round(
+      rounds.reduce((currentSum, r) => currentSum + r.score_diff, 0) /
+        rounds.length,
+      2
+    );
+
+    return this.handicapString(averagecap);
+  }
+
+  calculateAnticap(rounds) {
+    if (!rounds.length) {
+      return null;
+    }
+
+    rounds.sort((a, b) => b.score_diff - a.score_diff);
+
+    let anticap = this.calculate_handicap(rounds);
+
+    return this.handicapString(anticap);
   }
 
   calculateStats() {
-    let last20Rounds = this.data.rounds.slice(-20);
+    let recent20Rounds = this.rounds.slice(0, 20);
+
+    this.averagecap = this.calculateAveragecap([...recent20Rounds]);
+    this.anticap = this.calculateAnticap([...recent20Rounds]);
 
     let avgRoundArr = [];
     let fir = [];
     let gir = [];
     let putts = [];
-    for (let round of last20Rounds) {
+    for (let round of recent20Rounds) {
       let multiplier = 1;
       if (round.nine_hole_round) {
         multiplier = 2;
@@ -188,56 +264,76 @@ class PlayerStats extends NikElement {
     });
   }
 
-  calculateCourseStats() {
-    let coursesSet = new Set();
-    let statesSet = new Set();
+  getHighLowRounds() {
+    let recent20Rounds = this.rounds.slice(0, 20);
+
     let lowestRound = { score: 9999, toPar: 9999, scoreDiff: 9999 };
+    let highestRound = { score: -9999, toPar: -9999, scoreDiff: -9999 };
 
-    for (let r of this.data.rounds) {
-      coursesSet.add(r.course_id);
-      let c = COURSES[r.course_id];
-      if (c.address) {
-        statesSet.add(c.address_dict.StateName);
-      }
-
+    for (let r of recent20Rounds) {
       if (r.nine_hole_round) {
         continue;
       }
 
+      let c = r.course;
       let t = c.teeboxes.find((t) => t.id === r.teebox_id);
       let toPar = r.score - t.par;
       if (
         toPar < lowestRound.toPar ||
-        (toPar === lowestRound.toPar && r.scoreDiff < lowestRound.scoreDiff)
+        (toPar === lowestRound.toPar && r.score_diff < lowestRound.scoreDiff)
       ) {
         lowestRound = {
           score: r.score,
           toPar,
-          scoreDiff: r.scoreDiff,
+          scoreDiff: r.score_diff,
+          course: c,
+          teebox: t,
+        };
+      }
+
+      if (
+        toPar > highestRound.toPar ||
+        (toPar === highestRound && r.score_diff > highestRound.scoreDiff)
+      ) {
+        highestRound = {
+          score: r.score,
+          toPar,
+          scoreDiff: r.score_diff,
           course: c,
           teebox: t,
         };
       }
     }
 
-    this.coursesPlayed = coursesSet.size;
-    this.statesPlayed = statesSet.size;
-    this.lowestRound = lowestRound;
+    this.highLowRound = { low: lowestRound, high: highestRound };
+  }
+
+  calculateCourseStats() {
+    this.coursesPlayed = new Set(this.rounds.map((r) => r.course_id)).size;
+
+    let statesPlayed = new Set(
+      this.rounds.map((r) => r.course.address_dict?.StateName)
+    );
+    let nullState = 0;
+    if (statesPlayed.has(undefined)) {
+      nullState = 1;
+    }
+    this.statesPlayed = statesPlayed.size - nullState;
   }
 
   handicapTemplate() {
     return html`<wa-card
       ><div class="flex flex-col">
         <div class="text-start">
-          <h4>Your handicap is ${this.data?.user.handicap.handicap_str}</h4>
+          <h4>Your handicap is ${this.user.handicap.handicap_str}</h4>
           <p>Your handicap is the best 8 of the last 20 rounds</p>
         </div>
         <div class="text-center">
-          <h4>Your averagecap is ${this.data?.averagecap}</h4>
+          <h4>Your averagecap is ${this.averagecap}</h4>
           <p>Your averagecap is the average of the last 20 rounds</p>
         </div>
         <div class="text-end">
-          <h4>Your anticap is ${this.data?.anticap}</h4>
+          <h4>Your anticap is ${this.anticap}</h4>
           <p>Your anticap is the worst 8 of the last 20 rounds</p>
         </div>
       </div>
@@ -305,19 +401,33 @@ class PlayerStats extends NikElement {
     return html`<div class="wa-grid">
       <wa-card>
         <div class="wa-stack">
-          <span class="wa-heading-s">Lowest round</span>
-          <div class="flex justify-between">
+          <div class="flex justify-between items-end">
             <span>
+              <span class="wa-heading-s">Low: </span>
               <span class="wa-heading-m" id="lowest-round"
-                >${this.lowestRound?.score}</span
+                >${this.highLowRound?.low.score}</span
               >
               <span class="wa-caption-m">
-                / ${this.lowestRound?.teebox.par}</span
+                / ${this.highLowRound?.low.teebox.par}</span
               >
             </span>
-
             <span class="wa-caption-m"
-              >at ${this.lowestRound?.course.name}</span
+              >at ${this.highLowRound?.low.course.name}</span
+            >
+          </div>
+
+          <div class="flex justify-between items-end">
+            <span>
+              <span class="wa-heading-s">High: </span>
+              <span class="wa-heading-m" id="lowest-round"
+                >${this.highLowRound?.high.score}</span
+              >
+              <span class="wa-caption-m">
+                / ${this.highLowRound?.high.teebox.par}</span
+              >
+            </span>
+            <span class="wa-caption-m"
+              >at ${this.highLowRound?.high.course.name}</span
             >
           </div>
         </div>
@@ -326,7 +436,7 @@ class PlayerStats extends NikElement {
         <div class="wa-stack">
           <span class="wa-heading-s">Rounds played</span>
           <span class="wa-heading-m" id="rounds-played"
-            >${this.data.rounds.length}</span
+            >${this.rounds.length}</span
           >
         </div>
       </wa-card>
@@ -350,26 +460,17 @@ class PlayerStats extends NikElement {
   }
 
   chartTemplate() {
+    return null;
     return html`<wa-card
       ><div class="min-h-20"><canvas id="handicap-graph"></canvas></div
     ></wa-card>`;
   }
 
-  dataTemplate() {
-    if (!this.data) {
-      return html`<div class="flex justify-center">
-        <wa-spinner class="text-6xl"></wa-spinner>
-      </div>`;
-    }
-
-    return html`<div class="wa-stack">
-      ${this.handicapTemplate()}${this.statsTemplate()}${this.coursesStatsTemplate()}${this.chartTemplate()}
-    </div>`;
-  }
-
   render() {
     return html`<wa-details summary="View Stats"
-      >${this.dataTemplate()}</wa-details
+      ><div class="wa-stack">
+        ${this.handicapTemplate()}${this.statsTemplate()}${this.coursesStatsTemplate()}${this.chartTemplate()}
+      </div></wa-details
     >`;
   }
 }

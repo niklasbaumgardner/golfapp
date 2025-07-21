@@ -47,7 +47,10 @@ class ViewPlayer extends NikElement {
   }
 
   statsTemplate() {
-    return html`<nb-player-stats></nb-player-stats>`;
+    return html`<nb-player-stats
+      .rounds=${this.rounds}
+      .user=${this.user}
+    ></nb-player-stats>`;
   }
 
   addRoundButtonTemplate() {
