@@ -9,7 +9,7 @@ export class ThemeSelector extends NikElement {
   static queries = {
     dropdown: "wa-dropdown",
     icon: "#icon",
-    themeItems: { all: "wa-menu-item" },
+    themeItems: { all: "wa-dropdown-item" },
   };
 
   get currentThemeIcon() {
@@ -76,21 +76,22 @@ export class ThemeSelector extends NikElement {
         variant="brand"
         appearance="plain"
         slot="trigger"
-        caret
+        with-caret
       >
         <wa-icon
+          slot="start"
           id="icon"
           library="ion"
           name="${this.getThemeIconName()}"
         ></wa-icon>
       </wa-button>
 
-      <wa-menu id="theme-selector">
-        <wa-menu-item id="light" type="checkbox" value="light"
-          >Light</wa-menu-item
-        >
-        <wa-menu-item id="dark" type="checkbox" value="dark">Dark</wa-menu-item>
-      </wa-menu>
+      <wa-dropdown-item id="light" type="checkbox" value="light"
+        >Light</wa-dropdown-item
+      >
+      <wa-dropdown-item id="dark" type="checkbox" value="dark"
+        >Dark</wa-dropdown-item
+      >
     </wa-dropdown>`;
   }
 }

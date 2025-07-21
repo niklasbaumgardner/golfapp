@@ -77,12 +77,10 @@ class ViewCourseRating extends NikElement {
   }
 
   render() {
-    return html`<wa-card
-      ><div class="wa-stack">
-        ${this.titleTemplate()}${this.addRatingButtonTemplate()}
-        ${this.ratingsTemplate()}
-      </div></wa-card
-    >`;
+    return html`<div class="wa-stack">
+      ${this.titleTemplate()}${this.addRatingButtonTemplate()}
+      ${this.ratingsTemplate()}
+    </div>`;
   }
 }
 customElements.define("nb-view-course-rating", ViewCourseRating);

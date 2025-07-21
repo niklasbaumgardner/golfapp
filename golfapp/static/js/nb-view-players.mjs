@@ -19,10 +19,10 @@ export class ViewPlayers extends NikElement {
   }
 
   render() {
-    return html`<wa-card>
+    return html`<div class="wa-stack">
       <h2>All Players</h2>
       ${this.playersTemplate()}
-    </wa-card>`;
+    </div>`;
   }
 }
 customElements.define("nb-view-players", ViewPlayers);

@@ -65,7 +65,7 @@ nb-course-rating-actions {
 }
 
 wa-page > main {
-  padding: var(--wa-space-m);
+  padding: var(--wa-space-2xl) var(--wa-space-m) var(--wa-space-4xl);
 }
 
 #alerts {
@@ -76,4 +76,24 @@ wa-page > main {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+:root,
+:host,
+html {
+  --wa-form-control-padding-block: 0.65em;
+}
+
+wa-button.icon-button {
+  line-height: normal;
+
+  &::part(base) {
+    padding: var(--wa-space-xs);
+    width: auto;
+    height: auto;
+  }
+
+  &.no-border::part(base) {
+    border-width: 0;
+  }
 }

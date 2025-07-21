@@ -17,9 +17,11 @@
     <link
       id="theme-stylesheet"
       rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/{{ theme.theme }}.css"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/{{ theme.theme }}.css"
+      render="blocking"
+      fetchpriority="high"
     />
-    <link
+    <!-- <link
       id="color-contrast-stylesheet"
       rel="stylesheet"
       href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/{{ theme.color_contrast }}/color.css"
@@ -33,18 +35,55 @@
       id="primary-color-stylesheet"
       rel="stylesheet"
       href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/brand/{{ theme.primary_color }}.css"
+    /> -->
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/bright.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/shoelace.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/rudimentary.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/elegant.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/mild.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/natural.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/anodized.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/color/palettes/vogue.css"
     />
 
     <link
       rel="stylesheet"
-      href="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/webawesome.css"
+      href="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/webawesome.css"
     />
+
     <script
       type="module"
-      src="https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js"
+      src="https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js"
     ></script>
     <script type="module">
-      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/webawesome.loader.js";
+      import { registerIconLibrary } from "https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/webawesome.loader.js";
 
       registerIconLibrary("ion", {
         resolver: (name) =>
@@ -60,11 +99,20 @@
           );
         },
       });
+
+      registerIconLibrary("remix", {
+        resolver: (name) => {
+          const match = name.match(/^(.*?)\/(.*?)?$/);
+          match[1] = match[1].charAt(0).toUpperCase() + match[1].slice(1);
+          return `https://cdn.jsdelivr.net/npm/remixicon@4.6.0/icons/${match[1]}/${match[2]}.svg`;
+        },
+        mutator: (svg) => svg.setAttribute("fill", "currentColor"),
+      });
     </script>
 
     <link href="/static/css/main.css" rel="stylesheet" />
-    <!-- <link href="/static/css/light.css" rel="stylesheet" /> -->
-    <!-- <link href="/static/css/dark.css" rel="stylesheet" /> -->
+    <link href="/static/css/colors.css" rel="stylesheet" />
+    <link href="/static/css/themes.css" rel="stylesheet" />
     <link href="/static/css/output.css" rel="stylesheet" />
 
     <link
@@ -134,7 +182,7 @@
     if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbgolf@1.0.13",
+            release: "nbgolf@1.0.14",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,

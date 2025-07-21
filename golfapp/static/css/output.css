@@ -63,9 +63,6 @@
   .min-w-\[1ch\] {
     min-width: 1ch;
   }
-  .flex-grow {
-    flex-grow: 1;
-  }
   .flex-grow-1 {
     flex-grow: 1;
   }
@@ -98,6 +95,9 @@
   }
   .bg-\(--wa-color-success-fill-quiet\)\! {
     background-color: var(--wa-color-success-fill-quiet) !important;
+  }
+  .p-\(--wa-space-2xs\) {
+    padding: var(--wa-space-2xs);
   }
   .text-center {
     text-align: center;

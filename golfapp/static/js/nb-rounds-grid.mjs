@@ -30,18 +30,19 @@ class RoundActions extends NikElement {
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
       <wa-button
-        appearance="outlined"
-        size="small"
+        class="icon-button no-border"
+        variant="success"
+        appearance="plain"
         @click=${this.handleEditClick}
-        >Edit</wa-button
-      >
+        ><wa-icon library="ion" name="create-outline" label="Edit"></wa-icon
+      ></wa-button>
       <wa-button
-        appearance="outlined"
+        class="icon-button no-border"
         variant="danger"
-        size="small"
+        appearance="plain"
         @click=${this.handleDeleteClick}
-        >Delete</wa-button
-      >
+        ><wa-icon library="ion" name="trash-outline" label="Delete"></wa-icon
+      ></wa-button>
     </div>`;
   }
 }
@@ -108,7 +109,7 @@ export class RoundsGrid extends NikElement {
 
           let teebox = param.data.teebox;
 
-          return `<div class="wa-heading-xs">${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})</div><div class="wa-body-xs">${courseAddress}</div>`;
+          return `<div class="p-(--wa-space-2xs)"><div class="wa-heading-xs">${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})</div><div class="wa-body-xs">${courseAddress}</div></div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
           let courseA = nodeA.data.course;
@@ -165,8 +166,8 @@ export class RoundsGrid extends NikElement {
     if (IS_ME) {
       columnDefs.push({
         field: "actions",
-        minWidth: 160,
-        maxWidth: 160,
+        minWidth: 116,
+        maxWidth: 116,
         cellRenderer: (param) => {
           let actions = document.createElement("nb-round-actions");
           actions.round = param.data;
@@ -182,12 +183,12 @@ export class RoundsGrid extends NikElement {
       autoSizeStrategy: {
         type: "fitGridWidth",
         defaultMinWidth: 100,
-        defaultMaxWidth: 100,
+        // defaultMaxWidth: 100,
         columnLimits: [
           {
             colId: "course",
             minWidth: 350,
-            maxWidth: 350,
+            // maxWidth: 350,
           },
           {
             colId: "score",

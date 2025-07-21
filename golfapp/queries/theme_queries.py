@@ -42,13 +42,13 @@ def set_theme(theme):
 
     if theme in [
         "default",
-        "classic",
         "awesome",
-        "mellow",
+        "shoelace",
         "active",
         "brutalist",
         "glossy",
         "matter",
+        "mellow",
         "playful",
         "premium",
         "tailspin",
@@ -90,14 +90,26 @@ def set_primary_color(primary_color):
     if primary_color not in [
         "red",
         "orange",
+        "amber",
         "yellow",
+        "lime",
         "green",
+        "emerald",
+        "teal",
         "cyan",
+        "sky",
         "blue",
         "indigo",
+        "violet",
         "purple",
+        "fuchsia",
         "pink",
+        "rose",
+        "slate",
         "gray",
+        "zinc",
+        "neutral",
+        "stone",
     ]:
         primary_color = None
 
@@ -111,48 +123,19 @@ def set_primary_color(primary_color):
     return theme
 
 
-def set_color_contrast(color_contrast):
-    if not current_user.is_authenticated:
-        return
-
-    if color_contrast not in [
-        "default",
-        "classic",
-        "awesome",
-        "mellow",
-        "active",
-        "brutalist",
-        "glossy",
-        "matter",
-        "playful",
-        "premium",
-        "tailspin",
-    ]:
-        color_contrast = None
-
-    theme = get_theme()
-
-    if theme:
-        update_theme(color_contrast=color_contrast)
-    else:
-        create_theme(theme="classic", mode="light", color_contrast=color_contrast)
-
-    return theme
-
-
 def set_color_palette(color_palette):
     if not current_user.is_authenticated:
         return
 
     if color_palette not in [
         "default",
-        "anodized",
         "bright",
-        "classic",
+        "shoelace",
+        "rudimentary",
         "elegant",
         "mild",
         "natural",
-        "rudimentary",
+        "anodized",
         "vogue",
     ]:
         color_palette = None

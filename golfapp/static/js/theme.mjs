@@ -1,20 +1,94 @@
 const themeStorage = window.localStorage;
 
+export const THEME_LIST = [
+  "default",
+  "awesome",
+  "shoelace",
+  "active",
+  "brutalist",
+  "glossy",
+  "matter",
+  "mellow",
+  "playful",
+  "premium",
+  "tailspin",
+];
+
+export const THEME_MODE_LIST = ["light", "dark"];
+
+export const PRIMARY_COLOR_LIST = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "slate",
+  "gray",
+  "zinc",
+  "neutral",
+  "stone",
+];
+
+export const BACKGROUND_COLOR_LIST = [
+  "niks-favorite",
+  "red",
+  "gray",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+];
+
+export const COLOR_PALETTE_LIST = [
+  "default",
+  "bright",
+  "shoelace",
+  "rudimentary",
+  "elegant",
+  "mild",
+  "natural",
+  "anodized",
+  "vogue",
+];
+
 export class Theme {
   #theme;
   #mode;
   #primaryColor;
-  #colorContrast;
+  #backgroundColor;
   #colorPalette;
   #initing;
 
   constructor(theme) {
     this.#initing = true;
-
     this.theme = theme.theme;
     this.mode = theme.mode;
     this.primaryColor = theme.primary_color;
-    this.colorContrast = theme.color_contrast;
+    this.backgroundColor = theme.background_color;
     this.colorPalette = theme.color_palette;
 
     this.#initing = false;
@@ -36,8 +110,8 @@ export class Theme {
     return this.#primaryColor;
   }
 
-  get colorContrast() {
-    return this.#colorContrast;
+  get backgroundColor() {
+    return this.#backgroundColor;
   }
 
   get colorPalette() {
@@ -49,30 +123,19 @@ export class Theme {
       return;
     }
 
-    switch (theme) {
-      case "default":
-      case "classic":
-      case "awesome":
-      case "mellow":
-      case "active":
-      case "brutalist":
-      case "glossy":
-      case "matter":
-      case "playful":
-      case "premium":
-      case "tailspin":
-        this.#theme = theme;
-        break;
-      default: {
-        this.#theme = null;
-        break;
-      }
+    document.documentElement.classList.remove(`wa-theme-${this.theme}`);
+
+    if (THEME_LIST.includes(theme)) {
+      this.#theme = theme;
+    } else {
+      this.#theme = THEME_LIST[0];
     }
 
     themeStorage.setItem("theme", this.theme);
     document.getElementById("theme-stylesheet").href = this.theme
-      ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.theme}.css`
+      ? `https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/${theme}.css`
       : "";
+    document.documentElement.classList.add(`wa-theme-${this.theme}`);
 
     if (!this.#initing) {
       fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
@@ -80,19 +143,14 @@ export class Theme {
   }
 
   set mode(mode) {
-    if (mode === this.mode) {
+    if (mode && mode === this.mode) {
       return;
     }
 
-    switch (mode) {
-      case "light":
-      case "dark":
-        this.#mode = mode;
-        break;
-      default: {
-        this.#mode = null;
-        break;
-      }
+    if (THEME_MODE_LIST.includes(mode)) {
+      this.#mode = mode;
+    } else {
+      this.#mode = "light";
     }
 
     themeStorage.setItem("mode", this.mode);
@@ -111,34 +169,26 @@ export class Theme {
     }
   }
 
+  /**
+   * Sets the primary color
+   */
   set primaryColor(primaryColor) {
     if (primaryColor === this.primaryColor) {
       return;
     }
 
-    switch (primaryColor) {
-      case "red":
-      case "orange":
-      case "yellow":
-      case "green":
-      case "cyan":
-      case "blue":
-      case "indigo":
-      case "purple":
-      case "pink":
-      case "gray":
-        this.#primaryColor = primaryColor;
-        break;
-      default: {
-        this.#primaryColor = null;
-        break;
-      }
+    document.documentElement.classList.remove(`${this.primaryColor}-brand`);
+
+    if (PRIMARY_COLOR_LIST.includes(primaryColor)) {
+      this.#primaryColor = primaryColor;
+    } else {
+      this.#primaryColor = null;
     }
 
     themeStorage.setItem("primaryColor", this.primaryColor);
-    document.getElementById("primary-color-stylesheet").href = this.primaryColor
-      ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/brand/${this.primaryColor}.css`
-      : "";
+    if (this.primaryColor) {
+      document.documentElement.classList.add(`${this.primaryColor}-brand`);
+    }
 
     if (!this.#initing) {
       fetch(
@@ -149,73 +199,69 @@ export class Theme {
     }
   }
 
-  set colorContrast(colorContrast) {
-    if (colorContrast === this.colorContrast) {
+  /**
+   * Sets the background color
+   */
+  set backgroundColor(backgroundColor) {
+    if (backgroundColor === this.backgroundColor) {
       return;
     }
 
-    switch (colorContrast) {
-      case "default":
-      case "classic":
-      case "awesome":
-      case "mellow":
-      case "active":
-      case "brutalist":
-      case "glossy":
-      case "matter":
-      case "playful":
-      case "premium":
-      case "tailspin":
-        this.#colorContrast = colorContrast;
-        break;
-      default: {
-        this.#colorContrast = null;
-        break;
-      }
+    document
+      .querySelector("main")
+      .classList.remove(`${this.backgroundColor}-background`);
+    document
+      .querySelector("wa-page")
+      .classList.remove(`${this.backgroundColor}-background`);
+
+    if (BACKGROUND_COLOR_LIST.includes(backgroundColor)) {
+      this.#backgroundColor = backgroundColor;
+    } else {
+      this.#backgroundColor = null;
     }
 
-    themeStorage.setItem("colorContrast", this.colorContrast);
-    document.getElementById("color-contrast-stylesheet").href = this
-      .colorContrast
-      ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/themes/${this.colorContrast}/color.css`
-      : "";
+    themeStorage.setItem("backgroundColor", this.backgroundColor);
+    if (this.backgroundColor) {
+      document
+        .querySelector("main")
+        .classList.add(`${this.backgroundColor}-background`);
+      document
+        .querySelector("wa-page")
+        .classList.add(`${this.backgroundColor}-background`);
+    }
 
     if (!this.#initing) {
       fetch(
-        SET_COLOR_CONTRAST_URL +
+        SET_BACKGROUND_COLOR_URL +
           "?" +
-          new URLSearchParams({ color_contrast: this.colorContrast })
+          new URLSearchParams({ background_color: this.backgroundColor })
       );
     }
   }
 
+  /**
+   * Sets the color palette
+   */
   set colorPalette(colorPalette) {
-    if (colorPalette === this.colorPalete) {
+    if (colorPalette === this.colorPalette) {
       return;
     }
 
-    switch (colorPalette) {
-      case "default":
-      case "anodized":
-      case "bright":
-      case "classic":
-      case "elegant":
-      case "mild":
-      case "natural":
-      case "rudimentary":
-      case "vogue":
-        this.#colorPalette = colorPalette;
-        break;
-      default: {
-        this.#colorPalette = null;
-        break;
-      }
+    document.documentElement.classList.remove(
+      `wa-palette-${this.colorPalette}`
+    );
+
+    if (COLOR_PALETTE_LIST.includes(colorPalette)) {
+      this.#colorPalette = colorPalette;
+    } else {
+      this.#colorPalette = null;
     }
 
     themeStorage.setItem("colorPalette", this.colorPalette);
-    document.getElementById("color-pallete-stylesheet").href = this.colorPalette
-      ? `https://early.webawesome.com/webawesome@3.0.0-alpha.13/dist/styles/color/${this.colorPalette}.css`
-      : "";
+
+    if (this.colorPalette) {
+      document.documentElement.classList.add(`wa-palette-${this.colorPalette}`);
+    }
 
     if (!this.#initing) {
       fetch(
@@ -227,12 +273,12 @@ export class Theme {
   }
 
   makeDefault() {
-    this.theme = "classic";
+    this.theme = THEME_LIST[0];
     this.mode = "light";
   }
 
   migrateTheme(themeMode) {
-    this.theme = "classic";
+    this.theme = THEME_LIST[0];
     this.mode = themeMode;
   }
 }

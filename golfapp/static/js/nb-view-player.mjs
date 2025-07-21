@@ -56,7 +56,7 @@ class ViewPlayer extends NikElement {
     }
 
     return html`<wa-button
-      variant="brand"
+      variant="success"
       appearance="filled outlined"
       @click=${this.handleAddRoundClick}
       >Add Round</wa-button
@@ -80,18 +80,16 @@ class ViewPlayer extends NikElement {
   }
 
   render() {
-    return html`<wa-card
-      ><div class="wa-stack">
-        ${this.titleTemplate()}${this.statsTemplate()}
-        <div class="wa-split">
-          <a href=${USER.course_ranking_url}
-            >${IS_ME ? "My" : USER.username} course ratings</a
-          >
-          ${this.addRoundButtonTemplate()}
-        </div>
-        ${this.roundsTemplate()}
-      </div></wa-card
-    >`;
+    return html`<div class="wa-stack">
+      ${this.titleTemplate()}${this.statsTemplate()}
+      <div class="wa-split">
+        <a href=${USER.course_ranking_url}
+          >${IS_ME ? "My" : USER.username} course ratings</a
+        >
+        ${this.addRoundButtonTemplate()}
+      </div>
+      ${this.roundsTemplate()}
+    </div>`;
   }
 }
 customElements.define("nb-view-player", ViewPlayer);

@@ -1,5 +1,15 @@
 import { NikElement } from "./customElement.mjs";
 import { html } from "./imports.mjs";
+import {
+  THEME_LIST,
+  PRIMARY_COLOR_LIST,
+  BACKGROUND_COLOR_LIST,
+  COLOR_PALETTE_LIST,
+} from "./theme.mjs";
+
+function toUpper(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 export class PreferencesCard extends NikElement {
   static properties = {
@@ -10,6 +20,7 @@ export class PreferencesCard extends NikElement {
     themesSelect: "#themes",
     modeSelect: "#mode",
     primaryColorSelect: "#primary-color",
+    // backgroundColorSelect: "#background-color",
     colorContrastSelect: "#color-contrast",
     colorPaletteSelect: "#color-palette",
   };
@@ -44,6 +55,13 @@ export class PreferencesCard extends NikElement {
     this.theme.primaryColor = primaryColor;
   }
 
+  // handleBackgroundColorChange() {
+  //   let backgroundColor = this.backgroundColorSelect.value;
+  //   console.log(backgroundColor);
+
+  //   this.theme.backgroundColor = backgroundColor;
+  // }
+
   handleColorPaletteChange() {
     let colorPalette = this.colorPaletteSelect.value;
     console.log(colorPalette);
@@ -66,94 +84,84 @@ export class PreferencesCard extends NikElement {
     return html`<wa-card>
       <form id="profile-form" action="" method="POST" autocomplete="off"></form>
       <div class="wa-stack">
-        <h2>Preferences</h2>
+        <div class="wa-stack">
+          <h2>Preferences</h2>
 
-        <wa-select
-          id="themes"
-          label="Builtin Themes"
-          value=${this.theme.theme}
-          @input=${this.handleThemeChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="awesome">Awesome</wa-option
-          ><wa-option value="mellow">Mellow</wa-option
-          ><wa-option value="active">Actvie</wa-option
-          ><wa-option value="brutalist">Brutalist</wa-option
-          ><wa-option value="glossy">Glossy</wa-option
-          ><wa-option value="matter">Matter</wa-option
-          ><wa-option value="playful">Playful</wa-option
-          ><wa-option value="premium">Premium</wa-option
-          ><wa-option value="tailspin">Tailspin</wa-option></wa-select
-        >
+          <wa-select
+            id="themes"
+            label="Builtin Themes"
+            @input=${this.handleThemeChange}
+            >${THEME_LIST.map(
+              (theme) =>
+                html`<wa-option
+                  ?selected=${this.theme.theme === theme}
+                  value=${theme}
+                  >${toUpper(theme)}</wa-option
+                >`
+            )}</wa-select
+          >
 
-        <wa-select
-          id="mode"
-          label="Mode"
-          value=${this.theme.mode}
-          @input=${this.handleModeChange}
-          ><wa-option value="light">Light</wa-option
-          ><wa-option value="dark">Dark</wa-option></wa-select
-        >
+          <wa-select id="mode" label="Mode" @input=${this.handleModeChange}
+            ><wa-option value="light" ?selected=${this.theme.mode === "light"}
+              >Light</wa-option
+            ><wa-option value="dark" ?selected=${this.theme.mode === "dark"}
+              >Dark</wa-option
+            ></wa-select
+          >
 
-        <wa-divider></wa-divider>
+          <wa-divider></wa-divider>
 
-        <p>Custom Theming Options</p>
+          <p>Custom Theming Options</p>
 
-        <wa-select
-          clearable
-          id="primary-color"
-          label="Primary Color"
-          value=${this.theme.primaryColor}
-          @input=${this.handlePrimaryColorChange}
-          ><wa-option value="red">Red</wa-option
-          ><wa-option value="orange">Orange</wa-option
-          ><wa-option value="yellow">Yellow</wa-option
-          ><wa-option value="green">Green</wa-option
-          ><wa-option value="cyan">Cyan</wa-option
-          ><wa-option value="blue">Blue</wa-option
-          ><wa-option value="indigo">Indigo</wa-option
-          ><wa-option value="purple">Purple</wa-option
-          ><wa-option value="pink">Pink</wa-option
-          ><wa-option value="gray">Gray</wa-option></wa-select
-        >
+          <wa-select
+            with-clear
+            id="primary-color"
+            label="Primary Color"
+            @input=${this.handlePrimaryColorChange}
+            >${PRIMARY_COLOR_LIST.map(
+              (color) =>
+                html`<wa-option
+                  ?selected=${this.theme.primaryColor === color}
+                  value=${color}
+                  >${toUpper(color)}</wa-option
+                >`
+            )}</wa-select
+          >
 
-        <wa-select
-          clearable
-          id="color-palette"
-          label="Color Palette"
-          value=${this.theme.colorPalette}
-          @input=${this.handleColorPaletteChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="anodized">Anodized</wa-option
-          ><wa-option value="bright">Bright</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="elegant">Elegant</wa-option
-          ><wa-option value="mild">Mild</wa-option
-          ><wa-option value="natural">Natural</wa-option
-          ><wa-option value="rudimentary">Rudimentary</wa-option
-          ><wa-option value="vogue">Vouge</wa-option></wa-select
-        >
-
-        <wa-select
-          clearable
-          id="color-contrast"
-          label="Color Contrast"
-          value=${this.theme.colorContrast}
-          @input=${this.handleColorContrastChange}
-          ><wa-option value="default">Default</wa-option
-          ><wa-option value="classic">Classic</wa-option
-          ><wa-option value="awesome">Awesome</wa-option
-          ><wa-option value="mellow">Mellow</wa-option
-          ><wa-option value="active">Actvie</wa-option
-          ><wa-option value="brutalist">Brutalist</wa-option
-          ><wa-option value="glossy">Glossy</wa-option
-          ><wa-option value="matter">Matter</wa-option
-          ><wa-option value="playful">Playful</wa-option
-          ><wa-option value="premium">Premium</wa-option
-          ><wa-option value="tailspin">Tailspin</wa-option></wa-select
-        >
+          <wa-select
+            with-clear
+            id="color-palette"
+            label="Color Palette"
+            @input=${this.handleColorPaletteChange}
+            >${COLOR_PALETTE_LIST.map(
+              (color) =>
+                html`<wa-option
+                  ?selected=${this.theme.colorPalette === color}
+                  value=${color}
+                  >${toUpper(color)}</wa-option
+                >`
+            )}</wa-select
+          >
+        </div>
       </div>
     </wa-card>`;
+  }
+
+  backgroundTempalte() {
+    return html`<wa-select
+      with-clear
+      id="background-color"
+      label="Background Color"
+      @input=${this.handleBackgroundColorChange}
+      >${BACKGROUND_COLOR_LIST.map(
+        (color) =>
+          html`<wa-option
+            ?selected=${this.theme.backgroundColor === color}
+            value=${color}
+            >${toUpper(color)}</wa-option
+          >`
+      )}</wa-select
+    >`;
   }
 }
 

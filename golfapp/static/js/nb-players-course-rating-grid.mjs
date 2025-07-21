@@ -19,11 +19,12 @@ class RatingActions extends NikElement {
   render() {
     return html`<div class="wa-cluster wa-align-items-center">
       <wa-button
-        appearance="outlined"
-        size="small"
+        class="icon-button no-border"
+        variant="brand"
+        appearance="plain"
         @click=${this.handleEditClick}
-        >Edit</wa-button
-      >
+        ><wa-icon library="ion" name="create-outline" label="Edit"></wa-icon
+      ></wa-button>
     </div>`;
   }
 }

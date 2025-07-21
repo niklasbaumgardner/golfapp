@@ -2,12 +2,9 @@
   <div class="container">
     <div class="wa-split">
       <div class="wa-cluster">
-        <wa-icon-button
-          library="ion"
-          name="menu-outline"
-          label="Menu"
-          data-toggle-nav
-        ></wa-icon-button>
+        <wa-button data-toggle-nav appearance="plain"
+          ><wa-icon library="ion" name="menu-outline" label="Menu"></wa-icon
+        ></wa-button>
         <a class="wa-heading-l" href="/">NB Golf</a>
         <a
           class="wa-desktop-only wa-heading-m"
@@ -29,52 +26,55 @@
         <nb-theme-selector></nb-theme-selector>
         {% if current_user.is_authenticated %}
         <wa-dropdown
-          ><wa-button id="user-button" appearance="plain" slot="trigger" caret
+          ><wa-button
+            id="user-button"
+            appearance="plain"
+            slot="trigger"
+            with-caret
             >{{ current_user.username }}</wa-button
-          ><wa-menu id="user-dropdown-selector">
-            {% if current_user.is_admin %}
-            <wa-menu-item
-              ><a
-                href="{{ url_for('admin_bp.hijack') }}"
-                class="inline-block w-full"
-                >Hijack Handicap</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a
-                href="{{ url_for('admin_bp.edit_courses') }}"
-                class="inline-block w-full"
-                >Edit Courses</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a
-                href="{{ url_for('admin_bp.subscribers') }}"
-                class="inline-block w-full"
-                >Subscribers</a
-              ></wa-menu-item
-            >
-            <wa-divider></wa-divider>
-            {% endif %}
-            <wa-menu-item
-              ><a
-                href="{{ url_for('preferences_bp.preferences') }}"
-                class="inline-block w-full"
-                >Preferences</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a
-                href="{{ url_for('profile_bp.profile') }}"
-                class="inline-block w-full"
-                >Profile</a
-              ></wa-menu-item
-            ><wa-menu-item
-              ><a
-                href="{{ url_for('auth_bp.logout') }}"
-                class="inline-block w-full"
-                >Logout</a
-              ></wa-menu-item
-            >
-          </wa-menu></wa-dropdown
-        >
+          >
+          {% if current_user.is_admin %}
+          <wa-dropdown-item
+            ><a
+              href="{{ url_for('admin_bp.hijack') }}"
+              class="inline-block w-full"
+              >Hijack Handicap</a
+            ></wa-dropdown-item
+          ><wa-dropdown-item
+            ><a
+              href="{{ url_for('admin_bp.edit_courses') }}"
+              class="inline-block w-full"
+              >Edit Courses</a
+            ></wa-dropdown-item
+          ><wa-dropdown-item
+            ><a
+              href="{{ url_for('admin_bp.subscribers') }}"
+              class="inline-block w-full"
+              >Subscribers</a
+            ></wa-dropdown-item
+          >
+          <wa-divider></wa-divider>
+          {% endif %}
+          <wa-dropdown-item
+            ><a
+              href="{{ url_for('preferences_bp.preferences') }}"
+              class="inline-block w-full"
+              >Preferences</a
+            ></wa-dropdown-item
+          ><wa-dropdown-item
+            ><a
+              href="{{ url_for('profile_bp.profile') }}"
+              class="inline-block w-full"
+              >Profile</a
+            ></wa-dropdown-item
+          ><wa-dropdown-item
+            ><a
+              href="{{ url_for('auth_bp.logout') }}"
+              class="inline-block w-full"
+              >Logout</a
+            ></wa-dropdown-item
+          >
+        </wa-dropdown>
         {% else %}
         <a href="{{ url_for('auth_bp.login') }}">Login</a>
         {% endif %}
@@ -99,48 +99,45 @@
   <nb-theme-selector></nb-theme-selector>
   {% if current_user.is_authenticated %}
   <wa-dropdown
-    ><wa-button id="user-button" appearance="plain" slot="trigger" caret
+    ><wa-button id="user-button" appearance="plain" slot="trigger" with-caret
       >{{ current_user.username }}</wa-button
-    ><wa-menu id="user-dropdown-selector">
-      {% if current_user.is_admin %}
-      <wa-menu-item
-        ><a href="{{ url_for('admin_bp.hijack') }}" class="inline-block w-full"
-          >Hijack Handicap</a
-        ></wa-menu-item
-      ><wa-menu-item
-        ><a
-          href="{{ url_for('admin_bp.edit_courses') }}"
-          class="inline-block w-full"
-          >Edit Courses</a
-        ></wa-menu-item
-      ><wa-menu-item
-        ><a
-          href="{{ url_for('admin_bp.subscribers') }}"
-          class="inline-block w-full"
-          >Subscribers</a
-        ></wa-menu-item
-      >
-      <wa-divider></wa-divider>
-      {% endif %}
-      <wa-menu-item
-        ><a
-          href="{{ url_for('preferences_bp.preferences') }}"
-          class="inline-block w-full"
-          >Preferences</a
-        ></wa-menu-item
-      ><wa-menu-item
-        ><a
-          href="{{ url_for('profile_bp.profile') }}"
-          class="inline-block w-full"
-          >Profile</a
-        ></wa-menu-item
-      ><wa-menu-item
-        ><a href="{{ url_for('auth_bp.logout') }}" class="inline-block w-full"
-          >Logout</a
-        ></wa-menu-item
-      >
-    </wa-menu></wa-dropdown
-  >
+    >
+    {% if current_user.is_admin %}
+    <wa-dropdown-item
+      ><a href="{{ url_for('admin_bp.hijack') }}" class="inline-block w-full"
+        >Hijack Handicap</a
+      ></wa-dropdown-item
+    ><wa-dropdown-item
+      ><a
+        href="{{ url_for('admin_bp.edit_courses') }}"
+        class="inline-block w-full"
+        >Edit Courses</a
+      ></wa-dropdown-item
+    ><wa-dropdown-item
+      ><a
+        href="{{ url_for('admin_bp.subscribers') }}"
+        class="inline-block w-full"
+        >Subscribers</a
+      ></wa-dropdown-item
+    >
+    <wa-divider></wa-divider>
+    {% endif %}
+    <wa-dropdown-item
+      ><a
+        href="{{ url_for('preferences_bp.preferences') }}"
+        class="inline-block w-full"
+        >Preferences</a
+      ></wa-dropdown-item
+    ><wa-dropdown-item
+      ><a href="{{ url_for('profile_bp.profile') }}" class="inline-block w-full"
+        >Profile</a
+      ></wa-dropdown-item
+    ><wa-dropdown-item
+      ><a href="{{ url_for('auth_bp.logout') }}" class="inline-block w-full"
+        >Logout</a
+      ></wa-dropdown-item
+    >
+  </wa-dropdown>
   {% else %}
   <a href="{{ url_for('auth_bp.login') }}">Login</a>
   {% endif %}

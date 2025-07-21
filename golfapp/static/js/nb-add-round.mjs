@@ -99,11 +99,11 @@ export class AddRound extends NikElement {
         orientation="horizontal"
         required
       >
-        <wa-radio-button value="False" variant="brand"
-          >18 hole round</wa-radio-button
+        <wa-radio appearance="button" value="False" variant="brand"
+          >18 hole round</wa-radio
         >
-        <wa-radio-button value="True" variant="brand"
-          >9 hole round</wa-radio-button
+        <wa-radio appearance="button" value="True" variant="brand"
+          >9 hole round</wa-radio
         >
       </wa-radio-group>
     </div>`;
