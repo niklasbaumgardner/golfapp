@@ -101,9 +101,9 @@ export class CourseRatingsGrid extends NikElement {
     const columnDefs = [
       {
         field: "rank",
-        width: 75,
-        minWidth: 75,
-        maxWidth: 75,
+        width: 108,
+        minWidth: 108,
+        maxWidth: 108,
         filter: "agNumberColumnFilter",
       },
       {
@@ -113,6 +113,7 @@ export class CourseRatingsGrid extends NikElement {
         width: 240,
         minWidth: 240,
         maxWidth: 240,
+        filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let course = param.data;
           let address = course.address ?? "";
@@ -123,23 +124,33 @@ export class CourseRatingsGrid extends NikElement {
             courseAddress = `${city}, ${state}`;
           } catch {}
 
-          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${courseAddress}</div>`;
+          return `<div class="p-(--wa-space-2xs)"><div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${courseAddress}</div></div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
-          let courseA = nodeA.data.course;
-          let courseB = nodeB.data.course;
+          let courseA = nodeA.data;
+          let courseB = nodeB.data;
 
           return courseA.name.localeCompare(courseB.name);
         },
         filterValueGetter: (param) => {
-          let course = param.data.course;
+          let course = param.data;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
 
-          return course.name;
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `${course.name} ${city} ${state}`;
         },
       },
       {
         field: "averageRating",
-        headerName: "Weighted Rating",
+        headerName: "Rating (Weighted)",
         width: 130,
         minWidth: 130,
         maxWidth: 130,
@@ -149,8 +160,8 @@ export class CourseRatingsGrid extends NikElement {
         field: "array",
         headerName: "All Ratings",
         autoHeight: true,
-        flex: 1,
         minWidth: 200,
+        filter: "agTextColumnFilter",
         cellRenderer: (param) => {
           let rankings = param.data.array.map(
             (x) =>
@@ -159,6 +170,27 @@ export class CourseRatingsGrid extends NikElement {
           rankings = rankings.join('<span class="min-w-[1ch]">, </span>');
 
           return `<div class="flex flex-wrap">${rankings}</div>`;
+        },
+        filterValueGetter: (param) => {
+          let rankings = param.data.array;
+          return rankings
+            .map((x) => `${x.rating} by ${x.user.username}`)
+            .join(", ");
+        },
+        valueFormatter: (param) => {
+          let course = param.data;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
+
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `${course.name} ${city} ${state}`;
         },
       },
     ];

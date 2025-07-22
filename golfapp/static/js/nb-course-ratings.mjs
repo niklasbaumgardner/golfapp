@@ -16,12 +16,10 @@ class CourseRatings extends NikElement {
   }
 
   render() {
-    return html`<wa-card
-      ><div class="wa-stack">
-        <h2>Course Ratings</h2>
-        ${this.ratingsTemplate()}
-      </div></wa-card
-    >`;
+    return html`<div class="wa-stack">
+      <h2>Course Ratings</h2>
+      ${this.ratingsTemplate()}
+    </div>`;
   }
 }
 customElements.define("nb-course-ratings", CourseRatings);

@@ -88,10 +88,15 @@ export class PlayersCourseRatingGrid extends NikElement {
     this.rankCourses();
 
     const columnDefs = [
-      { field: "rank", width: 75, minWidth: 75 },
+      {
+        field: "rank",
+        width: 108,
+        minWidth: 108,
+        maxWidth: 108,
+        filter: "agNumberColumnFilter",
+      },
       {
         field: "course",
-        flex: 1,
         minWidth: 200,
         autoHeight: true,
         filter: "agTextColumnFilter",
@@ -108,7 +113,7 @@ export class PlayersCourseRatingGrid extends NikElement {
             [state, _] = stateZip.split(" ");
           }
 
-          return `<div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${city}, ${state}</div>`;
+          return `<div class="p-(--wa-space-2xs)"><div class="wa-heading-xs">${course.name}</div><div class="wa-body-xs">${city}, ${state}</div></div>`;
         },
         comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
           let courseA = nodeA.data.course;
@@ -118,8 +123,33 @@ export class PlayersCourseRatingGrid extends NikElement {
         },
         filterValueGetter: (param) => {
           let course = param.data.course;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
 
-          return course.name;
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `${course.name} ${city} ${state}`;
+        },
+        valueFormatter: (param) => {
+          let course = param.data.course;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
+
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `${course.name} ${city} ${state}`;
         },
       },
       {
