@@ -123,6 +123,22 @@ export class RoundsGrid extends NikElement {
 
           return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope})`;
         },
+        valueFormatter: (param) => {
+          let course = param.data.course;
+          let teebox = param.data.teebox;
+          let address = course.address ?? "";
+          let state = "",
+            city = "",
+            stateZip = "",
+            _ = "";
+
+          if (address) {
+            [_, city, stateZip] = address.split(", ");
+            [state, _] = stateZip.split(" ");
+          }
+
+          return `${course.name} - ${teebox.teebox} (${teebox.rating} / ${teebox.slope}) ${city} ${state}`;
+        },
       },
       {
         field: "score",
