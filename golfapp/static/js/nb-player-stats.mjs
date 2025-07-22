@@ -1,5 +1,5 @@
-import { NikElement } from "./customElement.mjs";
-import { html } from "./imports.mjs";
+import { NikElement } from "./nik-element.mjs";
+import { html } from "./bundle.mjs";
 import * as chartJs from "https://cdn.jsdelivr.net/npm/chart.js@3.6.2/+esm";
 
 function average(array) {

@@ -1,4 +1,4 @@
-import { html, ifDefined } from "./imports.mjs";
+import { html, ifDefined } from "./bundle.mjs";
 import { AddRound } from "./nb-add-round.mjs";
 
 export class EditRound extends AddRound {

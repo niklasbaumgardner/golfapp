@@ -132,9 +132,9 @@ export class Theme {
     }
 
     themeStorage.setItem("theme", this.theme);
-    document.getElementById("theme-stylesheet").href = this.theme
-      ? `https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/${theme}.css`
-      : "";
+    // document.getElementById("theme-stylesheet").href = this.theme
+    //   ? `https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/${theme}.css`
+    //   : "";
     document.documentElement.classList.add(`wa-theme-${this.theme}`);
 
     if (!this.#initing) {

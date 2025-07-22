@@ -1,4 +1,4 @@
-import { html, ifDefined } from "./imports.mjs";
+import { html } from "./bundle.mjs";
 import { AddCourseRating } from "./nb-add-course-rating.mjs";
 
 export class EditCourseRating extends AddCourseRating {

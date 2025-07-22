@@ -1,4 +1,4 @@
-import { html } from "./imports.mjs";
+import { html } from "./bundle.mjs";
 import { SignupCard } from "./nb-signup.mjs";
 
 export class ProfileCard extends SignupCard {

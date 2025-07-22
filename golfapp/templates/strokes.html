@@ -1,9 +1,5 @@
 {% extends "base.html" %} {% block title %}Strokes{% endblock title %} {% block
-strokes %}active{% endblock strokes %} {% block content %} {% if courses %}
-<script>
-  const ADD_COURSE_URL = "{{ url_for('addcourse_bp.add_course') }}";
-</script>
-{% endif %}
+strokes %}active{% endblock strokes %} {% block content %}
 
 <nb-calculate-strokes
   courses='{{ courses|tojson }}'

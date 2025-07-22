@@ -1,5 +1,5 @@
-import { NikElement } from "./customElement.mjs";
-import { html } from "./imports.mjs";
+import { NikElement } from "./nik-element.mjs";
+import { html } from "./bundle.mjs";
 import "./nb-rounds-grid.mjs";
 import "./nb-player-stats.mjs";
 import "./nb-add-round.mjs";

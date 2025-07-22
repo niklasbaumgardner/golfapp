@@ -1,5 +1,5 @@
-import { html } from "./imports.mjs";
-import { NikElement } from "./customElement.mjs";
+import { NikElement } from "./nik-element.mjs";
+import { html } from "./bundle.mjs";
 
 class RatingActions extends NikElement {
   static properties = {
