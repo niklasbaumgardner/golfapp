@@ -90,7 +90,7 @@ export class LoginCard extends NikElement {
           label="Email"
           placeholder="Your email"
           maxlength="60"
-          ?value=${this.email}
+          value=${this.email}
           required
         ></wa-input>
 
@@ -112,8 +112,6 @@ export class LoginCard extends NikElement {
         >
 
         <div>
-          <!-- This submit button is hidden so "Enter" will submit the form -->
-          <button form="login-form" type="submit" class="hidden!"></button>
           <wa-button
             class="w-full"
             type="submit"

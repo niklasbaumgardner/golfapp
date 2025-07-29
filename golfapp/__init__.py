@@ -25,7 +25,7 @@ if not os.environ.get("FLASK_DEBUG"):
         # of transactions for tracing.
         traces_sample_rate=1.0,
         _experiments={"enable_logs": True},
-        release="nbgolf@1.0.9",
+        release="nbgolf@1.0.10",
     )
 
 

@@ -14,6 +14,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("viewplayer_bp.index"))
 
+    # We know this is a GET request so just render the login page
     email = request.args.get("email")
     if email:
         return render_template("login.html", email=email)
@@ -36,7 +37,7 @@ def login():
 
         elif user:
             flash("Password was incorrect. Try again", "danger")
-            return render_template("login.html", email=email)
+            return redirect(url_for("auth_bp.login", email=email))
 
         flash("User not found. Please create an acount", "neutral")
 
