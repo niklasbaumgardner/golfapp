@@ -70,15 +70,11 @@ def add_round_submit():
 
     course = course_queries.get_course_by_id(course_id=course_id)
 
-    try:
-        send_email.send_subscribers_message(
-            user_id=current_user,
-            old_handicap=old_handicap,
-            new_handicap=new_handicap,
-            round_dict=dict(score=score, course_name=course.name, date=date),
-        )
-    except:
-        pass
+    send_email.send_subscribers_message(
+        old_handicap=old_handicap,
+        new_handicap=new_handicap,
+        round_dict=dict(score=score, course_name=course.name, date=date),
+    )
 
     return redirect(url_for("viewplayer_bp.index"))
 

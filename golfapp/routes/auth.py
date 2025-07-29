@@ -15,11 +15,11 @@ def login():
         return redirect(url_for("viewplayer_bp.index"))
 
     # We know this is a GET request so just render the login page
-    email = request.args.get("email")
+    email = request.args.get("email") or ""
     if email:
         return render_template("login.html", email=email)
 
-    email = request.form.get("email")
+    email = request.form.get("email") or ""
     password = request.form.get("password")
     remember = request.form.get("remember")
 
