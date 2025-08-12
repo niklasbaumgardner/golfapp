@@ -1,6 +1,7 @@
 import { NikElement } from "./nik-element.mjs";
 import { html } from "./bundle.mjs";
 import "./nb-delete-round.mjs";
+import * as agGrid from "./agGrid.bundle.mjs";
 
 class RoundActions extends NikElement {
   static properties = {

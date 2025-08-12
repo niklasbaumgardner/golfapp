@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block title %}View Rounds{% endblock title %} {%
 block home %}active{% endblock home %} {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.3.2/dist/ag-grid-community.min.js"></script>
+
 <script>
   const COURSES = {{ courses|tojson }};
   const IS_ME = "{{ is_me }}" === "True";
