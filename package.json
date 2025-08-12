@@ -8,8 +8,8 @@
   "name": "golfapp",
   "version": "1.0.0",
   "scripts": {
-    "watch": "npx @tailwindcss/cli -i ./golfapp/static/css/tailwind.css -o ./golfapp/static/css/tw-out.css --watch",
-    "build": "npx @tailwindcss/cli -i ./golfapp/static/css/tailwind.css -o ./golfapp/static/css/tw-out.css",
+    "watch": "npx @tailwindcss/cli -i ./golfapp/static/css/src/tailwind.css -o ./golfapp/static/css/src/tw-out.css --watch",
+    "build": "npx @tailwindcss/cli -i ./golfapp/static/css/src/tailwind.css -o ./golfapp/static/css/src/tw-out.css",
     "wp-build": "webpack --progress --config ./golfapp/static/webpack.config.js --mode=production",
     "wp-watch": "webpack --progress --config ./golfapp/static/webpack.config.js --watch --mode=development",
     "build-all": "npm run build && npm run wp-build"
@@ -18,6 +18,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
     "mini-css-extract-plugin": "^2.9.2",
     "webpack-cli": "^6.0.1"
   }
