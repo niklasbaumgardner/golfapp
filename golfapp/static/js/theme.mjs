@@ -118,6 +118,13 @@ export class Theme {
     return this.#colorPalette;
   }
 
+  get themeLinkEl() {
+    return document.getElementById("theme");
+  }
+  get paletteLinkEl() {
+    return document.getElementById("palette");
+  }
+
   set theme(theme) {
     if (theme === this.theme) {
       return;
@@ -132,10 +139,9 @@ export class Theme {
     }
 
     themeStorage.setItem("theme", this.theme);
-    // document.getElementById("theme-stylesheet").href = this.theme
-    //   ? `https://early.webawesome.com/webawesome@3.0.0-beta.2/dist/styles/themes/${theme}.css`
-    //   : "";
     document.documentElement.classList.add(`wa-theme-${this.theme}`);
+
+    this.themeLinkEl.href = `/static/css/${this.theme}.min.css`;
 
     if (!this.#initing) {
       fetch(SET_THEME_URL + "?" + new URLSearchParams({ theme: this.theme }));
@@ -262,6 +268,8 @@ export class Theme {
     if (this.colorPalette) {
       document.documentElement.classList.add(`wa-palette-${this.colorPalette}`);
     }
+
+    this.paletteLinkEl.href = `/static/css/${this.colorPalette}.palette.min.css`;
 
     if (!this.#initing) {
       fetch(

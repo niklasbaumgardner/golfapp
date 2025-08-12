@@ -14,6 +14,8 @@
     <link rel="manifest" href="/static/manifest.webmanifest" />
 
     <link href="/static/css/bundle.min.css" rel="stylesheet" />
+    <link id="theme" rel="stylesheet" href="" />
+    <link id="palette" rel="stylesheet" href="" />
 
     <link rel="icon" type="image/png" href="/static/images/golf.png" />
     <link
@@ -30,20 +32,6 @@
         window.THEME.migrateTheme(storedTheme);
       }
       console.log(window.THEME);
-
-      let head = document.querySelector("head");
-      for (let theme of THEME_LIST) {
-        let themeLink = document.createElement("link");
-        themeLink.rel = "stylesheet";
-        themeLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/themes/${theme}.css`;
-        head.append(themeLink);
-      }
-      for (let palette of COLOR_PALETTE_LIST) {
-        let paletteLink = document.createElement("link");
-        paletteLink.rel = "stylesheet";
-        paletteLink.href = `https://early.webawesome.com/webawesome@3.0.0-beta.3/dist/styles/color/palettes/${palette}.css`;
-        head.append(paletteLink);
-      }
     </script>
     <script src="/static/js/nb-alert.mjs" type="module"></script>
     <script type="module" src="/static/js/nb-theme-selector.mjs"></script>
@@ -93,7 +81,7 @@
     if (window.Sentry) {
         Sentry.onLoad(function () {
           Sentry.init({
-            release: "nbgolf@1.1.7",
+            release: "nbgolf@1.1.8",
             environment: "production",
             replaysSessionSampleRate: 0,
             replaysOnErrorSampleRate: 1.0,
